@@ -1,7 +1,6 @@
 import { redirect } from '@sveltejs/kit'
 import type { Actions } from './$types'
-import { db } from '$lib/server/db'
-import { workflows } from '$lib/server/db/schema'
+import { Slack, Workflows } from '$lib/server/services'
 
 export const actions = {
 	default: async ({ request, locals }) => {
@@ -21,10 +20,18 @@ export const actions = {
 			return { error: 'Description is not provided' }
 		}
 
-		const [{ id }] = await db
-			.insert(workflows)
-			.values({ name, description, authorId: session.user.slackId })
-			.returning({ id: workflows.id })
+		const app = await Slack.createApp({ name })
+
+		const { id } = await Workflows.createWorkflow({
+			author: session.user.slackId,
+			name,
+			description,
+			appId: app.appId,
+			clientId: app.clientId,
+			clientSecret: app.clientSecret,
+			verificationToken: app.verificationToken,
+			signingSecret: app.signingSecret
+		})
 
 		redirect(303, `/workflows/${id}`)
 	}

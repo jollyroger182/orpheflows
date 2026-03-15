@@ -18,7 +18,7 @@ export const configTokens = pgTable(
 		id: serial('id').primaryKey(),
 		token: text('token').notNull(),
 		refreshToken: text('refresh_token').notNull(),
-		expiresAt: timestamp('expires_at', { withTimezone: true }).notNull().defaultNow(),
+		expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
 		createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow()
 	},
 	(table) => [index().on(table.createdAt)]
@@ -33,6 +33,7 @@ export const workflows = pgTable('workflows', {
 		.notNull(),
 	name: text('name').notNull(),
 	description: text('description').notNull().default('A brand new workflow'),
+	appId: text('app_id').notNull(),
 	clientId: text('client_id').notNull(),
 	clientSecret: text('client_secret').notNull(),
 	verificationToken: text('verification_token').notNull(),

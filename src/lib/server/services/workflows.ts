@@ -43,10 +43,36 @@ interface CreateWorkflow {
 	author: string
 	name: string
 	description: string
+	appId: string
+	clientId: string
+	clientSecret: string
+	verificationToken: string
+	signingSecret: string
 }
 
-export async function createWorkflow({ author, name, description }: CreateWorkflow) {
+export async function createWorkflow({
+	author,
+	name,
+	description,
+	appId,
+	clientId,
+	clientSecret,
+	verificationToken,
+	signingSecret
+}: CreateWorkflow) {
 	return (
-		await db.insert(workflows).values({ authorId: author, name, description }).returning()
+		await db
+			.insert(workflows)
+			.values({
+				authorId: author,
+				name,
+				description,
+				appId,
+				clientId,
+				clientSecret,
+				verificationToken,
+				signingSecret
+			})
+			.returning()
 	)[0]!
 }

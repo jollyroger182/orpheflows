@@ -1,3 +1,4 @@
+import { env } from '$env/dynamic/public'
 import { db } from '$lib/server/db'
 import { users } from '$lib/server/db/schema'
 import { SvelteKitAuth } from '@auth/sveltekit'
@@ -5,8 +6,10 @@ import Slack from '@auth/sveltekit/providers/slack'
 
 export const { handle, signIn, signOut } = SvelteKitAuth({
 	providers: [Slack],
+	redirectProxyUrl: env.PUBLIC_REDIRECT_PROXY_URL,
 	callbacks: {
 		async signIn({ account, user }) {
+			console.log('signin', account, user, )
 			const id = account?.providerAccountId
 			const name = user.name || 'unknown'
 			const photo_url = user.image || null
