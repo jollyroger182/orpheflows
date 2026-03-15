@@ -1,3 +1,4 @@
+import { convertWorkflowToPublic } from '$lib/server/convert'
 import { db } from '$lib/server/db'
 import { workflows } from '$lib/server/db/schema'
 import { json } from '@sveltejs/kit'
@@ -10,13 +11,5 @@ export async function GET() {
 		with: { author: true }
 	})
 
-	return json(
-		flows.map((f) => ({
-			id: f.id,
-			author: { id: f.author.id, name: f.author.name, photo_url: f.author.photo_url },
-			name: f.name,
-			description: f.description,
-			createdAt: f.createdAt
-		}))
-	)
+	return json(flows.map((f) => convertWorkflowToPublic(f)))
 }

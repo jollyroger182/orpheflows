@@ -1,65 +1,40 @@
 <script lang="ts">
-	import * as Blockly from 'blockly/core'
-	import 'blockly/blocks'
-	import * as En from 'blockly/msg/en'
-	import { onMount } from 'svelte'
-	import { javascriptGenerator } from 'blockly/javascript'
-	import { signIn, signOut } from '@auth/sveltekit/client'
 	import { page } from '$app/state'
+	import { signIn, signOut } from '@auth/sveltekit/client'
+	import type { PageProps } from './$types'
 
-	let code = $state('')
+	let { data }: PageProps = $props()
 
-	let blocklyContainer: HTMLDivElement
-	let workspace: Blockly.WorkspaceSvg
-
-	function serialize() {
-		const json = Blockly.serialization.workspaces.save(workspace)
-		localStorage.setItem('blocks', JSON.stringify(json))
-	}
-
-	function deserialize() {
-		const data = localStorage.getItem('blocks')
-		if (data) {
-			Blockly.serialization.workspaces.load(JSON.parse(data), workspace)
-		}
-	}
-
-	onMount(() => {
-		Blockly.setLocale(En as unknown as Record<string, string>)
-
-		const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
-			kind: 'flyoutToolbox',
-			contents: [
-				{ kind: 'block', type: 'controls_if' },
-				{ kind: 'block', type: 'controls_whileUntil' }
-			]
-		}
-		workspace = Blockly.inject(blocklyContainer, { toolbox })
-		workspace.addChangeListener(refresh)
-	})
-
-	function refresh() {
-		code = javascriptGenerator.workspaceToCode(workspace)
-	}
+	let user = $derived(page.data.session?.user)
 </script>
 
-<div class="grid h-screen w-screen grid-cols-2 grid-rows-[min-content_1fr]">
-	<div class="col-span-2 flex items-center gap-2 p-2">
-		<span>Hello World</span>
-		<button onclick={serialize} class="btn btn-primary">Save</button>
-		<button onclick={deserialize} class="btn btn-primary">Load</button>
-		<span class="flex-1"></span>
-		{#if page.data.session?.user}
-			{#if page.data.session.user.image}
-				<img src={page.data.session.user.image} alt="Profile" class="h-[2em] rounded-full" />
-			{/if}
-			<button onclick={() => signOut()} class="btn btn-primary">Log out</button>
+<header class="flex items-center gap-2 bg-blue-100 px-8 py-2">
+	<span class="text-2xl">Orpheflows</span>
+
+	<span class="flex-1"></span>
+
+	{#if user}
+		<img
+			src={user.image}
+			alt="Profile"
+			title={`Logged in as: ${user.name}`}
+			class="inline h-[2em] rounded-full"
+		/>
+		<button onclick={() => signOut()} class="btn btn-secondary">Log out</button>
+	{:else}
+		<button onclick={() => signIn('slack')} class="btn btn-secondary">Log in</button>
+	{/if}
+</header>
+
+<div class="container mx-auto my-4">
+	<h1 class="mb-4 text-3xl font-semibold">Your workflows</h1>
+	{#if user}
+		{#if data.workflows.length}
+			you have {data.workflows.length} workflows
 		{:else}
-			<button onclick={() => signIn('slack')} class="btn btn-primary">Log in</button>
+			you have no workflows
 		{/if}
-	</div>
-	<div bind:this={blocklyContainer}></div>
-	<div>
-		<pre>{code}</pre>
-	</div>
+	{:else}
+		you are not logged in
+	{/if}
 </div>
