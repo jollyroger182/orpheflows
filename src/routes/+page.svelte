@@ -4,6 +4,8 @@
 	import * as En from 'blockly/msg/en'
 	import { onMount } from 'svelte'
 	import { javascriptGenerator } from 'blockly/javascript'
+	import { signIn, signOut } from '@auth/sveltekit/client'
+	import { page } from '$app/state'
 
 	let code = $state('')
 
@@ -46,6 +48,15 @@
 		<span>Hello World</span>
 		<button onclick={serialize} class="btn btn-primary">Save</button>
 		<button onclick={deserialize} class="btn btn-primary">Load</button>
+		<span class="flex-1"></span>
+		{#if page.data.session?.user}
+			{#if page.data.session.user.image}
+				<img src={page.data.session.user.image} alt="Profile" class="h-[2em] rounded-full" />
+			{/if}
+			<button onclick={() => signOut()} class="btn btn-primary">Log out</button>
+		{:else}
+			<button onclick={() => signIn('slack')} class="btn btn-primary">Log in</button>
+		{/if}
 	</div>
 	<div bind:this={blocklyContainer}></div>
 	<div>

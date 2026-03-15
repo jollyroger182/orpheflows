@@ -25,6 +25,7 @@
 		"@sveltejs/vite-plugin-svelte": "^6.2.4",
 		"@tailwindcss/vite": "^4.1.18",
 		"@types/node": "^20",
+		"@vitejs/plugin-basic-ssl": "^2.2.0",
 		"drizzle-kit": "^0.31.8",
 		"drizzle-orm": "^0.45.1",
 		"eslint": "^9.39.2",
@@ -43,6 +44,7 @@
 		"vite": "^7.3.1"
 	},
 	"dependencies": {
+		"@auth/sveltekit": "^1.11.1",
 		"blockly": "^12.4.1"
 	}
 }
