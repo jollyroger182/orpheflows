@@ -10,4 +10,18 @@ declare global {
 	}
 }
 
-export {};
+declare module '@auth/core/types' {
+	interface Session {
+		user: {
+			slackId?: string
+		} & DefaultSession['user']
+	}
+}
+
+declare module '@auth/core/jwt' {
+	interface JWT {
+		slackId?: string
+	}
+}
+
+export {}

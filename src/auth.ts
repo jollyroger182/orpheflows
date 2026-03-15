@@ -6,10 +6,10 @@ import Slack from '@auth/sveltekit/providers/slack'
 export const { handle, signIn, signOut } = SvelteKitAuth({
 	providers: [Slack],
 	callbacks: {
-		async signIn(params) {
-			const id = params.profile!.sub!
-			const name = params.user.name || 'unknown'
-			const photo_url = params.user.image || null
+		async signIn({ account, user }) {
+			const id = account?.providerAccountId
+			const name = user.name || 'unknown'
+			const photo_url = user.image || null
 			if (id) {
 				await db
 					.insert(users)
@@ -17,6 +17,18 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 					.onConflictDoUpdate({ target: users.id, set: { name, photo_url } })
 			}
 			return true
+		},
+
+		jwt({ token, account }) {
+			if (account?.providerAccountId) {
+				token.slackId = account.providerAccountId
+			}
+			return token
+		},
+
+		session({ session, token }) {
+			session.user.slackId = token.slackId
+			return session
 		}
 	}
 })

@@ -17,3 +17,10 @@
 .btn-secondary:hover {
 	@apply bg-gray-600;
 }
+
+.btn-success {
+	@apply bg-green-500 text-white;
+}
+.btn-success:hover {
+	@apply bg-green-600;
+}
