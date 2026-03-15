@@ -1,6 +1,6 @@
 import { desc, eq } from 'drizzle-orm'
 import { db } from '../db'
-import { workflows } from '../db/schema'
+import { installations, workflows } from '../db/schema'
 
 interface GetWorkflows {
 	limit?: number
@@ -21,7 +21,18 @@ interface GetWorkflow {
 export async function getWorkflow({ id }: GetWorkflow) {
 	return await db.query.workflows.findFirst({
 		where: eq(workflows.id, id),
-		with: { author: true }
+		with: { author: true, installation: true }
+	})
+}
+
+interface GetWorkflowByClientId {
+	clientId: string
+}
+
+export async function getWorkflowByClientId({ clientId }: GetWorkflowByClientId) {
+	return await db.query.workflows.findFirst({
+		where: eq(workflows.clientId, clientId),
+		with: { author: true, installation: true }
 	})
 }
 
@@ -75,4 +86,13 @@ export async function createWorkflow({
 			})
 			.returning()
 	)[0]!
+}
+
+interface CreateWorkflowInstallation {
+	id: number
+	token: string
+}
+
+export async function createWorkflowInstallation({ id, token }: CreateWorkflowInstallation) {
+	return (await db.insert(installations).values({ token, workflowId: id }).returning())[0]!
 }

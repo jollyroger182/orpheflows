@@ -26,24 +26,28 @@ export const configTokens = pgTable(
 
 // workflows
 
-export const workflows = pgTable('workflows', {
-	id: serial('id').primaryKey(),
-	authorId: text('author_id')
-		.references(() => users.id)
-		.notNull(),
-	name: text('name').notNull(),
-	description: text('description').notNull().default('A brand new workflow'),
-	appId: text('app_id').notNull(),
-	clientId: text('client_id').notNull(),
-	clientSecret: text('client_secret').notNull(),
-	verificationToken: text('verification_token').notNull(),
-	signingSecret: text('signing_secret').notNull(),
-	blocks: text('blocks'),
-	code: text('code').notNull().default(''),
-	blocksUpdatedAt: timestamp('blocks_updated_at', { withTimezone: true }).notNull().defaultNow(),
-	codeUpdatedAt: timestamp('code_updated_at', { withTimezone: true }).notNull().defaultNow(),
-	createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow()
-})
+export const workflows = pgTable(
+	'workflows',
+	{
+		id: serial('id').primaryKey(),
+		authorId: text('author_id')
+			.references(() => users.id)
+			.notNull(),
+		name: text('name').notNull(),
+		description: text('description').notNull().default('A brand new workflow'),
+		appId: text('app_id').notNull(),
+		clientId: text('client_id').notNull(),
+		clientSecret: text('client_secret').notNull(),
+		verificationToken: text('verification_token').notNull(),
+		signingSecret: text('signing_secret').notNull(),
+		blocks: text('blocks'),
+		code: text('code').notNull().default(''),
+		blocksUpdatedAt: timestamp('blocks_updated_at', { withTimezone: true }).notNull().defaultNow(),
+		codeUpdatedAt: timestamp('code_updated_at', { withTimezone: true }).notNull().defaultNow(),
+		createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow()
+	},
+	(table) => [index().on(table.clientId)]
+)
 
 export const workflowsRelations = relations(workflows, ({ one, many }) => ({
 	versions: many(versions),

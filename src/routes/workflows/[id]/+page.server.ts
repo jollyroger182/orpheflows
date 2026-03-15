@@ -13,9 +13,12 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 	const session = await locals.auth()
 
 	const isOwner = flow.authorId == session?.user.slackId
+	const isInstalled = !!flow.installation
 
 	return {
 		workflow: convertWorkflowToPublic(flow),
-		isOwner
+		clientId: isOwner ? flow.clientId : null,
+		isOwner,
+		isInstalled
 	}
 }

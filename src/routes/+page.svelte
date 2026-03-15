@@ -14,7 +14,13 @@
 </div>
 {#if user}
 	{#if data.workflows.length}
-		you have {data.workflows.length} workflows
+		<p class="mb-4">you have {data.workflows.length} workflows</p>
+
+		<ul>
+			{#each data.workflows as workflow (workflow.id)}
+				<li><a href={resolve(`/workflows/${workflow.id}`)}>{workflow.name}</a></li>
+			{/each}
+		</ul>
 	{:else}
 		you have no workflows
 	{/if}
