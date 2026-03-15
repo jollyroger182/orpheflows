@@ -5,7 +5,11 @@ import { relations } from 'drizzle-orm'
 
 export const workflows = pgTable('workflows', {
 	id: serial('id').primaryKey(),
-	userId: text('user_id').notNull(),
+	authorId: text('author_id')
+		.references(() => users.id)
+		.notNull(),
+	name: text().notNull(),
+	description: text().notNull().default('A brand new workflow'),
 	blocks: text('blocks'),
 	code: text('code').notNull().default(''),
 	blocksUpdatedAt: timestamp('blocks_updated_at', { withTimezone: true }).notNull().defaultNow(),
@@ -13,8 +17,12 @@ export const workflows = pgTable('workflows', {
 	createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow()
 })
 
-export const workflowsRelations = relations(workflows, ({ many }) => ({
-	versions: many(versions)
+export const workflowsRelations = relations(workflows, ({ one, many }) => ({
+	versions: many(versions),
+	author: one(users, {
+		fields: [workflows.authorId],
+		references: [users.id]
+	})
 }))
 
 // versions
@@ -52,6 +60,7 @@ export const executions = pgTable(
 	},
 	(table) => [
 		foreignKey({
+			name: 'workflow_executions_versions_id_workflow_id_fk',
 			columns: [table.versionId, table.workflowId],
 			foreignColumns: [versions.id, versions.workflowId]
 		}).onDelete('cascade')
@@ -63,4 +72,16 @@ export const executionsRelations = relations(executions, ({ one }) => ({
 		fields: [executions.versionId, executions.workflowId],
 		references: [versions.id, versions.workflowId]
 	})
+}))
+
+// users
+
+export const users = pgTable('users', {
+	id: text().primaryKey(),
+	name: text().notNull(),
+	photo_url: text()
+})
+
+export const usersRelations = relations(users, ({ many }) => ({
+	workflows: many(workflows)
 }))
