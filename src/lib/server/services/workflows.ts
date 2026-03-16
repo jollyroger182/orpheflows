@@ -37,6 +37,19 @@ export async function getWorkflowByClientId({ clientId }: GetWorkflowByClientId)
 	})
 }
 
+interface GetWorkflowByVerificationToken {
+	verificationToken: string
+}
+
+export async function getWorkflowByVerificationToken({
+	verificationToken
+}: GetWorkflowByVerificationToken) {
+	return await db.query.workflows.findFirst({
+		where: eq(workflows.verificationToken, verificationToken),
+		with: { author: true, installation: true }
+	})
+}
+
 interface GetWorkflowsByUser {
 	author: string
 	limit?: number

@@ -1,5 +1,5 @@
 import { randomUUID } from 'crypto'
-import { Executions, Workflows } from '../services'
+import { Executions, Workflows } from '../../services'
 import { stepHandlers } from './steps'
 
 export interface StepExecutionContext {
