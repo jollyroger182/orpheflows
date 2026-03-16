@@ -6,7 +6,10 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 		{
 			kind: 'category',
 			name: 'Trigger',
-			contents: [{ kind: 'block', type: 'trigger_user' }],
+			contents: [
+				{ kind: 'block', type: 'trigger_user' },
+				{ kind: 'block', type: 'trigger_trigger_id' }
+			],
 			categorystyle: 'trigger_category'
 		},
 		{
@@ -28,6 +31,32 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 				}
 			],
 			categorystyle: 'messaging_category'
+		},
+		{
+			kind: 'category',
+			name: 'Form',
+			contents: [
+				{
+					kind: 'block',
+					type: 'form_present',
+					inputs: {
+						TITLE: { shadow: { type: 'text', fields: { TEXT: 'Join my channel' } } },
+						TEXT: {
+							shadow: { type: 'text', fields: { TEXT: 'Please answer the following questions!' } }
+						},
+						QUESTIONS: {
+							block: {
+								type: 'lists_create_with',
+								inputs: {
+									ADD0: { block: { type: 'text', fields: { TEXT: 'Why would you like to join?' } } }
+								}
+							}
+						},
+						TRIGGER_ID: { shadow: { type: 'trigger_trigger_id' } }
+					}
+				}
+			],
+			categorystyle: 'form_category'
 		},
 		{
 			kind: 'category',
@@ -71,6 +100,12 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 				{ kind: 'block', type: 'text_join' },
 				{ kind: 'block', type: 'logic_boolean' },
 				{ kind: 'block', type: 'math_number' },
+				{ kind: 'block', type: 'lists_create_with' },
+				{
+					kind: 'block',
+					type: 'lists_custom_getindex',
+					inputs: { INDEX: { shadow: { type: 'math_number' } } }
+				},
 				{ kind: 'block', type: 'logic_compare' }
 			],
 			categorystyle: 'text_category'

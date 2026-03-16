@@ -7,6 +7,7 @@ const theme = Blockly.Theme.defineTheme('orpheflows', {
 		messaging_blocks: { colourPrimary: '300' },
 		channel_blocks: { colourPrimary: '60' },
 		user_blocks: { colourPrimary: '30' },
+		form_blocks: { colourPrimary: '150' },
 		trigger: { colourPrimary: '120', hat: 'cap' },
 		trigger_blocks: { colourPrimary: '120' }
 	},
@@ -14,6 +15,7 @@ const theme = Blockly.Theme.defineTheme('orpheflows', {
 		messaging_category: { colour: '300' },
 		channel_category: { colour: '60' },
 		user_category: { colour: '30' },
+		form_category: { colour: '150' },
 		trigger_category: { colour: '120' }
 	}
 })

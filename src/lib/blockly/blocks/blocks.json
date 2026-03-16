@@ -30,6 +30,18 @@
 		"style": "trigger_blocks"
 	},
 	{
+		"type": "trigger_trigger_id",
+		"message0": "trigger trigger_id %1",
+		"args0": [
+			{
+				"type": "input_dummy",
+				"name": "NAME"
+			}
+		],
+		"output": "TriggerId",
+		"style": "trigger_blocks"
+	},
+	{
 		"type": "ignore_output",
 		"message0": "execute and ignore output %1",
 		"args0": [
@@ -64,6 +76,60 @@
 		"style": "messaging_blocks"
 	},
 	{
+		"type": "form_present",
+		"message0": "present form with title %1 text %2 questions %3 using trigger_id %4 storing responses in %5 %6 trigger_id in %7 %8",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "TITLE",
+				"align": "RIGHT",
+				"check": "String"
+			},
+			{
+				"type": "input_value",
+				"name": "TEXT",
+				"align": "RIGHT",
+				"check": "String"
+			},
+			{
+				"type": "input_value",
+				"name": "QUESTIONS",
+				"align": "RIGHT",
+				"check": "Array"
+			},
+			{
+				"type": "input_value",
+				"name": "TRIGGER_ID",
+				"align": "RIGHT",
+				"check": "TriggerId"
+			},
+			{
+				"type": "field_variable",
+				"name": "OUTPUT",
+				"variable": "responses"
+			},
+			{
+				"type": "input_dummy",
+				"name": "DUMMY",
+				"align": "RIGHT"
+			},
+			{
+				"type": "field_variable",
+				"name": "TRIGGER_OUTPUT",
+				"variable": "trigger_id"
+			},
+			{
+				"type": "input_dummy",
+				"name": "DUMMY2",
+				"align": "RIGHT"
+			}
+		],
+		"previousStatement": null,
+		"nextStatement": null,
+		"inputsInline": false,
+		"style": "form_blocks"
+	},
+	{
 		"type": "channel_from_id",
 		"message0": "channel with ID %1",
 		"args0": [
@@ -95,5 +161,45 @@
 		],
 		"output": "String",
 		"style": "user_blocks"
+	},
+	{
+		"type": "text",
+		"tooltip": "",
+		"helpUrl": "",
+		"message0": "%1 %2",
+		"args0": [
+			{
+				"type": "field_input",
+				"name": "TEXT",
+				"text": ""
+			},
+			{
+				"type": "input_dummy",
+				"name": "NAME"
+			}
+		],
+		"output": null,
+		"style": "text_blocks"
+	},
+	{
+		"type": "lists_custom_getindex",
+		"tooltip": "",
+		"helpUrl": "",
+		"message0": "list %1 get item at index %2",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "LIST",
+				"check": "Array"
+			},
+			{
+				"type": "input_value",
+				"name": "INDEX",
+				"check": "Number"
+			}
+		],
+		"output": null,
+		"inputsInline": true,
+		"style": "list_blocks"
 	}
 ]

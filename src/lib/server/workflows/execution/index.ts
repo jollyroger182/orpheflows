@@ -49,12 +49,14 @@ export async function startWorkflow(params: Start) {
 interface ProgressWorkflow {
 	executionId: number
 	continuationToken: string
+	updateVariables?: Record<string, string>
 	nextBlockId?: string
 }
 
 export async function progressWorkflow({
 	executionId,
 	continuationToken,
+	updateVariables,
 	nextBlockId
 }: ProgressWorkflow) {
 	const execution = await Executions.getWithVersion({ id: executionId })
@@ -113,6 +115,9 @@ export async function progressWorkflow({
 
 	data.blockId = step.id
 	data.continuationToken = randomUUID()
+	if (updateVariables) {
+		Object.assign(data.variables, updateVariables)
+	}
 	await Executions.updateData({ id: executionId, data: JSON.stringify(data) })
 
 	// don't await the next step
