@@ -1,11 +1,17 @@
-import { redirect } from '@sveltejs/kit'
-import type { Actions, PageServerLoad } from './$types'
 import { Slack, Workflows } from '$lib/server/services'
+import { redirect } from '@sveltejs/kit'
+import z from 'zod'
+import type { Actions, PageServerLoad } from './$types'
 
 export const load: PageServerLoad = async ({ locals }) => {
 	const session = await locals.auth()
 	if (!session?.user.slackId) return redirect(307, '/signin')
 }
+
+const CreateSchema = z.object({
+	name: z.string().nonempty().max(36),
+	description: z.string().nonempty().max(200)
+})
 
 export const actions = {
 	default: async ({ request, locals }) => {
@@ -14,16 +20,16 @@ export const actions = {
 			return { error: 'You are not logged in' }
 		}
 
-		const data = await request.formData()
-		const name = data.get('name')! as string
-		const description = data.get('description')! as string
+		const form = await request.formData()
 
-		if (!name) {
-			return { error: 'Name is not provided' }
+		const { success, error, data } = CreateSchema.safeParse({
+			name: form.get('name'),
+			description: form.get('description')
+		})
+		if (!success) {
+			return { error: z.prettifyError(error) }
 		}
-		if (!description) {
-			return { error: 'Description is not provided' }
-		}
+		const { name, description } = data
 
 		const app = await Slack.createApp({ name })
 

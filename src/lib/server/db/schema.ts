@@ -34,7 +34,7 @@ export const workflows = pgTable(
 		authorId: text('author_id')
 			.references(() => users.id)
 			.notNull(),
-		name: varchar('name', { length: 100 }).notNull(),
+		name: varchar('name', { length: 36 }).notNull(),
 		description: varchar('description', { length: 200 }).notNull().default('A brand new workflow'),
 		appId: text('app_id').notNull(),
 		clientId: text('client_id').notNull(),

@@ -59,6 +59,6 @@ export async function createApp({ name }: CreateApp) {
 		clientId: resp.credentials!.client_id!,
 		clientSecret: resp.credentials!.client_secret!,
 		verificationToken: resp.credentials!.verification_token!,
-		signingSecret: resp.credentials!.signing_secret!,
+		signingSecret: resp.credentials!.signing_secret!
 	}
 }
