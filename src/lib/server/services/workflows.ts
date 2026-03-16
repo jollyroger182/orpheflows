@@ -1,6 +1,7 @@
 import { desc, eq } from 'drizzle-orm'
 import { db } from '../db'
 import { installations, workflows } from '../db/schema'
+import { slack } from '../slack'
 
 interface GetWorkflows {
 	limit?: number
@@ -94,5 +95,11 @@ interface CreateWorkflowInstallation {
 }
 
 export async function createWorkflowInstallation({ id, token }: CreateWorkflowInstallation) {
-	return (await db.insert(installations).values({ token, workflowId: id }).returning())[0]!
+	const resp = await slack.auth.test({ token })
+	return (
+		await db
+			.insert(installations)
+			.values({ token, workflowId: id, userId: resp.user_id! })
+			.returning()
+	)[0]!
 }

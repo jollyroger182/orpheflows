@@ -43,6 +43,13 @@
       "when": 1773590930923,
       "tag": "0005_broad_excalibur",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1773622223388,
+      "tag": "0006_spotty_enchantress",
+      "breakpoints": true
     }
   ]
 }

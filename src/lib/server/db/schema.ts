@@ -64,8 +64,10 @@ export const installations = pgTable('workflow_installations', {
 	id: serial('id').primaryKey(),
 	workflowId: integer('workflow_id')
 		.references(() => workflows.id, { onDelete: 'cascade' })
-		.notNull(),
-	token: text().notNull()
+		.notNull()
+		.unique(),
+	userId: text('user_id').notNull(),
+	token: text('token').notNull()
 })
 
 export const installationsRelations = relations(installations, ({ one }) => ({
@@ -88,7 +90,11 @@ export const versions = pgTable(
 		code: text('code').notNull().default(''),
 		createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow()
 	},
-	(table) => [unique().on(table.id, table.workflowId), index().on(table.workflowId)]
+	(table) => [
+		unique().on(table.id, table.workflowId),
+		index().on(table.workflowId),
+		index().on(table.workflowId, table.createdAt)
+	]
 )
 
 export const versionsRelations = relations(versions, ({ one, many }) => ({
@@ -106,7 +112,11 @@ export const executions = pgTable(
 	{
 		id: serial('id').primaryKey(),
 		versionId: integer('version_id').notNull(),
-		workflowId: integer('workflow_id').notNull()
+		workflowId: integer('workflow_id')
+			.references(() => workflows.id, { onDelete: 'cascade' })
+			.notNull(),
+		data: text().notNull(),
+		createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow()
 	},
 	(table) => [
 		foreignKey({
@@ -115,7 +125,9 @@ export const executions = pgTable(
 			foreignColumns: [versions.id, versions.workflowId]
 		}).onDelete('cascade'),
 		index().on(table.workflowId),
-		index().on(table.versionId)
+		index().on(table.versionId),
+		index().on(table.createdAt),
+		index().on(table.workflowId, table.createdAt)
 	]
 )
 
@@ -123,6 +135,10 @@ export const executionsRelations = relations(executions, ({ one }) => ({
 	version: one(versions, {
 		fields: [executions.versionId, executions.workflowId],
 		references: [versions.id, versions.workflowId]
+	}),
+	workflow: one(workflows, {
+		fields: [executions.workflowId],
+		references: [workflows.id]
 	})
 }))
 

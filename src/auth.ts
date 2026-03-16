@@ -6,6 +6,7 @@ import Slack from '@auth/sveltekit/providers/slack'
 
 export const { handle, signIn, signOut } = SvelteKitAuth({
 	providers: [Slack],
+	trustHost: true,
 	redirectProxyUrl: env.PUBLIC_REDIRECT_PROXY_URL,
 	callbacks: {
 		async signIn({ account, user }) {
