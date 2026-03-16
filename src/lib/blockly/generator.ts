@@ -24,8 +24,14 @@ class OrphejsonGenerator extends Blockly.CodeGenerator {
 		return code
 	}
 
-	workspaceToCode(workspace?: Blockly.Workspace): string {
-		return `[${super.workspaceToCode(workspace)}]`
+	workspaceToCode(workspace: Blockly.Workspace): string {
+		const blocks = workspace.getTopBlocks(true)
+		const codes = blocks
+			.map((b) => this.blockToCode(b))
+			.filter(Boolean)
+			.map((v) => (typeof v === 'string' ? v : v[0]))
+
+		return `[${codes.join(',')}]`
 	}
 
 	private _generateCode(block: Blockly.Block): string | [string, number] {

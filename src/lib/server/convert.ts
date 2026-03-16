@@ -2,7 +2,7 @@ import type { installations, users, workflows } from './db/schema'
 
 type WorkflowWithAuthor = typeof workflows.$inferSelect & {
 	author: typeof users.$inferSelect
-	installation?: typeof installations.$inferSelect
+	installation?: typeof installations.$inferSelect | null
 }
 
 export function convertWorkflowToPublic(workflow: WorkflowWithAuthor) {

@@ -30,3 +30,9 @@
 .btn-success:hover {
 	@apply bg-green-600;
 }
+
+/* hide ghost scrollbar in blockly */
+.blocklyFlyoutScrollbar[display="none"] {
+	display: none;
+}
+

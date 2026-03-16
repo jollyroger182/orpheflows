@@ -1,10 +1,13 @@
 <script lang="ts">
+	import { blocks } from '$lib/blockly/blocks'
+	import { generator } from '$lib/blockly/generator'
+	import theme from '$lib/blockly/theme'
+	import toolbox from '$lib/blockly/toolbox'
+	import { onMount } from 'svelte'
+
+	import 'blockly/blocks'
 	import * as Blockly from 'blockly/core'
 	import * as En from 'blockly/msg/en'
-	import 'blockly/blocks'
-	import { onMount } from 'svelte'
-	import { generator } from '$lib/blockly/generator'
-	import { blocks } from '$lib/blockly/blocks'
 
 	let code = $state('')
 
@@ -15,17 +18,8 @@
 		Blockly.setLocale(En as unknown as Record<string, string>)
 		Blockly.common.defineBlocks(blocks)
 
-		workspace = Blockly.inject(blocklyContainer, {
-			toolbox: {
-				kind: 'flyoutToolbox',
-				contents: [
-					{ kind: 'block', type: 'logic_boolean' },
-					{ kind: 'block', type: 'test_block' },
-					{ kind: 'block', type: 'controls_if' }
-				]
-			}
-		})
-
+		workspace = Blockly.inject(blocklyContainer, { toolbox })
+		workspace.setTheme(theme)
 		workspace.addChangeListener(onWorkspaceChanged)
 	})
 
