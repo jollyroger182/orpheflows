@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths'
 	import { PUBLIC_SLACK_DOMAIN } from '$env/static/public'
 	import { WORKFLOW_APP_SCOPES } from '$lib/consts'
 	import type { PageProps } from './$types'
@@ -43,7 +44,7 @@
 {#if data.workflow.installation}
 	<div class="mb-4 flex gap-2">
 		{#if data.isOwner}
-			<button class="btn btn-primary">Edit workflow</button>
+			<a href={resolve(`/workflows/${data.workflow.id}/edit`)} class="btn btn-primary">Edit workflow</a>
 		{/if}
 		<a
 			href={`https://${PUBLIC_SLACK_DOMAIN}.slack.com/team/${data.workflow.installation.userId}`}

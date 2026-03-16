@@ -38,6 +38,4 @@
 	{/if}
 </header>
 
-<div class="container mx-auto my-4">
-	{@render children()}
-</div>
+{@render children()}
