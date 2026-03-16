@@ -137,6 +137,8 @@ async function evaluateStep(
 	workflow: ReturnType<typeof Workflows.getWorkflow>,
 	executionId: number
 ) {
+	if (!step) throw new Error('A block is missing in the workflow')
+
 	const context: StepExecutionContext = {
 		executionId,
 		data,

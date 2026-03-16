@@ -83,8 +83,7 @@
 				Blockly.Events.BLOCK_MOVE as string,
 				Blockly.Events.BLOCK_CHANGE,
 				Blockly.Events.BLOCK_CREATE,
-				Blockly.Events.BLOCK_DELETE,
-				Blockly.Events.BLOCK_DRAG
+				Blockly.Events.BLOCK_DELETE
 			].includes(event.type)
 		) {
 			console.log(event)

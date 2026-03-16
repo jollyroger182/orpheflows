@@ -70,7 +70,8 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 				{ kind: 'block', type: 'text' },
 				{ kind: 'block', type: 'text_join' },
 				{ kind: 'block', type: 'logic_boolean' },
-				{ kind: 'block', type: 'math_number' }
+				{ kind: 'block', type: 'math_number' },
+				{ kind: 'block', type: 'logic_compare' }
 			],
 			categorystyle: 'text_category'
 		},

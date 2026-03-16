@@ -12,7 +12,7 @@ declare global {
 	interface WorkflowStep {
 		id: string
 		type: string
-		params: Record<string, string | WorkflowStep | WorkflowStep[]>
+		params: Record<string, string | number | WorkflowStep | WorkflowStep[] | null>
 	}
 }
 
