@@ -1,0 +1,1 @@
+ALTER TABLE "workflows" ALTER COLUMN "name" SET DATA TYPE varchar(36);
