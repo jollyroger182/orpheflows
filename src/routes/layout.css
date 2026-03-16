@@ -1,5 +1,11 @@
 @import 'tailwindcss';
 
+.main-content {
+	display: grid;
+	grid-template-rows: auto 1fr;
+	height: 100vh
+}
+
 .btn {
 	@apply cursor-pointer rounded px-4 py-2 transition-colors;
 }

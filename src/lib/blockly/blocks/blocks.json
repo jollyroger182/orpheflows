@@ -1,0 +1,42 @@
+[
+	{
+		"type": "test_block",
+		"tooltip": "a testing block",
+		"helpUrl": "",
+		"message0": "test block %1 %2",
+		"args0": [
+			{
+				"type": "field_input",
+				"name": "VALUE",
+				"text": "value"
+			},
+			{
+				"type": "input_dummy",
+				"name": "DUMMY"
+			}
+		],
+		"previousStatement": null,
+		"nextStatement": null,
+		"colour": 0
+	},
+	{
+		"type": "control_if",
+		"tooltip": "",
+		"helpUrl": "",
+		"message0": "if %1 %2",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "TEST",
+				"check": "Boolean"
+			},
+			{
+				"type": "input_statement",
+				"name": "DO"
+			}
+		],
+		"previousStatement": null,
+		"nextStatement": null,
+		"colour": 225
+	}
+]
