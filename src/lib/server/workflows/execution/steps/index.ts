@@ -2,7 +2,7 @@ import { slack } from '$lib/server/slack'
 import { progressWorkflow, type StepExecutionContext } from '..'
 import type { KnownBlock } from '@slack/web-api'
 
-export const stepHandlers: Record<string, (context: StepExecutionContext) => unknown> = {
+export const stepHandlers: Record<string, (context: StepExecutionContext) => Promise<unknown>> = {
 	// statements
 
 	messaging_send_text: async (ctx) => {

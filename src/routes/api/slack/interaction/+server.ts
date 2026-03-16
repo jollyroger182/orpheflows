@@ -16,13 +16,17 @@ export async function POST({ request }) {
 	const token: string = data.token
 
 	if (token === SLACK_VERIFICATION_TOKEN) {
-		handleCoreInteraction(data)
+		handleCoreInteraction(data).catch((error) => {
+			console.error('error handling core interaction', error)
+		})
 		return text('')
 	}
 
 	const workflow = await Workflows.getWorkflowByVerificationToken({ verificationToken: token })
 	if (!workflow) return error(400)
 
-	handleWorkflowInteraction(data, workflow)
+	handleWorkflowInteraction(data, workflow).catch((error) => {
+		console.error('error handling workflow interaction for workflow', workflow.id, error)
+	})
 	return text('')
 }

@@ -15,7 +15,9 @@ export async function POST({ request }) {
 		if (payload.type === 'url_verification') {
 			return text(payload.challenge)
 		} else {
-			handleCoreEvent(payload)
+			handleCoreEvent(payload).catch((error) => {
+				console.error('error handling core event', error)
+			})
 			return text('')
 		}
 	}
@@ -26,7 +28,9 @@ export async function POST({ request }) {
 	if (payload.type === 'url_verification') {
 		return text(payload.challenge)
 	} else {
-		handleWorkflowEvent(payload, workflow)
+		handleWorkflowEvent(payload, workflow).catch((error) => {
+			console.error('error handling workflow event for workflow', workflow.id, error)
+		})
 		return text('')
 	}
 }

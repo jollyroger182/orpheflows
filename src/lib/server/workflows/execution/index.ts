@@ -1,6 +1,8 @@
 import { randomUUID } from 'crypto'
 import { Executions, Workflows } from '../../services'
 import { stepHandlers } from './steps'
+import { slack } from '$lib/server/slack'
+import { SLACK_BOT_TOKEN } from '$env/static/private'
 
 export interface StepExecutionContext {
 	executionId: number
@@ -105,7 +107,11 @@ export async function progressWorkflow({
 		params: step.params,
 		getToken: async () => {
 			if (!workflow) workflow = Workflows.getWorkflow({ id: execution.workflowId })
-			return workflow.then((w) => w!.installation!.token)
+			const w = await workflow
+			if (!w?.installation?.token) {
+				throw new Error('Workflow has been uninstalled')
+			}
+			return w.installation.token
 		},
 		evaluate: async (step) => {
 			if (!workflow) workflow = Workflows.getWorkflow({ id: execution.workflowId })
@@ -121,7 +127,15 @@ export async function progressWorkflow({
 	await Executions.updateData({ id: executionId, data: JSON.stringify(data) })
 
 	// don't await the next step
-	handler(context)
+	handler(context).catch(async (error) => {
+		console.error('failed to run next step in progressWorkflow,', executionId, data.blockId, error)
+		sendErrorMessage(
+			execution.workflowId,
+			error instanceof Error ? error.message : String(error)
+		).catch((error) => {
+			console.error('error sending error message', error)
+		})
+	})
 }
 
 function findStep(steps: WorkflowStep[], id: string): WorkflowStep | undefined {
@@ -149,7 +163,11 @@ async function evaluateStep(
 		data,
 		params: step.params,
 		getToken: async () => {
-			return workflow.then((w) => w!.installation!.token)
+			const w = await workflow
+			if (!w?.installation?.token) {
+				throw new Error('Workflow has been uninstalled')
+			}
+			return w.installation.token
 		},
 		evaluate: async (step) => {
 			return evaluateStep(step, data, workflow, executionId)
@@ -191,3 +209,30 @@ function findNextStep(steps: WorkflowStep[], id: string): WorkflowStep | typeof 
 }
 
 const NEXT = Symbol.for('orpheflows.execution.NEXT')
+
+async function sendErrorMessage(workflowId: number, message: string) {
+	const workflow = await Workflows.getWorkflow({ id: workflowId })
+	if (!workflow) {
+		console.error('sending error message to nonexistent workflow', workflowId)
+		return
+	}
+	const mention = workflow.installation ? `<@${workflow.installation.userId}>` : workflow.name
+	await slack.chat.postMessage({
+		channel: workflow.authorId,
+		text: `Your workflow, ${workflow.name}, finished with an error.`,
+		blocks: [
+			{
+				type: 'section',
+				text: {
+					type: 'mrkdwn',
+					text: `Your workflow, ${mention}, finished with an error. Please review the information below.`
+				}
+			},
+			{
+				type: 'rich_text',
+				elements: [{ type: 'rich_text_preformatted', elements: [{ type: 'text', text: message }] }]
+			}
+		],
+		token: SLACK_BOT_TOKEN
+	})
+}
