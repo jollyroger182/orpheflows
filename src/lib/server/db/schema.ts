@@ -6,7 +6,8 @@ import {
 	timestamp,
 	unique,
 	foreignKey,
-	index
+	index,
+	varchar
 } from 'drizzle-orm/pg-core'
 import { relations } from 'drizzle-orm'
 
@@ -33,8 +34,8 @@ export const workflows = pgTable(
 		authorId: text('author_id')
 			.references(() => users.id)
 			.notNull(),
-		name: text('name').notNull(),
-		description: text('description').notNull().default('A brand new workflow'),
+		name: varchar('name', { length: 100 }).notNull(),
+		description: varchar('description', { length: 200 }).notNull().default('A brand new workflow'),
 		appId: text('app_id').notNull(),
 		clientId: text('client_id').notNull(),
 		clientSecret: text('client_secret').notNull(),
