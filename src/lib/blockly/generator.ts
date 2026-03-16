@@ -4,39 +4,54 @@ const Order = {
 	ATOMIC: 0
 }
 
-export const generator = new Blockly.CodeGenerator('orphejson')
+class OrphejsonGenerator extends Blockly.CodeGenerator {
+	constructor(name: string = 'orphejson') {
+		super(name)
 
-generator.scrub_ = (block, code, thisOnly) => {
-	const nextBlock = block.nextConnection?.targetBlock()
-	if (nextBlock && !thisOnly) {
-		return `${code},${generator.blockToCode(nextBlock)}`
+		const generateCode = this._generateCode.bind(this)
+		this.forBlock = new Proxy({} as (typeof this)['forBlock'], {
+			get(target, prop) {
+				return target[prop as string] ?? generateCode
+			}
+		})
 	}
-	return code
+
+	scrub_(block: Blockly.Block, code: string, thisOnly?: boolean): string {
+		const nextBlock = block.nextConnection?.targetBlock()
+		if (nextBlock && !thisOnly) {
+			return `${code},${this.blockToCode(nextBlock)}`
+		}
+		return code
+	}
+
+	workspaceToCode(workspace?: Blockly.Workspace): string {
+		return `[${super.workspaceToCode(workspace)}]`
+	}
+
+	private _generateCode(block: Blockly.Block): string | [string, number] {
+		const params: Record<string, unknown> = {}
+
+		for (const input of block.inputList) {
+			switch (input.type) {
+				case Blockly.inputs.inputTypes.VALUE:
+					params[input.name] = JSON.parse(
+						this.valueToCode(block, input.name, Order.ATOMIC) || 'null'
+					)
+					break
+				case Blockly.inputs.inputTypes.STATEMENT:
+					params[input.name] = JSON.parse('[' + this.statementToCode(block, input.name) + ']')
+					break
+			}
+			for (const field of input.fieldRow) {
+				if (field.name) {
+					params[field.name] = field.getValue()
+				}
+			}
+		}
+
+		const code = JSON.stringify({ id: block.id, type: block.type, params })
+		return block.outputConnection === null ? code : [code, Order.ATOMIC]
+	}
 }
 
-generator.forBlock['test_block'] = (block) => {
-	const value = block.getFieldValue('VALUE')
-
-	return JSON.stringify({ type: 'test_block', params: { value } })
-}
-
-generator.forBlock['math_number'] = (block) => {
-	const value = block.getFieldValue('NUM')
-
-	return JSON.stringify(value)
-}
-
-generator.forBlock['controls_if'] = (block) => {
-	type IfBlock = Blockly.Block & { elseifCount_: number; elseCount_: number }
-	const ifCount = (block as IfBlock).elseifCount_ + 1
-	const hasElse = !!(block as IfBlock).elseCount_
-
-	const ifs = Array.from({ length: ifCount }).map((_, i) => ({
-		test: generator.valueToCode(block, `IF${i}`, Order.ATOMIC),
-		execute: generator.statementToCode(block, `DO${i}`)
-	}))
-
-	const else_ = hasElse ? generator.statementToCode(block, 'ELSE') : null
-
-	return JSON.stringify({ type: 'controls_if', params: { ifs, else: else_ } })
-}
+export const generator = new OrphejsonGenerator()
