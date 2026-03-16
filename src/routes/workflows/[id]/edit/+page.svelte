@@ -8,6 +8,7 @@
 	import 'blockly/blocks'
 	import * as Blockly from 'blockly/core'
 	import * as En from 'blockly/msg/en'
+	import { beforeNavigate } from '$app/navigation'
 
 	const { data } = $props()
 
@@ -15,6 +16,7 @@
 
 	let blocklyContainer: HTMLDivElement
 	let workspace: Blockly.WorkspaceSvg
+	let dirty = false
 
 	onMount(() => {
 		Blockly.setLocale(En as unknown as Record<string, string>)
@@ -22,16 +24,39 @@
 
 		workspace = Blockly.inject(blocklyContainer, { toolbox })
 		workspace.setTheme(theme)
-		workspace.addChangeListener(onWorkspaceChanged)
-
 		if (data.workflow.blocks) {
 			Blockly.serialization.workspaces.load(JSON.parse(data.workflow.blocks), workspace)
 		}
+		setTimeout(() => workspace.addChangeListener(onWorkspaceChanged), 1)
 	})
 
-	function onWorkspaceChanged() {
+	function onWorkspaceChanged(event: Blockly.Events.Abstract) {
+		if (
+			[
+				Blockly.Events.BLOCK_MOVE as string,
+				Blockly.Events.BLOCK_CHANGE,
+				Blockly.Events.BLOCK_CREATE,
+				Blockly.Events.BLOCK_DELETE,
+				Blockly.Events.BLOCK_DRAG
+			].includes(event.type)
+		) {
+			console.log(event)
+			dirty = true
+		}
 		code = generator.workspaceToCode(workspace)
 	}
+
+	async function checkDirty(event: BeforeUnloadEvent) {
+		if (!dirty) return
+		event.preventDefault()
+		event.returnValue = 'Your workflow is not saved. Are you sure you want to leave?'
+		return 'Your workflow is not saved. Are you sure you want to leave?'
+	}
+
+	beforeNavigate(({ cancel }) => {
+		if (!dirty) return
+		if (!confirm('Your workflow is not saved. Are you sure you want to leave?')) cancel()
+	})
 
 	async function onSave() {
 		const blocks = JSON.stringify(Blockly.serialization.workspaces.save(workspace))
@@ -70,6 +95,8 @@
 		}
 	}
 </script>
+
+<svelte:window onbeforeunload={checkDirty} />
 
 <div class="grid h-full grid-cols-2 grid-rows-[auto_1fr]">
 	<div class="col-span-2 flex items-center gap-2 px-4 py-2">
