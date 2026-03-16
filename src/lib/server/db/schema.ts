@@ -46,7 +46,7 @@ export const workflows = pgTable(
 		codeUpdatedAt: timestamp('code_updated_at', { withTimezone: true }).notNull().defaultNow(),
 		createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow()
 	},
-	(table) => [index().on(table.clientId)]
+	(table) => [index().on(table.clientId), index().on(table.verificationToken)]
 )
 
 export const workflowsRelations = relations(workflows, ({ one, many }) => ({

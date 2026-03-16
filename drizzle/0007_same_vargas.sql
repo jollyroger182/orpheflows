@@ -1,0 +1,1 @@
+CREATE INDEX "workflows_verification_token_index" ON "workflows" USING btree ("verification_token");

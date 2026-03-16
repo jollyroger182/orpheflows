@@ -50,6 +50,13 @@
       "when": 1773622223388,
       "tag": "0006_spotty_enchantress",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1773664351549,
+      "tag": "0007_same_vargas",
+      "breakpoints": true
     }
   ]
 }
