@@ -25,7 +25,9 @@ class OrphejsonGenerator extends Blockly.CodeGenerator {
 	}
 
 	workspaceToCode(workspace: Blockly.Workspace): string {
-		const blocks = workspace.getTopBlocks(true)
+		const blocks = workspace
+			.getTopBlocks(true)
+			.filter((b) => b.type === 'trigger' && !b.getDisabledReasons().size)
 		const codes = blocks
 			.map((b) => this.blockToCode(b))
 			.filter(Boolean)
@@ -49,7 +51,7 @@ class OrphejsonGenerator extends Blockly.CodeGenerator {
 					break
 			}
 			for (const field of input.fieldRow) {
-				if (field.name) {
+				if (field.name && !field.name.startsWith('_')) {
 					params[field.name] = field.getValue()
 				}
 			}

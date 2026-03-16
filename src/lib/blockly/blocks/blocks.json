@@ -1,5 +1,48 @@
 [
 	{
+		"type": "trigger",
+		"message0": "when %1 %2",
+		"args0": [
+			{
+				"type": "field_dropdown",
+				"name": "TRIGGER",
+				"options": [["workflow is executed", "MANUAL"]]
+			},
+			{
+				"type": "input_dummy",
+				"name": "NAME"
+			}
+		],
+		"nextStatement": null,
+		"style": "trigger",
+		"extensions": ["trigger"]
+	},
+	{
+		"type": "trigger_user",
+		"message0": "trigger user %1",
+		"args0": [
+			{
+				"type": "input_dummy",
+				"name": "NAME"
+			}
+		],
+		"output": "User",
+		"style": "trigger_blocks"
+	},
+	{
+		"type": "ignore_output",
+		"message0": "execute and ignore output %1",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "VALUE"
+			}
+		],
+		"previousStatement": null,
+		"nextStatement": null,
+		"style": "logic_blocks"
+	},
+	{
 		"type": "messaging_send_text",
 		"message0": "send message to channel %1 text %2",
 		"args0": [
@@ -32,5 +75,25 @@
 		],
 		"output": "Channel",
 		"style": "channel_blocks"
+	},
+	{
+		"type": "user_from_id",
+		"message0": "user with ID %1",
+		"args0": [{ "type": "input_value", "name": "ID", "check": "String" }],
+		"output": "User",
+		"style": "user_blocks"
+	},
+	{
+		"type": "user_to_id",
+		"message0": "get ID of user %1",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "USER",
+				"check": "User"
+			}
+		],
+		"output": "String",
+		"style": "user_blocks"
 	}
 ]

@@ -5,6 +5,12 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 	contents: [
 		{
 			kind: 'category',
+			name: 'Trigger',
+			contents: [{ kind: 'block', type: 'trigger_user' }],
+			categorystyle: 'trigger_category'
+		},
+		{
+			kind: 'category',
 			name: 'Messaging',
 			contents: [
 				{
@@ -25,8 +31,36 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 		},
 		{
 			kind: 'category',
+			name: 'Channels',
+			contents: [
+				{
+					kind: 'block',
+					type: 'channel_from_id',
+					inputs: { ID: { shadow: { type: 'text', fields: { TEXT: 'C' } } } }
+				}
+			],
+			categorystyle: 'channel_category'
+		},
+		{
+			kind: 'category',
+			name: 'Users',
+			contents: [
+				{
+					kind: 'block',
+					type: 'user_from_id',
+					inputs: { ID: { shadow: { type: 'text', fields: { TEXT: 'U' } } } }
+				},
+				{ kind: 'block', type: 'user_to_id' }
+			],
+			categorystyle: 'user_category'
+		},
+		{
+			kind: 'category',
 			name: 'Control',
-			contents: [{ kind: 'block', type: 'controls_if' }],
+			contents: [
+				{ kind: 'block', type: 'controls_if' },
+				{ kind: 'block', type: 'ignore_output' }
+			],
 			categorystyle: 'logic_category'
 		},
 		{
@@ -36,12 +70,7 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 				{ kind: 'block', type: 'text' },
 				{ kind: 'block', type: 'text_join' },
 				{ kind: 'block', type: 'logic_boolean' },
-				{ kind: 'block', type: 'math_number' },
-				{
-					kind: 'block',
-					type: 'channel_from_id',
-					inputs: { ID: { shadow: { type: 'text', fields: { TEXT: 'C' } } } }
-				}
+				{ kind: 'block', type: 'math_number' }
 			],
 			categorystyle: 'text_category'
 		},

@@ -5,10 +5,11 @@
 	import toolbox from '$lib/blockly/toolbox'
 	import { onMount } from 'svelte'
 
+	import { beforeNavigate } from '$app/navigation'
+	import { register as registerExtensions } from '$lib/blockly/extensions.js'
 	import 'blockly/blocks'
 	import * as Blockly from 'blockly/core'
 	import * as En from 'blockly/msg/en'
-	import { beforeNavigate } from '$app/navigation'
 
 	const { data } = $props()
 
@@ -21,16 +22,62 @@
 	onMount(() => {
 		Blockly.setLocale(En as unknown as Record<string, string>)
 		Blockly.common.defineBlocks(blocks)
+		registerExtensions()
 
-		workspace = Blockly.inject(blocklyContainer, { toolbox })
+		workspace = Blockly.inject(blocklyContainer, { toolbox, maxInstances: { trigger: 1 } })
 		workspace.setTheme(theme)
 		if (data.workflow.blocks) {
 			Blockly.serialization.workspaces.load(JSON.parse(data.workflow.blocks), workspace)
 		}
-		setTimeout(() => workspace.addChangeListener(onWorkspaceChanged), 1)
+		ensureTrigger()
+		disableDisconnected()
+		workspace.addChangeListener(checkDisconnectBlock)
+		workspace.addChangeListener(generateCode)
+		setTimeout(() => workspace.addChangeListener(checkSetDirty), 1)
+		generateCode()
 	})
 
-	function onWorkspaceChanged(event: Blockly.Events.Abstract) {
+	function generateCode() {
+		code = generator.workspaceToCode(workspace)
+	}
+
+	function ensureTrigger() {
+		const triggers = workspace.getBlocksByType('trigger', false)
+		if (!triggers.length) {
+			const trigger = workspace.newBlock('trigger')
+			trigger.initSvg()
+			trigger.render()
+			trigger.moveBy(20, 20)
+		}
+	}
+
+	// disable disconnected blocks
+
+	function checkDisconnectBlock(event: Blockly.Events.Abstract) {
+		if (!(event instanceof Blockly.Events.BlockMove) || !event.blockId) return
+
+		const block = workspace.getBlockById(event.blockId)
+		if (!block) return
+
+		const disabled = block.getRootBlock().type !== 'trigger'
+		setStackDisabled(block, disabled)
+	}
+
+	function disableDisconnected() {
+		for (const block of workspace.getTopBlocks(false)) {
+			setStackDisabled(block, block.type !== 'trigger')
+		}
+	}
+
+	function setStackDisabled(block: Blockly.Block, disabled: boolean) {
+		block.setDisabledReason(disabled, 'connected to trigger')
+		const next = block.nextConnection?.targetBlock()
+		if (next) setStackDisabled(next, disabled)
+	}
+
+	// dirty check
+
+	function checkSetDirty(event: Blockly.Events.Abstract) {
 		if (
 			[
 				Blockly.Events.BLOCK_MOVE as string,
@@ -43,7 +90,6 @@
 			console.log(event)
 			dirty = true
 		}
-		code = generator.workspaceToCode(workspace)
 	}
 
 	async function checkDirty(event: BeforeUnloadEvent) {
@@ -58,6 +104,8 @@
 		if (!confirm('Your workflow is not saved. Are you sure you want to leave?')) cancel()
 	})
 
+	// button actions
+
 	async function onSave() {
 		const blocks = JSON.stringify(Blockly.serialization.workspaces.save(workspace))
 		const code = generator.workspaceToCode(workspace)
@@ -70,6 +118,8 @@
 		if (!resp.ok) {
 			console.error('Failed to save workflow', await resp.text())
 			alert('Failed to save workflow. See console for more details.')
+		} else {
+			alert('Workflow saved!')
 		}
 	}
 
@@ -92,6 +142,8 @@
 		if (!resp.ok) {
 			console.error('Failed to publish workflow', await resp.text())
 			alert('Failed to publish workflow. See console for more details.')
+		} else {
+			alert('Workflow successfully published!')
 		}
 	}
 </script>
