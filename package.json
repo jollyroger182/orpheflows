@@ -48,6 +48,7 @@
 		"@auth/sveltekit": "^1.11.1",
 		"@slack/web-api": "^7.15.0",
 		"blockly": "^12.4.1",
+		"node-cron": "^4.2.1",
 		"zod": "^4.3.6"
 	}
 }
