@@ -1,6 +1,6 @@
-import { desc, eq } from 'drizzle-orm'
+import { and, desc, eq } from 'drizzle-orm'
 import { db } from '../db'
-import { installations, workflows } from '../db/schema'
+import { installations, versions, workflows } from '../db/schema'
 import { slack } from '../slack'
 
 interface GetWorkflows {
@@ -102,4 +102,62 @@ export async function createWorkflowInstallation({ id, token }: CreateWorkflowIn
 			.values({ token, workflowId: id, userId: resp.user_id! })
 			.returning()
 	)[0]!
+}
+
+interface SetCode {
+	id: number
+	blocks?: string
+	code: string
+	userId: string
+}
+
+export async function setCode({
+	id,
+	blocks,
+	code,
+	userId
+}: SetCode): Promise<typeof workflows.$inferSelect | undefined> {
+	const now = new Date()
+	return (
+		await db
+			.update(workflows)
+			.set({
+				blocks,
+				code,
+				blocksUpdatedAt: blocks ? now : undefined,
+				codeUpdatedAt: now
+			})
+			.where(and(eq(workflows.id, id), eq(workflows.authorId, userId)))
+			.returning()
+	)[0]
+}
+
+interface PublishVersion {
+	id: number
+	blocks?: string
+	code: string
+	userId: string
+}
+
+export async function publishVersion({ id, blocks, code, userId }: PublishVersion) {
+	const now = new Date()
+	return await db.transaction(async (tx) => {
+		const [workflow] = await tx
+			.update(workflows)
+			.set({
+				blocks,
+				code,
+				blocksUpdatedAt: blocks ? now : undefined,
+				codeUpdatedAt: now
+			})
+			.where(and(eq(workflows.id, id), eq(workflows.authorId, userId)))
+			.returning()
+		if (!workflow) return
+
+		const [version] = await tx
+			.insert(versions)
+			.values({ workflowId: id, blocks: blocks, code: code })
+			.returning()
+		return { workflow, version }
+	})
 }

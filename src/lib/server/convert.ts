@@ -24,3 +24,13 @@ export function convertWorkflowToPublic(workflow: WorkflowWithAuthor) {
 		createdAt: workflow.createdAt
 	}
 }
+
+export function convertWorkflowToSelf(workflow: WorkflowWithAuthor) {
+	return {
+		...convertWorkflowToPublic(workflow),
+		blocks: workflow.blocks,
+		blocksUpdatedAt: workflow.blocksUpdatedAt,
+		code: workflow.code,
+		codeUpdatedAt: workflow.codeUpdatedAt
+	}
+}
