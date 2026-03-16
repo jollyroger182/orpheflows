@@ -1,6 +1,11 @@
 import { redirect } from '@sveltejs/kit'
-import type { Actions } from './$types'
+import type { Actions, PageServerLoad } from './$types'
 import { Slack, Workflows } from '$lib/server/services'
+
+export const load: PageServerLoad = async ({ locals }) => {
+	const session = await locals.auth()
+	if (!session?.user.slackId) return redirect(307, '/signin')
+}
 
 export const actions = {
 	default: async ({ request, locals }) => {
