@@ -8,6 +8,12 @@ declare global {
 		// interface PageState {}
 		// interface Platform {}
 	}
+
+	interface WorkflowStep {
+		id: string
+		type: string
+		params: Record<string, string | WorkflowStep | WorkflowStep[]>
+	}
 }
 
 declare module '@auth/core/types' {

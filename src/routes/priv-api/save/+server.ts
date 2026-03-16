@@ -21,6 +21,11 @@ export async function POST({ request, locals }) {
 
 	const { id, blocks, code } = data
 
+	const steps = JSON.parse(code)
+	if (steps[0]?.type !== 'trigger') {
+		return error(400, 'No trigger block found')
+	}
+
 	const workflow = await Workflows.setCode({ id, blocks, code, userId: session.user.slackId })
 	if (!workflow) return error(404, 'Workflow not found')
 

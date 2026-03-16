@@ -33,7 +33,7 @@
 		disableDisconnected()
 		workspace.addChangeListener(checkDisconnectBlock)
 		workspace.addChangeListener(generateCode)
-		setTimeout(() => workspace.addChangeListener(checkSetDirty), 1)
+		setTimeout(() => workspace.addChangeListener(checkSetDirty), 100)
 		generateCode()
 	})
 
@@ -119,6 +119,7 @@
 			console.error('Failed to save workflow', await resp.text())
 			alert('Failed to save workflow. See console for more details.')
 		} else {
+			dirty = false
 			alert('Workflow saved!')
 		}
 	}
@@ -143,6 +144,7 @@
 			console.error('Failed to publish workflow', await resp.text())
 			alert('Failed to publish workflow. See console for more details.')
 		} else {
+			dirty = false
 			alert('Workflow successfully published!')
 		}
 	}
