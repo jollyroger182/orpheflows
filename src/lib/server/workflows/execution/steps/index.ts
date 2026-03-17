@@ -8,9 +8,23 @@ export const stepHandlers: Record<string, (context: StepExecutionContext) => Pro
 	messaging_send_text: async (ctx) => {
 		const channel = await ctx.evaluate(ctx.params.CHANNEL as WorkflowStep)
 		const text = await ctx.evaluate(ctx.params.TEXT as WorkflowStep)
-		// console.log('ok, send msg to', channel, 'with text', text)
 		await slack.chat.postMessage({
 			channel,
+			text,
+			token: await ctx.getToken()
+		})
+		await progressWorkflow({
+			executionId: ctx.executionId,
+			continuationToken: ctx.data.continuationToken
+		})
+	},
+	messaging_reply: async (ctx) => {
+		const thread = await ctx.evaluate(ctx.params.THREAD as WorkflowStep)
+		const text = await ctx.evaluate(ctx.params.TEXT as WorkflowStep)
+		const { channel, ts } = JSON.parse(thread)
+		await slack.chat.postMessage({
+			channel,
+			thread_ts: ts,
 			text,
 			token: await ctx.getToken()
 		})
@@ -85,6 +99,13 @@ export const stepHandlers: Record<string, (context: StepExecutionContext) => Pro
 			nextBlockId
 		})
 	},
+	ignore_output: async (ctx) => {
+		await ctx.evaluate(ctx.params.VALUE as WorkflowStep)
+		await progressWorkflow({
+			executionId: ctx.executionId,
+			continuationToken: ctx.data.continuationToken
+		})
+	},
 
 	variables_set: async (ctx) => {
 		const name = ctx.params.VAR as string
@@ -99,8 +120,36 @@ export const stepHandlers: Record<string, (context: StepExecutionContext) => Pro
 
 	// values
 
-	trigger_user: async (ctx) => ctx.data.variables['trigger.user'],
-	trigger_trigger_id: async (ctx) => ctx.data.variables['trigger.trigger_id'],
+	trigger_user: async (ctx) => {
+		if (!ctx.data.variables['trigger.user']) {
+			throw new Error('The workflow was not triggered by a user.')
+		}
+		return ctx.data.variables['trigger.user']
+	},
+	trigger_message: async (ctx) => {
+		if (!ctx.data.variables['trigger.message']) {
+			throw new Error('The workflow was not triggered by a message or a message reaction.')
+		}
+		return ctx.data.variables['trigger.message']
+	},
+	trigger_trigger_id: async (ctx) => {
+		if (!ctx.data.variables['trigger.trigger_id']) {
+			throw new Error(
+				'The trigger does not have a trigger_id. There will only be a trigger_id if the workflow is started by a button or shortcut in Slack.'
+			)
+		}
+		return ctx.data.variables['trigger.trigger_id']
+	},
+
+	message_from_ts: async (ctx) =>
+		JSON.stringify({
+			channel: await ctx.evaluate(ctx.params.CHANNEL as WorkflowStep),
+			ts: await ctx.evaluate(ctx.params.TS as WorkflowStep)
+		}),
+	message_to_channel: async (ctx) =>
+		JSON.parse(await ctx.evaluate(ctx.params.MESSAGE as WorkflowStep)).channel,
+	message_to_ts: async (ctx) =>
+		JSON.parse(await ctx.evaluate(ctx.params.MESSAGE as WorkflowStep)).ts,
 
 	channel_from_id: async (ctx) => ctx.evaluate(ctx.params.ID as WorkflowStep),
 
@@ -159,6 +208,36 @@ export const stepHandlers: Record<string, (context: StepExecutionContext) => Pro
 				return lhs >= rhs ? 'true' : 'false'
 			default:
 				throw new Error(`Unknown comparison operator ${ctx.params.OP}`)
+		}
+	},
+	convert_float: async (ctx) => {
+		const value = await ctx.evaluate(ctx.params.VALUE as WorkflowStep)
+		if (isNaN(parseFloat(value))) {
+			throw new Error(`convert_float input is not a valid float: "${value}"`)
+		}
+		return parseFloat(value).toString()
+	},
+	convert_int: async (ctx) => {
+		const value = await ctx.evaluate(ctx.params.VALUE as WorkflowStep)
+		if (isNaN(parseInt(value))) {
+			throw new Error(`convert_int input is not a valid int: "${value}"`)
+		}
+		return parseInt(value).toString()
+	},
+	math_round: async (ctx) => {
+		const op = ctx.params.OP as 'ROUND' | 'ROUNDUP' | 'ROUNDDOWN'
+		const value = await ctx.evaluate(ctx.params.NUM as WorkflowStep)
+		const num = parseFloat(value)
+		if (isNaN(num)) {
+			throw new Error(`math_round input is not a valid float: "${value}"`)
+		}
+		switch (op) {
+			case 'ROUND':
+				return Math.round(num).toString()
+			case 'ROUNDUP':
+				return Math.ceil(num).toString()
+			case 'ROUNDDOWN':
+				return Math.floor(num).toString()
 		}
 	},
 

@@ -8,7 +8,8 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 			name: 'Trigger',
 			contents: [
 				{ kind: 'block', type: 'trigger_user' },
-				{ kind: 'block', type: 'trigger_trigger_id' }
+				{ kind: 'block', type: 'trigger_trigger_id' },
+				{ kind: 'block', type: 'trigger_message' }
 			],
 			categorystyle: 'trigger_category'
 		},
@@ -28,7 +29,18 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 						},
 						TEXT: { shadow: { type: 'text', fields: { TEXT: 'Hello World' } } }
 					}
-				}
+				},
+				{
+					kind: 'block',
+					type: 'messaging_reply',
+					inputs: {
+						THREAD: { shadow: { type: 'trigger_message' } },
+						TEXT: { shadow: { type: 'text', fields: { TEXT: 'Hello World' } } }
+					}
+				},
+				{ kind: 'block', type: 'message_from_ts' },
+				{ kind: 'block', type: 'message_to_channel' },
+				{ kind: 'block', type: 'message_to_ts' }
 			],
 			categorystyle: 'messaging_category'
 		},
@@ -106,7 +118,10 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 					type: 'lists_custom_getindex',
 					inputs: { INDEX: { shadow: { type: 'math_number' } } }
 				},
-				{ kind: 'block', type: 'logic_compare' }
+				{ kind: 'block', type: 'logic_compare' },
+				{ kind: 'block', type: 'convert_float' },
+				{ kind: 'block', type: 'convert_int' },
+				{ kind: 'block', type: 'math_round' }
 			],
 			categorystyle: 'text_category'
 		},

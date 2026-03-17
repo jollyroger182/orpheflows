@@ -24,6 +24,18 @@
 		"style": "trigger_blocks"
 	},
 	{
+		"type": "trigger_message",
+		"message0": "trigger message %1",
+		"args0": [
+			{
+				"type": "input_dummy",
+				"name": "NAME"
+			}
+		],
+		"output": "Message",
+		"style": "trigger_blocks"
+	},
+	{
 		"type": "ignore_output",
 		"message0": "execute and ignore output %1",
 		"args0": [
@@ -55,6 +67,73 @@
 		],
 		"previousStatement": null,
 		"nextStatement": null,
+		"style": "messaging_blocks"
+	},
+	{
+		"type": "messaging_reply",
+		"message0": "reply to message %1 text %2",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "THREAD",
+				"align": "RIGHT",
+				"check": "Message"
+			},
+			{
+				"type": "input_value",
+				"name": "TEXT",
+				"align": "RIGHT",
+				"check": "String"
+			}
+		],
+		"previousStatement": null,
+		"nextStatement": null,
+		"style": "messaging_blocks"
+	},
+	{
+		"type": "message_from_ts",
+		"message0": "message in channel %1 timestamp %2",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "CHANNEL",
+				"align": "RIGHT",
+				"check": "Channel"
+			},
+			{
+				"type": "input_value",
+				"name": "TS",
+				"align": "RIGHT",
+				"check": "String"
+			}
+		],
+		"output": "Message",
+		"style": "messaging_blocks"
+	},
+	{
+		"type": "message_to_channel",
+		"message0": "get channel of message %1",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "MESSAGE",
+				"check": "Message"
+			}
+		],
+		"output": "Channel",
+		"style": "messaging_blocks"
+	},
+	{
+		"type": "message_to_ts",
+		"message0": "get timestamp of message %1",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "MESSAGE",
+				"check": "Message"
+			}
+		],
+		"output": "String",
 		"style": "messaging_blocks"
 	},
 	{
@@ -165,8 +244,6 @@
 	},
 	{
 		"type": "lists_custom_getindex",
-		"tooltip": "",
-		"helpUrl": "",
 		"message0": "list %1 get item at index %2",
 		"args0": [
 			{
@@ -183,5 +260,29 @@
 		"output": null,
 		"inputsInline": true,
 		"style": "list_blocks"
+	},
+	{
+		"type": "convert_float",
+		"message0": "convert to float %1",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "VALUE"
+			}
+		],
+		"output": "Number",
+		"style": "math_blocks"
+	},
+	{
+		"type": "convert_int",
+		"message0": "convert to int %1",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "VALUE"
+			}
+		],
+		"output": "Number",
+		"style": "math_blocks"
 	}
 ]
