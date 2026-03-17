@@ -59,6 +59,7 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 						QUESTIONS: {
 							block: {
 								type: 'lists_create_with',
+								extraState: { itemCount: 1 },
 								inputs: {
 									ADD0: { block: { type: 'text', fields: { TEXT: 'Why would you like to join?' } } }
 								}
@@ -100,6 +101,8 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 			name: 'Control',
 			contents: [
 				{ kind: 'block', type: 'controls_if' },
+				{ kind: 'block', type: 'controls_if', extraState: { hasElse: true } },
+				{ kind: 'block', type: 'controls_if', extraState: { elseIfCount: 1, hasElse: true } },
 				{ kind: 'block', type: 'ignore_output' }
 			],
 			categorystyle: 'logic_category'
@@ -112,6 +115,7 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 				{ kind: 'block', type: 'text_join' },
 				{ kind: 'block', type: 'logic_boolean' },
 				{ kind: 'block', type: 'math_number' },
+				{ kind: 'block', type: 'lists_create_with', extraState: { itemCount: 0 } },
 				{ kind: 'block', type: 'lists_create_with' },
 				{
 					kind: 'block',
