@@ -19,7 +19,8 @@ const TRIGGER = {
 					[
 						['workflow is executed', 'MANUAL'],
 						['reaction is added', 'REACTION'],
-						['message is received', 'MESSAGE']
+						['message is received', 'MESSAGE'],
+						['message is received in DM', 'DM']
 					],
 					this.onDropdownChange_.bind(this)
 				),
@@ -37,7 +38,7 @@ const TRIGGER = {
 			this.removeInput('DYNAMIC')
 		}
 
-		if (value === 'MANUAL') return
+		if (value === 'MANUAL' || value === 'DM') return
 
 		const input = this.appendDummyInput('DYNAMIC')
 

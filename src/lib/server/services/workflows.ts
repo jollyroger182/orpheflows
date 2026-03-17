@@ -187,7 +187,8 @@ export async function publishVersion({ id, blocks, code, userId }: PublishVersio
 					triggersWorkflowId: id,
 					event: 'reaction_added',
 					param: `${channel};${emoji}`,
-					handler: 'start'
+					handler: 'start',
+					data: JSON.stringify({ trigger: trigger.id })
 				})
 			} else if (trigger.params.TRIGGER === 'MESSAGE') {
 				const channel = trigger.params.CHANNEL as string
@@ -195,7 +196,15 @@ export async function publishVersion({ id, blocks, code, userId }: PublishVersio
 					triggersWorkflowId: id,
 					event: 'message_received',
 					param: channel,
-					handler: 'start'
+					handler: 'start',
+					data: JSON.stringify({ trigger: trigger.id })
+				})
+			} else if (trigger.params.TRIGGER === 'DM') {
+				await tx.insert(listeners).values({
+					triggersWorkflowId: id,
+					event: 'dm_received',
+					handler: 'start',
+					data: JSON.stringify({ trigger: trigger.id })
 				})
 			}
 		}

@@ -1,4 +1,4 @@
-import { and, eq } from 'drizzle-orm'
+import { and, eq, SQL } from 'drizzle-orm'
 import { db } from '../db'
 import { listeners } from '../db/schema'
 
@@ -27,6 +27,16 @@ export async function create({
 	)[0]!
 }
 
+interface GetByEvent {
+	event: string
+}
+
+export async function getByEvent({ event }: GetByEvent) {
+	return await db.query.listeners.findMany({
+		where: and(eq(listeners.event, event))
+	})
+}
+
 interface GetByParam {
 	event: string
 	param: string
@@ -36,4 +46,12 @@ export async function getByParam({ event, param }: GetByParam) {
 	return await db.query.listeners.findMany({
 		where: and(eq(listeners.event, event), eq(listeners.param, param))
 	})
+}
+
+interface GetByFilter {
+	filter?: SQL
+}
+
+export async function getByFilter({ filter }: GetByFilter) {
+	return await db.query.listeners.findMany({ where: filter })
 }

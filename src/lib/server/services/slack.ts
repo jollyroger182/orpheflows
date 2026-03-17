@@ -62,6 +62,7 @@ export async function generateManifest({ name, triggers = [] }: GenerateManifest
 	const messageEvents = triggers.find((s) => s.params.TRIGGER === 'MESSAGE')
 		? (['message.channels', 'message.groups', 'message.mpim'] as const)
 		: []
+	const dmEvents = triggers.find((s) => s.params.TRIGGER === 'DM') ? (['message.im'] as const) : []
 
 	const manifest = {
 		display_information: {
@@ -72,7 +73,7 @@ export async function generateManifest({ name, triggers = [] }: GenerateManifest
 			app_home: {
 				home_tab_enabled: true,
 				messages_tab_enabled: true,
-				messages_tab_read_only_enabled: true
+				messages_tab_read_only_enabled: false
 			},
 			bot_user: {
 				display_name: name,
@@ -88,7 +89,7 @@ export async function generateManifest({ name, triggers = [] }: GenerateManifest
 		settings: {
 			event_subscriptions: {
 				request_url: `${EXTERNAL_URL}/api/slack/events`,
-				bot_events: ['app_home_opened', ...reactionEvents, ...messageEvents]
+				bot_events: ['app_home_opened', ...reactionEvents, ...messageEvents, ...dmEvents]
 			},
 			interactivity: {
 				is_enabled: true,
