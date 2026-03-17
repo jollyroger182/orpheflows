@@ -1,0 +1,39 @@
+{
+	"display_information": {
+		"name": "orpheflows (dev)",
+		"description": "slack workflows pro plus max",
+		"background_color": "#384f94"
+	},
+	"features": {
+		"bot_user": {
+			"display_name": "orpheflows (dev)",
+			"always_online": false
+		},
+		"slash_commands": [],
+		"unfurl_domains": ["orpheflows-dev.example.com"]
+	},
+	"oauth_config": {
+		"redirect_urls": [
+			"https://orpheflows-dev.example.com/auth/callback/slack"
+		],
+		"scopes": {
+			"bot": [
+				"commands",
+				"im:write",
+				"chat:write",
+				"chat:write.customize",
+				"chat:write.public",
+				"links:read"
+			]
+		}
+	},
+	"settings": {
+		"event_subscriptions": {
+			"request_url": "https://orpheflows-dev.example.com/api/slack/events",
+			"bot_events": ["link_shared"]
+		},
+		"org_deploy_enabled": false,
+		"socket_mode_enabled": false,
+		"token_rotation_enabled": false
+	}
+}
