@@ -1,6 +1,6 @@
 import { and, desc, eq } from 'drizzle-orm'
 import { db } from '../db'
-import { installations, versions, workflows } from '../db/schema'
+import { installations, listeners, versions, workflows } from '../db/schema'
 import { slack } from '../slack'
 import { Slack } from '.'
 
@@ -155,6 +155,10 @@ interface PublishVersion {
 
 export async function publishVersion({ id, blocks, code, userId }: PublishVersion) {
 	const now = new Date()
+
+	const steps = JSON.parse(code) as WorkflowStep[]
+	const triggers = steps.filter((s) => s.type === 'trigger')
+
 	const result = await db.transaction(async (tx) => {
 		const [workflow] = await tx
 			.update(workflows)
@@ -172,6 +176,24 @@ export async function publishVersion({ id, blocks, code, userId }: PublishVersio
 			.insert(versions)
 			.values({ workflowId: id, blocks: blocks, code: code })
 			.returning()
+
+		await tx.delete(listeners).where(eq(listeners.triggersWorkflowId, id))
+
+		for (const trigger of triggers) {
+			if (trigger.params.TRIGGER === 'REACTION') {
+				const channel = trigger.params.CHANNEL as string
+				const emoji = trigger.params.EMOJI as string
+				await tx
+					.insert(listeners)
+					.values({
+						triggersWorkflowId: id,
+						event: 'reaction_added',
+						param: `${channel};${emoji}`,
+						handler: 'start',
+					})
+			}
+		}
+
 		return { workflow, version }
 	})
 	if (result) {

@@ -7,7 +7,8 @@ import {
 	unique,
 	foreignKey,
 	index,
-	varchar
+	varchar,
+	real
 } from 'drizzle-orm/pg-core'
 import { relations } from 'drizzle-orm'
 
@@ -56,7 +57,8 @@ export const workflowsRelations = relations(workflows, ({ one, many }) => ({
 	author: one(users, {
 		fields: [workflows.authorId],
 		references: [users.id]
-	})
+	}),
+	triggeringListener: one(listeners)
 }))
 
 // installations
@@ -139,6 +141,31 @@ export const executionsRelations = relations(executions, ({ one }) => ({
 	}),
 	workflow: one(workflows, {
 		fields: [executions.workflowId],
+		references: [workflows.id]
+	})
+}))
+
+// listeners
+
+export const listeners = pgTable(
+	'listeners',
+	{
+		id: serial('id').primaryKey(),
+		triggersWorkflowId: integer('triggers_workflow_id')
+			.references(() => workflows.id, { onDelete: 'cascade' })
+			.unique(undefined, { nulls: 'distinct' }),
+		event: text('event').notNull(),
+		param: text('param'),
+		paramNum: real('param_num'),
+		handler: text('handler').notNull(),
+		data: text('data')
+	},
+	(table) => [index().on(table.event, table.param), index().on(table.event, table.paramNum)]
+)
+
+export const listenersRelations = relations(listeners, ({ one }) => ({
+	triggersWorkflow: one(workflows, {
+		fields: [listeners.triggersWorkflowId],
 		references: [workflows.id]
 	})
 }))
