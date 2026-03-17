@@ -91,6 +91,27 @@
 		"style": "messaging_blocks"
 	},
 	{
+		"type": "messaging_add_reaction",
+		"message0": "add reaction to message %1 emoji %2",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "MESSAGE",
+				"align": "RIGHT",
+				"check": "Message"
+			},
+			{
+				"type": "input_value",
+				"name": "EMOJI",
+				"align": "RIGHT",
+				"check": "String"
+			}
+		],
+		"previousStatement": null,
+		"nextStatement": null,
+		"style": "messaging_blocks"
+	},
+	{
 		"type": "message_from_ts",
 		"message0": "message in channel %1 timestamp %2",
 		"args0": [

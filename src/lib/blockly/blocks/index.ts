@@ -18,7 +18,8 @@ const TRIGGER = {
 				new Blockly.FieldDropdown(
 					[
 						['workflow is executed', 'MANUAL'],
-						['reaction is added', 'REACTION']
+						['reaction is added', 'REACTION'],
+						['message is received', 'MESSAGE']
 					],
 					this.onDropdownChange_.bind(this)
 				),
@@ -46,6 +47,8 @@ const TRIGGER = {
 				.appendField(new Blockly.FieldTextInput('C'), 'CHANNEL')
 				.appendField('emoji name')
 				.appendField(new Blockly.FieldTextInput('yay'), 'EMOJI')
+		} else if (value === 'MESSAGE') {
+			input.appendField('in channel ID').appendField(new Blockly.FieldTextInput('C'), 'CHANNEL')
 		}
 	},
 	saveExtraState: function (this: TriggerBlock) {

@@ -9,7 +9,6 @@ export async function handleWorkflowEvent(
 	workflow: Awaited<ReturnType<typeof Workflows.getWorkflowByVerificationToken>> & {}
 ) {
 	const { event } = payload
-	console.log(event)
 
 	if (event.type === 'app_home_opened') {
 		if (event.tab !== 'home') return
@@ -32,6 +31,31 @@ export async function handleWorkflowEvent(
 						step.params.CHANNEL === event.item.channel &&
 						step.params.EMOJI === event.reaction
 				})
+			}
+		}
+	} else if (event.type === 'message') {
+		if (
+			(!event.subtype || event.subtype === 'file_share' || event.subtype === 'thread_broadcast') &&
+			(event.channel_type === 'channel' ||
+				event.channel_type === 'group' ||
+				event.channel_type === 'mpim')
+		) {
+			const listeners = await Listeners.getByParam({
+				event: 'message_received',
+				param: event.channel
+			})
+			for (const listener of listeners) {
+				if (listener.triggersWorkflowId) {
+					await startWorkflow({
+						workflowId: listener.triggersWorkflowId,
+						variables: {
+							'trigger.message': JSON.stringify({ channel: event.channel, ts: event.ts }),
+							'trigger.user': event.user
+						},
+						findTrigger: (step) =>
+							step.params.TRIGGER === 'MESSAGE' && step.params.CHANNEL === event.channel
+					})
+				}
 			}
 		}
 	}

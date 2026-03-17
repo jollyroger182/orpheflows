@@ -54,7 +54,11 @@
 	// disable disconnected blocks
 
 	function checkDisconnectBlock(event: Blockly.Events.Abstract) {
-		if (!(event instanceof Blockly.Events.BlockMove) || !event.blockId) return
+		if (
+			!(event instanceof Blockly.Events.BlockMove || event instanceof Blockly.Events.BlockCreate) ||
+			!event.blockId
+		)
+			return
 
 		const block = workspace.getBlockById(event.blockId)
 		if (!block) return
@@ -86,7 +90,6 @@
 				Blockly.Events.BLOCK_DELETE
 			].includes(event.type)
 		) {
-			console.log(event)
 			dirty = true
 		}
 	}

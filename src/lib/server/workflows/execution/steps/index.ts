@@ -33,6 +33,15 @@ export const stepHandlers: Record<string, (context: StepExecutionContext) => Pro
 			continuationToken: ctx.data.continuationToken
 		})
 	},
+	messaging_add_reaction: async (ctx) => {
+		const { channel, ts } = JSON.parse(await ctx.evaluate(ctx.params.MESSAGE as WorkflowStep))
+		const emoji = await ctx.evaluate(ctx.params.EMOJI as WorkflowStep)
+		await slack.reactions.add({ channel, timestamp: ts, name: emoji, token: await ctx.getToken() })
+		await progressWorkflow({
+			executionId: ctx.executionId,
+			continuationToken: ctx.data.continuationToken
+		})
+	},
 
 	form_present: async (ctx) => {
 		const title = await ctx.evaluate(ctx.params.TITLE as WorkflowStep)

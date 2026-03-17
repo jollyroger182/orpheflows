@@ -9,6 +9,7 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 			contents: [
 				{ kind: 'block', type: 'trigger', extraState: { trigger: 'MANUAL' } },
 				{ kind: 'block', type: 'trigger', extraState: { trigger: 'REACTION' } },
+				{ kind: 'block', type: 'trigger', extraState: { trigger: 'MESSAGE' } },
 				{ kind: 'block', type: 'trigger_user' },
 				{ kind: 'block', type: 'trigger_trigger_id' },
 				{ kind: 'block', type: 'trigger_message' }
@@ -39,6 +40,11 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 						THREAD: { shadow: { type: 'trigger_message' } },
 						TEXT: { shadow: { type: 'text', fields: { TEXT: 'Hello World' } } }
 					}
+				},
+				{
+					kind: 'block',
+					type: 'messaging_add_reaction',
+					inputs: { EMOJI: { shadow: { type: 'text', fields: { TEXT: 'yay' } } } }
 				},
 				{ kind: 'block', type: 'message_from_ts' },
 				{ kind: 'block', type: 'message_to_channel' },

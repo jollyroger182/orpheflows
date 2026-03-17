@@ -183,14 +183,20 @@ export async function publishVersion({ id, blocks, code, userId }: PublishVersio
 			if (trigger.params.TRIGGER === 'REACTION') {
 				const channel = trigger.params.CHANNEL as string
 				const emoji = trigger.params.EMOJI as string
-				await tx
-					.insert(listeners)
-					.values({
-						triggersWorkflowId: id,
-						event: 'reaction_added',
-						param: `${channel};${emoji}`,
-						handler: 'start',
-					})
+				await tx.insert(listeners).values({
+					triggersWorkflowId: id,
+					event: 'reaction_added',
+					param: `${channel};${emoji}`,
+					handler: 'start'
+				})
+			} else if (trigger.params.TRIGGER === 'MESSAGE') {
+				const channel = trigger.params.CHANNEL as string
+				await tx.insert(listeners).values({
+					triggersWorkflowId: id,
+					event: 'message_received',
+					param: channel,
+					handler: 'start'
+				})
 			}
 		}
 

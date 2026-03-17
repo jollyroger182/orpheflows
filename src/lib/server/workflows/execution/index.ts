@@ -102,8 +102,7 @@ export async function progressWorkflow({
 
 	const handler = stepHandlers[step.type]
 	if (!handler) {
-		console.error('Step', step.type, 'is not implemented yet')
-		return
+		throw new Error(`Step ${step.type} is not implemented yet`)
 	}
 
 	let workflow: ReturnType<typeof Workflows.getWorkflow> | undefined

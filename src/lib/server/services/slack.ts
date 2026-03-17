@@ -42,25 +42,26 @@ export async function updateApp({ workflow }: UpdateApp) {
 	const version = await getLatestVersion({ id: workflow.id })
 	const code = (version ? JSON.parse(version.code) : []) as WorkflowStep[]
 
-	const triggerTypes = Array.from(
-		new Set(code.filter((s) => s.type === 'trigger').map((s) => s.params.TRIGGER as string))
-	)
+	const manifest = await generateManifest({
+		name: workflow.name,
+		triggers: code.filter((s) => s.type === 'trigger')
+	})
 
-	const manifest = await generateManifest({ name: workflow.name, triggerTypes })
-
-	console.log('update manufest', manifest)
 	await slack.apps.manifest.update({ app_id: workflow.appId, manifest, token })
 }
 
 interface GenerateManifest {
 	name: string
-	triggerTypes?: string[]
+	triggers?: WorkflowStep[]
 }
 
-export async function generateManifest({ name, triggerTypes = [] }: GenerateManifest) {
-	const extraEvents = triggerTypes.flatMap(
-		(t) => ({ REACTION: ['reaction_added'] as const })[t] || []
-	)
+export async function generateManifest({ name, triggers = [] }: GenerateManifest) {
+	const reactionEvents = triggers.find((s) => s.params.TRIGGER === 'REACTION')
+		? (['reaction_added'] as const)
+		: []
+	const messageEvents = triggers.find((s) => s.params.TRIGGER === 'MESSAGE')
+		? (['message.channels', 'message.groups', 'message.mpim'] as const)
+		: []
 
 	const manifest = {
 		display_information: {
@@ -87,7 +88,7 @@ export async function generateManifest({ name, triggerTypes = [] }: GenerateMani
 		settings: {
 			event_subscriptions: {
 				request_url: `${EXTERNAL_URL}/api/slack/events`,
-				bot_events: ['app_home_opened', ...extraEvents]
+				bot_events: ['app_home_opened', ...reactionEvents, ...messageEvents]
 			},
 			interactivity: {
 				is_enabled: true,

@@ -9,7 +9,6 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 	useSecureCookies: true,
 	callbacks: {
 		async signIn({ account, user }) {
-			console.log('signin', account, user, )
 			const id = account?.providerAccountId
 			const name = user.name || 'unknown'
 			const photo_url = user.image || null
