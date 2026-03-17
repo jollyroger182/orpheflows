@@ -1,4 +1,4 @@
-import { startWorkflow } from '$lib/server/workflows/slack'
+import { startWorkflow } from '$lib/server/workflows/execution'
 import { error, json } from '@sveltejs/kit'
 import z from 'zod'
 
