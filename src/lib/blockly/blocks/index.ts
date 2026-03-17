@@ -9,7 +9,7 @@ type TriggerMixinType = typeof TRIGGER
 
 const TRIGGER = {
 	init: function (this: TriggerBlock) {
-		this.setStyle('trigger')
+		this.setStyle('trigger_blocks')
 		this.setNextStatement(true, null)
 
 		this.appendDummyInput('DUMMY')

@@ -112,8 +112,21 @@
 		"style": "messaging_blocks"
 	},
 	{
+		"type": "messaging_get_text",
+		"message0": "get text from message %1",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "MESSAGE",
+				"check": "Message"
+			}
+		],
+		"output": "String",
+		"style": "messaging_blocks"
+	},
+	{
 		"type": "message_from_ts",
-		"message0": "message in channel %1 timestamp %2",
+		"message0": "message in channel %1 with timestamp %2",
 		"args0": [
 			{
 				"type": "input_value",
@@ -128,6 +141,7 @@
 				"check": "String"
 			}
 		],
+		"inputsInline": true,
 		"output": "Message",
 		"style": "messaging_blocks"
 	},
@@ -245,9 +259,7 @@
 		"style": "user_blocks"
 	},
 	{
-		"type": "text",
-		"tooltip": "",
-		"helpUrl": "",
+		"type": "text_embed",
 		"message0": "%1 %2",
 		"args0": [
 			{
@@ -260,12 +272,45 @@
 				"name": "NAME"
 			}
 		],
-		"output": null,
+		"output": "String",
 		"style": "text_blocks"
 	},
 	{
+		"type": "text_length2",
+		"message0": "length of text %1",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "TEXT",
+				"check": "String"
+			}
+		],
+		"output": "Number",
+		"style": "text_blocks"
+	},
+	{
+		"type": "text_indexOf2",
+		"tooltip": "Returns -1 when the substring is not found.",
+		"message0": "in text %1 find first occurrence of %2",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "TEXT",
+				"check": "String"
+			},
+			{
+				"type": "input_value",
+				"name": "SUB",
+				"check": "String"
+			}
+		],
+		"output": "Number",
+		"style": "text_blocks",
+		"inputsInline": true
+	},
+	{
 		"type": "lists_custom_getindex",
-		"message0": "list %1 get item at index %2",
+		"message0": "in list %1 get item at index %2",
 		"args0": [
 			{
 				"type": "input_value",

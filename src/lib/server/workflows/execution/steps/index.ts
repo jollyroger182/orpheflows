@@ -150,6 +150,20 @@ export const stepHandlers: Record<string, (context: StepExecutionContext) => Pro
 		return ctx.data.variables['trigger.trigger_id']
 	},
 
+	messaging_get_text: async (ctx) => {
+		const message = JSON.parse(await ctx.evaluate(ctx.params.MESSAGE as WorkflowStep))
+		if ('text' in message) return message.text
+
+		const resp = await slack.conversations.replies({
+			channel: message.channel,
+			ts: message.ts,
+			limit: 1,
+			token: await ctx.getToken()
+		})
+		const msg = resp.messages?.[0]
+		if (msg?.ts !== message.ts) return ''
+		return msg?.text || ''
+	},
 	message_from_ts: async (ctx) =>
 		JSON.stringify({
 			channel: await ctx.evaluate(ctx.params.CHANNEL as WorkflowStep),
@@ -187,17 +201,6 @@ export const stepHandlers: Record<string, (context: StepExecutionContext) => Pro
 		}
 		return JSON.stringify(list)
 	},
-	lists_custom_getindex: async (ctx) => {
-		const list = await ctx.evaluate(ctx.params.LIST as WorkflowStep)
-		const index = await ctx.evaluate(ctx.params.INDEX as WorkflowStep)
-
-		const items = JSON.parse(list) as string[]
-		const idx = parseInt(index)
-		if (isNaN(idx) || idx >= items.length) {
-			throw new Error('Invalid index in list')
-		}
-		return items[idx]
-	},
 	logic_compare: async (ctx) => {
 		const lhs = await ctx.evaluate(ctx.params.A as WorkflowStep)
 		const rhs = await ctx.evaluate(ctx.params.B as WorkflowStep)
@@ -218,6 +221,26 @@ export const stepHandlers: Record<string, (context: StepExecutionContext) => Pro
 			default:
 				throw new Error(`Unknown comparison operator ${ctx.params.OP}`)
 		}
+	},
+	text_length2: async (ctx) => {
+		const text = await ctx.evaluate(ctx.params.TEXT as WorkflowStep)
+		return text.length.toString()
+	},
+	text_indexOf2: async (ctx) => {
+		const text = await ctx.evaluate(ctx.params.TEXT as WorkflowStep)
+		const substring = await ctx.evaluate(ctx.params.SUB as WorkflowStep)
+		return text.indexOf(substring).toString()
+	},
+	lists_custom_getindex: async (ctx) => {
+		const list = await ctx.evaluate(ctx.params.LIST as WorkflowStep)
+		const index = await ctx.evaluate(ctx.params.INDEX as WorkflowStep)
+
+		const items = JSON.parse(list) as string[]
+		const idx = parseInt(index)
+		if (isNaN(idx) || idx >= items.length) {
+			throw new Error('Invalid index in list')
+		}
+		return items[idx]
 	},
 	convert_float: async (ctx) => {
 		const value = await ctx.evaluate(ctx.params.VALUE as WorkflowStep)
@@ -259,5 +282,9 @@ export const stepHandlers: Record<string, (context: StepExecutionContext) => Pro
 		}
 
 		return ctx.data.variables[key]
-	}
+	},
+
+	// hidden
+
+	text_embed: async (ctx) => ctx.params.TEXT as string
 }

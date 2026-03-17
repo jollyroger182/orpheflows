@@ -10,6 +10,7 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 				{ kind: 'block', type: 'trigger', extraState: { trigger: 'MANUAL' } },
 				{ kind: 'block', type: 'trigger', extraState: { trigger: 'REACTION' } },
 				{ kind: 'block', type: 'trigger', extraState: { trigger: 'MESSAGE' } },
+				{ kind: 'block', type: 'trigger', extraState: { trigger: 'DM' } },
 				{ kind: 'block', type: 'trigger_user' },
 				{ kind: 'block', type: 'trigger_trigger_id' },
 				{ kind: 'block', type: 'trigger_message' }
@@ -27,10 +28,10 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 						CHANNEL: {
 							shadow: {
 								type: 'channel_from_id',
-								inputs: { ID: { shadow: { type: 'text', fields: { TEXT: 'C' } } } }
+								inputs: { ID: { shadow: { type: 'text_embed', fields: { TEXT: 'C' } } } }
 							}
 						},
-						TEXT: { shadow: { type: 'text', fields: { TEXT: 'Hello World' } } }
+						TEXT: { shadow: { type: 'text_embed', fields: { TEXT: 'Hello World' } } }
 					}
 				},
 				{
@@ -38,14 +39,15 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 					type: 'messaging_reply',
 					inputs: {
 						THREAD: { shadow: { type: 'trigger_message' } },
-						TEXT: { shadow: { type: 'text', fields: { TEXT: 'Hello World' } } }
+						TEXT: { shadow: { type: 'text_embed', fields: { TEXT: 'Hello World' } } }
 					}
 				},
 				{
 					kind: 'block',
 					type: 'messaging_add_reaction',
-					inputs: { EMOJI: { shadow: { type: 'text', fields: { TEXT: 'yay' } } } }
+					inputs: { EMOJI: { shadow: { type: 'text_embed', fields: { TEXT: 'yay' } } } }
 				},
+				{ kind: 'block', type: 'messaging_get_text' },
 				{ kind: 'block', type: 'message_from_ts' },
 				{ kind: 'block', type: 'message_to_channel' },
 				{ kind: 'block', type: 'message_to_ts' }
@@ -60,16 +62,21 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 					kind: 'block',
 					type: 'form_present',
 					inputs: {
-						TITLE: { shadow: { type: 'text', fields: { TEXT: 'Join my channel' } } },
+						TITLE: { shadow: { type: 'text_embed', fields: { TEXT: 'Join my channel' } } },
 						TEXT: {
-							shadow: { type: 'text', fields: { TEXT: 'Please answer the following questions!' } }
+							shadow: {
+								type: 'text_embed',
+								fields: { TEXT: 'Please answer the following questions!' }
+							}
 						},
 						QUESTIONS: {
 							block: {
 								type: 'lists_create_with',
 								extraState: { itemCount: 1 },
 								inputs: {
-									ADD0: { block: { type: 'text', fields: { TEXT: 'Why would you like to join?' } } }
+									ADD0: {
+										block: { type: 'text_embed', fields: { TEXT: 'Why would you like to join?' } }
+									}
 								}
 							}
 						},
@@ -86,7 +93,7 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 				{
 					kind: 'block',
 					type: 'channel_from_id',
-					inputs: { ID: { shadow: { type: 'text', fields: { TEXT: 'C' } } } }
+					inputs: { ID: { shadow: { type: 'text_embed', fields: { TEXT: 'C' } } } }
 				}
 			],
 			categorystyle: 'channel_category'
@@ -98,7 +105,7 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 				{
 					kind: 'block',
 					type: 'user_from_id',
-					inputs: { ID: { shadow: { type: 'text', fields: { TEXT: 'U' } } } }
+					inputs: { ID: { shadow: { type: 'text_embed', fields: { TEXT: 'U' } } } }
 				},
 				{ kind: 'block', type: 'user_to_id' }
 			],
@@ -120,17 +127,19 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 			name: 'Primitives',
 			contents: [
 				{ kind: 'block', type: 'text' },
-				{ kind: 'block', type: 'text_join' },
+				{ kind: 'block', type: 'text_join', inline: true },
 				{ kind: 'block', type: 'logic_boolean' },
 				{ kind: 'block', type: 'math_number' },
-				{ kind: 'block', type: 'lists_create_with', extraState: { itemCount: 0 } },
-				{ kind: 'block', type: 'lists_create_with' },
+				{ kind: 'block', type: 'lists_create_with', inline: true, extraState: { itemCount: 0 } },
+				{ kind: 'block', type: 'lists_create_with', inline: true },
+				{ kind: 'block', type: 'logic_compare' },
+				{ kind: 'block', type: 'text_length2' },
+				{ kind: 'block', type: 'text_indexOf2' },
 				{
 					kind: 'block',
 					type: 'lists_custom_getindex',
 					inputs: { INDEX: { shadow: { type: 'math_number' } } }
 				},
-				{ kind: 'block', type: 'logic_compare' },
 				{ kind: 'block', type: 'convert_float' },
 				{ kind: 'block', type: 'convert_int' },
 				{ kind: 'block', type: 'math_round' }

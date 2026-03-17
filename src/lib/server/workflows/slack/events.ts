@@ -16,6 +16,7 @@ export async function handleWorkflowEvent(
 		if (event.tab !== 'home') return
 		await updateAppHome(workflow, event)
 	} else if (event.type === 'reaction_added') {
+		console.log(payload)
 		const listeners = await Listeners.getByFilter({
 			filter: and(
 				eq(listenersSchema.event, 'reaction_added'),
@@ -56,7 +57,11 @@ export async function handleWorkflowEvent(
 				await startWorkflow({
 					workflowId: workflow.id,
 					variables: {
-						'trigger.message': JSON.stringify({ channel: event.channel, ts: event.ts }),
+						'trigger.message': JSON.stringify({
+							channel: event.channel,
+							ts: event.ts,
+							text: event.text || ''
+						}),
 						'trigger.user': event.user
 					},
 					findTrigger: (step) =>
@@ -69,7 +74,6 @@ export async function handleWorkflowEvent(
 			(!event.subtype || event.subtype === 'file_share' || event.subtype === 'thread_broadcast') &&
 			(event.channel_type === 'im' || event.channel_type === 'app_home')
 		) {
-			console.log(event.channel_type)
 			const listeners = await Listeners.getByFilter({
 				filter: and(
 					eq(listenersSchema.event, 'dm_received'),
@@ -80,7 +84,11 @@ export async function handleWorkflowEvent(
 				await startWorkflow({
 					workflowId: workflow.id,
 					variables: {
-						'trigger.message': JSON.stringify({ channel: event.channel, ts: event.ts }),
+						'trigger.message': JSON.stringify({
+							channel: event.channel,
+							ts: event.ts,
+							text: event.text || ''
+						}),
 						'trigger.user': event.user
 					},
 					findTrigger: (step) =>
