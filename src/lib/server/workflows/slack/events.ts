@@ -26,7 +26,11 @@ export async function handleWorkflowEvent(
 					variables: {
 						'trigger.message': JSON.stringify({ channel: event.item.channel, ts: event.item.ts }),
 						'trigger.user': event.user
-					}
+					},
+					findTrigger: (step) =>
+						step.params.TRIGGER === 'REACTION' &&
+						step.params.CHANNEL === event.item.channel &&
+						step.params.EMOJI === event.reaction
 				})
 			}
 		}

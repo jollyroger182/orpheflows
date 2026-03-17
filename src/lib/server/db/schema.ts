@@ -151,9 +151,9 @@ export const listeners = pgTable(
 	'listeners',
 	{
 		id: serial('id').primaryKey(),
-		triggersWorkflowId: integer('triggers_workflow_id')
-			.references(() => workflows.id, { onDelete: 'cascade' })
-			.unique(undefined, { nulls: 'distinct' }),
+		triggersWorkflowId: integer('triggers_workflow_id').references(() => workflows.id, {
+			onDelete: 'cascade'
+		}),
 		event: text('event').notNull(),
 		param: text('param'),
 		paramNum: real('param_num'),

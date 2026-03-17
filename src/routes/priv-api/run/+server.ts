@@ -19,7 +19,11 @@ export async function POST({ request, locals }) {
 
 	const { id } = data
 
-	await startWorkflow({ workflowId: id, variables: { 'trigger.user': session.user.slackId } })
+	await startWorkflow({
+		workflowId: id,
+		variables: { 'trigger.user': session.user.slackId },
+		findTrigger: (step) => step.params.TRIGGER === 'MANUAL'
+	})
 
 	return json({ success: true })
 }

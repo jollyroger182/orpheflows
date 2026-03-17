@@ -7,6 +7,8 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 			kind: 'category',
 			name: 'Trigger',
 			contents: [
+				{ kind: 'block', type: 'trigger', extraState: { trigger: 'MANUAL' } },
+				{ kind: 'block', type: 'trigger', extraState: { trigger: 'REACTION' } },
 				{ kind: 'block', type: 'trigger_user' },
 				{ kind: 'block', type: 'trigger_trigger_id' },
 				{ kind: 'block', type: 'trigger_message' }

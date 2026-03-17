@@ -11,8 +11,6 @@ const TRIGGER = {
 	init: function (this: TriggerBlock) {
 		this.setStyle('trigger')
 		this.setNextStatement(true, null)
-		this.setDeletable(false)
-		this.setMovable(true)
 
 		this.appendDummyInput('DUMMY')
 			.appendField('when')
@@ -54,6 +52,7 @@ const TRIGGER = {
 		return { trigger: this.getFieldValue('TRIGGER') }
 	},
 	loadExtraState: function (this: TriggerBlock, state: { trigger: string }) {
+		this.setFieldValue(state.trigger || 'MANUAL', 'TRIGGER')
 		this.updateShape_(state.trigger || 'MANUAL')
 	}
 }

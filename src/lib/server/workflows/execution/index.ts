@@ -21,16 +21,22 @@ interface ExecutionData {
 interface Start {
 	workflowId: number
 	variables?: Record<string, string>
+	findTrigger?: (step: WorkflowStep) => boolean
 }
 
-export async function startWorkflow(params: Start) {
-	const { workflowId, variables = {} } = params
-
+export async function startWorkflow({
+	workflowId,
+	variables = {},
+	findTrigger = () => true
+}: Start) {
 	const version = await Workflows.getLatestVersion({ id: workflowId })
 	if (!version) return
 
 	const steps = JSON.parse(version.code) as WorkflowStep[]
-	const trigger = steps[0]!
+	const trigger = steps.find(findTrigger)
+	if (!trigger) {
+		throw new Error(`workflow trigger for ${workflowId} not found`)
+	}
 
 	const continuationToken = randomUUID()
 	const data: ExecutionData = {
@@ -88,7 +94,7 @@ export async function progressWorkflow({
 		// TODO: log
 		return
 	}
-	if (step === NEXT) {
+	if (step === NEXT || step.type === 'trigger') {
 		// execution finished
 		// TODO: log
 		return

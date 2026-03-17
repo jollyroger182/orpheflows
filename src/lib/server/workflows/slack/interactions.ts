@@ -12,7 +12,8 @@ export async function handleWorkflowInteraction(
 			if (action.action_id === 'run_workflow') {
 				await startWorkflow({
 					workflowId: workflow.id,
-					variables: { 'trigger.user': payload.user.id, 'trigger.trigger_id': payload.trigger_id }
+					variables: { 'trigger.user': payload.user.id, 'trigger.trigger_id': payload.trigger_id },
+					findTrigger: (step) => step.params.TRIGGER === 'MANUAL'
 				})
 			}
 		}

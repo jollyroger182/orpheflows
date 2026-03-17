@@ -24,7 +24,7 @@
 		Blockly.common.defineBlocks(blocks)
 		registerExtensions()
 
-		workspace = Blockly.inject(blocklyContainer, { toolbox, maxInstances: { trigger: 1 } })
+		workspace = Blockly.inject(blocklyContainer, { toolbox })
 		workspace.setTheme(theme)
 		if (data.workflow.blocks) {
 			Blockly.serialization.workspaces.load(JSON.parse(data.workflow.blocks), workspace)
