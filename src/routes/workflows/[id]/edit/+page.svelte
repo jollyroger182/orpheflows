@@ -161,6 +161,8 @@
 		<button onclick={onPublish} class="btn btn-sm btn-success">Publish</button>
 	</div>
 
-	<div bind:this={blocklyContainer} class="h-full"></div>
-	<pre class="text-wrap">{code}</pre>
+	<div bind:this={blocklyContainer} class={`h-full ${data.dev ? '' : 'col-span-2'}`}></div>
+	{#if data.dev}
+		<pre class="text-wrap">{code}</pre>
+	{/if}
 </div>
