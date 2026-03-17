@@ -48,6 +48,7 @@
 		"@auth/sveltekit": "^1.11.1",
 		"@slack/bolt": "^4.6.0",
 		"blockly": "^12.4.1",
+		"mode-watcher": "^1.1.0",
 		"node-cron": "^4.2.1",
 		"zod": "^4.3.6"
 	}

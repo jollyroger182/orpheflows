@@ -1,15 +1,16 @@
 <script lang="ts">
 	import { blocks } from '$lib/blockly/blocks'
+	import { register as registerExtensions } from '$lib/blockly/extensions'
 	import { generator } from '$lib/blockly/generator'
-	import theme from '$lib/blockly/theme'
+	import theme, * as themes from '$lib/blockly/theme'
 	import toolbox from '$lib/blockly/toolbox'
-	import { onMount } from 'svelte'
 
 	import { beforeNavigate } from '$app/navigation'
-	import { register as registerExtensions } from '$lib/blockly/extensions.js'
 	import 'blockly/blocks'
 	import * as Blockly from 'blockly/core'
 	import * as En from 'blockly/msg/en'
+	import { mode } from 'mode-watcher'
+	import { onMount } from 'svelte'
 
 	const { data } = $props()
 
@@ -35,6 +36,10 @@
 		workspace.addChangeListener(generateCode)
 		setTimeout(() => workspace.addChangeListener(checkSetDirty), 100)
 		generateCode()
+	})
+
+	$effect(() => {
+		workspace.setTheme(themes[mode.current || 'light'])
 	})
 
 	function generateCode() {

@@ -6,6 +6,7 @@
 	import { signIn, signOut } from '@auth/sveltekit/client'
 
 	import './layout.css'
+	import { ModeWatcher } from 'mode-watcher'
 
 	let { children } = $props()
 
@@ -14,7 +15,9 @@
 
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>
 
-<header class="flex items-center gap-2 bg-blue-100 px-8 py-2">
+<ModeWatcher />
+
+<header class="flex items-center gap-2 bg-blue-100 dark:bg-blue-950 px-4 py-2">
 	<a href={resolve('/')}><span class="text-2xl">Orpheflows</span></a>
 
 	<span class="flex-1"></span>
