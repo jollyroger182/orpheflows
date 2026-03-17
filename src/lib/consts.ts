@@ -2,6 +2,10 @@ import type { Manifest } from "@slack/web-api/dist/types/request/manifest"
 
 type BotScope = (((Manifest['oauth_config'] & {})['scopes'] & {})['bot'] & {})[number]
 
+export const ID = {
+	runWorkflow: 'run_workflow_80b152f4-c481-4781-8c34-edb5f8488c9f'
+}
+
 export const WORKFLOW_APP_SCOPES: BotScope[] = [
 	'app_mentions:read',
 	'bookmarks:read',

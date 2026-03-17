@@ -206,6 +206,14 @@ export async function publishVersion({ id, blocks, code, userId }: PublishVersio
 					handler: 'start',
 					data: JSON.stringify({ trigger: trigger.id })
 				})
+			} else if (trigger.params.TRIGGER === 'BUTTON') {
+				await tx.insert(listeners).values({
+					triggersWorkflowId: id,
+					event: 'button_pressed',
+					param: trigger.params.ACTIONID as string,
+					handler: 'start',
+					data: JSON.stringify({ trigger: trigger.id })
+				})
 			}
 		}
 

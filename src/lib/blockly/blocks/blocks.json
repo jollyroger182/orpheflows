@@ -49,6 +49,44 @@
 		"style": "logic_blocks"
 	},
 	{
+		"type": "messaging_action_button",
+		"message0": "button with text %1 action ID %2 value %3 style %4 %5",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "TEXT",
+				"align": "RIGHT"
+			},
+			{
+				"type": "input_value",
+				"name": "ACTIONID",
+				"align": "RIGHT"
+			},
+			{
+				"type": "input_value",
+				"name": "VALUE",
+				"align": "RIGHT"
+			},
+			{
+				"type": "field_dropdown",
+				"name": "STYLE",
+				"options": [
+					["normal", "NORMAL"],
+					["primary", "PRIMARY"],
+					["danger", "DANGER"]
+				]
+			},
+			{
+				"type": "input_dummy",
+				"name": "DUMMY",
+				"align": "RIGHT"
+			}
+		],
+		"output": "Action",
+		"style": "messaging_blocks",
+		"inputsInline": false
+	},
+	{
 		"type": "messaging_send_text",
 		"message0": "send message to channel %1 text %2",
 		"args0": [

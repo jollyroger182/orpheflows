@@ -1,6 +1,6 @@
 import { slack } from '$lib/server/slack'
 import { progressWorkflow, type StepExecutionContext } from '..'
-import type { KnownBlock } from '@slack/web-api'
+import type { KnownBlock, ActionsBlockElement } from '@slack/web-api'
 
 export const stepHandlers: Record<string, (context: StepExecutionContext) => Promise<unknown>> = {
 	// statements
@@ -150,6 +150,48 @@ export const stepHandlers: Record<string, (context: StepExecutionContext) => Pro
 		return ctx.data.variables['trigger.trigger_id']
 	},
 
+	messaging_send_v1: async (ctx) => {
+		const mode = ctx.params.MODE as 'CHANNEL' | 'THREAD'
+		const location = await ctx.evaluate(ctx.params.LOC as WorkflowStep)
+		const text = await ctx.evaluate(ctx.params.TEXT as WorkflowStep)
+		const components = JSON.parse(await ctx.evaluate(ctx.params.COMPS as WorkflowStep)) as string[]
+
+		const actionBlocks: KnownBlock[] = []
+		if (components.length) {
+			const actions: ActionsBlockElement[] = []
+			for (const def of components) {
+				const action = JSON.parse(def)
+				if (action.type === 'button') {
+					actions.push({
+						type: 'button',
+						text: { type: 'plain_text', text: action.text, emoji: true },
+						action_id: action.action_id,
+						value: action.value || undefined
+					})
+				}
+			}
+			actionBlocks.push({ type: 'actions', elements: actions })
+		}
+
+		const { channel, ts: thread_ts } =
+			mode === 'CHANNEL' ? { channel: location } : JSON.parse(location)
+
+		const resp = await slack.chat.postMessage({
+			channel,
+			thread_ts,
+			text,
+			blocks: [{ type: 'section', text: { type: 'mrkdwn', text } }, ...actionBlocks],
+			token: await ctx.getToken()
+		})
+		return JSON.stringify({ channel, ts: resp.ts! })
+	},
+	messaging_action_button: async (ctx) => {
+		const text = await ctx.evaluate(ctx.params.TEXT as WorkflowStep)
+		const action_id = await ctx.evaluate(ctx.params.ACTIONID as WorkflowStep)
+		const value = await ctx.evaluate(ctx.params.VALUE as WorkflowStep)
+
+		return JSON.stringify({ type: 'button', text, action_id, value })
+	},
 	messaging_get_text: async (ctx) => {
 		const message = JSON.parse(await ctx.evaluate(ctx.params.MESSAGE as WorkflowStep))
 		if ('text' in message) return message.text

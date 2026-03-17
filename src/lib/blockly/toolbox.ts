@@ -23,6 +23,25 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 			contents: [
 				{
 					kind: 'block',
+					type: 'messaging_send_v1',
+					inputs: {
+						TEXT: { shadow: { type: 'text_embed', fields: { TEXT: 'Hello World' } } },
+						COMPS: {
+							block: { type: 'lists_create_with', extraState: { itemCount: 0 } }
+						}
+					}
+				},
+				{
+					kind: 'block',
+					type: 'messaging_action_button',
+					inputs: {
+						TEXT: { shadow: { type: 'text_embed', fields: { TEXT: 'OK' } } },
+						ACTIONID: { shadow: { type: 'text_embed', fields: { TEXT: 'confirm_action' } } },
+						VALUE: { shadow: { type: 'text_embed', fields: { TEXT: 'additional state' } } }
+					}
+				},
+				{
+					kind: 'block',
 					type: 'messaging_send_text',
 					inputs: {
 						CHANNEL: {
@@ -72,6 +91,7 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 						QUESTIONS: {
 							block: {
 								type: 'lists_create_with',
+								inline: true,
 								extraState: { itemCount: 1 },
 								inputs: {
 									ADD0: {

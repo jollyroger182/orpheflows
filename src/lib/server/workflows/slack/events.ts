@@ -5,6 +5,7 @@ import type { ActionsBlockElement, AppHomeOpenedEvent, ContextBlockElement } fro
 import { startWorkflow } from '../execution'
 import { and, eq } from 'drizzle-orm'
 import { listeners as listenersSchema } from '$lib/server/db/schema'
+import { ID } from '$lib/consts'
 
 export async function handleWorkflowEvent(
 	payload: Slack.EventCallback,
@@ -152,7 +153,7 @@ async function updateAppHome(
 							type: 'button',
 							text: { type: 'plain_text', text: 'Run workflow' },
 							style: 'primary',
-							action_id: 'run_workflow'
+							action_id: ID.runWorkflow
 						}
 					]
 				}

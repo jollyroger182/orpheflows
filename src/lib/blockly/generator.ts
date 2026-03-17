@@ -19,7 +19,9 @@ class OrphejsonGenerator extends Blockly.CodeGenerator {
 	scrub_(block: Blockly.Block, code: string, thisOnly?: boolean): string {
 		const nextBlock = block.nextConnection?.targetBlock()
 		if (nextBlock && !thisOnly) {
-			return `${code},${this.blockToCode(nextBlock)}`
+			const nextCode = this.blockToCode(nextBlock)
+			if (!nextCode) return code
+			return `${code},${nextCode}`
 		}
 		return code
 	}
@@ -47,6 +49,7 @@ class OrphejsonGenerator extends Blockly.CodeGenerator {
 					)
 					break
 				case Blockly.inputs.inputTypes.STATEMENT:
+					console.log(this.statementToCode(block, input.name))
 					params[input.name] = JSON.parse('[' + this.statementToCode(block, input.name) + ']')
 					break
 			}
