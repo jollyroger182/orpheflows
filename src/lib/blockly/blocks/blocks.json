@@ -36,6 +36,18 @@
 		"style": "trigger_blocks"
 	},
 	{
+		"type": "trigger_data",
+		"message0": "trigger data %1",
+		"args0": [
+			{
+				"type": "input_dummy",
+				"name": "NAME"
+			}
+		],
+		"output": "Message",
+		"style": "trigger_blocks"
+	},
+	{
 		"type": "ignore_output",
 		"message0": "execute and ignore output %1",
 		"args0": [

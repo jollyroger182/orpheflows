@@ -149,6 +149,12 @@ export const stepHandlers: Record<string, (context: StepExecutionContext) => Pro
 		}
 		return ctx.data.variables['trigger.trigger_id']
 	},
+	trigger_data: async (ctx) => {
+		if (!('trigger.data' in ctx.data.variables)) {
+			throw new Error('The trigger does not have any data.')
+		}
+		return ctx.data.variables['trigger.data']
+	},
 
 	messaging_send_v1: async (ctx) => {
 		const mode = ctx.params.MODE as 'CHANNEL' | 'THREAD'

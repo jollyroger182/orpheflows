@@ -30,7 +30,8 @@ export async function handleWorkflowInteraction(
 					for (const listener of listeners) {
 						const variables: Record<string, string> = {
 							'trigger.user': payload.user.id,
-							'trigger.trigger_id': payload.trigger_id
+							'trigger.trigger_id': payload.trigger_id,
+							'trigger.data': action.value || ''
 						}
 						if (payload.channel && payload.message) {
 							variables['trigger.message'] = JSON.stringify({

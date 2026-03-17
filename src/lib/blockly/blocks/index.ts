@@ -53,7 +53,7 @@ const TRIGGER = {
 			input.appendField('in channel ID').appendField(new Blockly.FieldTextInput('C'), 'CHANNEL')
 		} else if (value === 'BUTTON') {
 			input
-				.appendField('with action_id')
+				.appendField('with action ID')
 				.appendField(new Blockly.FieldTextInput('confirm_action'), 'ACTIONID')
 		}
 	},
