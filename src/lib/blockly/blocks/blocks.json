@@ -1,23 +1,5 @@
 [
 	{
-		"type": "trigger",
-		"message0": "when %1 %2",
-		"args0": [
-			{
-				"type": "field_dropdown",
-				"name": "TRIGGER",
-				"options": [["workflow is executed", "MANUAL"]]
-			},
-			{
-				"type": "input_dummy",
-				"name": "NAME"
-			}
-		],
-		"nextStatement": null,
-		"style": "trigger",
-		"extensions": ["trigger"]
-	},
-	{
 		"type": "trigger_user",
 		"message0": "trigger user %1",
 		"args0": [

@@ -2,6 +2,7 @@ import { and, desc, eq } from 'drizzle-orm'
 import { db } from '../db'
 import { installations, versions, workflows } from '../db/schema'
 import { slack } from '../slack'
+import { Slack } from '.'
 
 interface GetWorkflows {
 	limit?: number
@@ -154,7 +155,7 @@ interface PublishVersion {
 
 export async function publishVersion({ id, blocks, code, userId }: PublishVersion) {
 	const now = new Date()
-	return await db.transaction(async (tx) => {
+	const result = await db.transaction(async (tx) => {
 		const [workflow] = await tx
 			.update(workflows)
 			.set({
@@ -173,6 +174,10 @@ export async function publishVersion({ id, blocks, code, userId }: PublishVersio
 			.returning()
 		return { workflow, version }
 	})
+	if (result) {
+		await Slack.updateApp({ workflow: result.workflow })
+	}
+	return result
 }
 
 interface GetLatestVersion {
