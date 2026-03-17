@@ -17,7 +17,7 @@
 
 <ModeWatcher />
 
-<header class="flex items-center gap-2 bg-blue-100 dark:bg-blue-950 px-4 py-2">
+<header class="flex items-center gap-2 bg-blue-100 px-4 py-2 dark:bg-blue-950">
 	<a href={resolve('/')}><span class="text-2xl">Orpheflows</span></a>
 
 	<span class="flex-1"></span>

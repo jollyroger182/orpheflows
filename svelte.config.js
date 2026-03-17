@@ -1,4 +1,4 @@
-import adapter from 'svelte-adapter-bun';
+import adapter from 'svelte-adapter-bun'
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -12,6 +12,6 @@ const config = {
 		dynamicCompileOptions: ({ filename }) =>
 			filename.includes('node_modules') ? undefined : { runes: true }
 	}
-};
+}
 
-export default config;
+export default config

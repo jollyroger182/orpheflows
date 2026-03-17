@@ -44,7 +44,9 @@
 {#if data.workflow.installation}
 	<div class="mb-4 flex gap-2">
 		{#if data.isOwner}
-			<a href={resolve(`/workflows/${data.workflow.id}/edit`)} class="btn btn-primary">Edit workflow</a>
+			<a href={resolve(`/workflows/${data.workflow.id}/edit`)} class="btn btn-primary"
+				>Edit workflow</a
+			>
 		{/if}
 		<a
 			href={`https://${PUBLIC_SLACK_DOMAIN}.slack.com/team/${data.workflow.installation.userId}`}

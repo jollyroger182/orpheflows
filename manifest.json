@@ -13,9 +13,7 @@
 		"unfurl_domains": ["orpheflows-dev.example.com"]
 	},
 	"oauth_config": {
-		"redirect_urls": [
-			"https://orpheflows-dev.example.com/auth/callback/slack"
-		],
+		"redirect_urls": ["https://orpheflows-dev.example.com/auth/callback/slack"],
 		"scopes": {
 			"bot": [
 				"commands",
