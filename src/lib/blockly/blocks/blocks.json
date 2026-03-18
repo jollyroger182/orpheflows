@@ -48,6 +48,48 @@
 		"style": "trigger_blocks"
 	},
 	{
+		"type": "trigger_respond",
+		"message0": "respond to trigger with text %1 actions %2 edit original %3 %4 ephemeral %5 %6",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "TEXT",
+				"align": "RIGHT",
+				"check": "String"
+			},
+			{
+				"type": "input_value",
+				"name": "COMPS",
+				"align": "RIGHT",
+				"check": "Array"
+			},
+			{
+				"type": "field_checkbox",
+				"name": "EDIT",
+				"checked": "FALSE"
+			},
+			{
+				"type": "input_dummy",
+				"name": "EDIT2",
+				"align": "RIGHT"
+			},
+			{
+				"type": "field_checkbox",
+				"name": "EPHEMERAL",
+				"checked": "TRUE"
+			},
+			{
+				"type": "input_dummy",
+				"name": "EPHEMERAL2",
+				"align": "RIGHT"
+			}
+		],
+		"previousStatement": null,
+		"nextStatement": null,
+		"style": "trigger_blocks",
+		"inputsInline": false
+	},
+	{
 		"type": "ignore_output",
 		"message0": "execute and ignore output %1",
 		"args0": [

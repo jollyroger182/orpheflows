@@ -16,7 +16,8 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 				{ kind: 'block', type: 'trigger_user' },
 				{ kind: 'block', type: 'trigger_trigger_id' },
 				{ kind: 'block', type: 'trigger_message' },
-				{ kind: 'block', type: 'trigger_data' }
+				{ kind: 'block', type: 'trigger_data' },
+				{ kind: 'block', type: 'trigger_respond' }
 			],
 			categorystyle: 'trigger_category'
 		},

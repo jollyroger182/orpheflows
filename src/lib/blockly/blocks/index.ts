@@ -73,15 +73,9 @@ const TRIGGER = {
 
 type SendMessageBlock = Blockly.Block & SendMessageMixin
 interface SendMessageMixin extends SendMessageMixinType {
-	mode: 'CHANNEL' | 'THREAD' | 'TRIGGER'
+	mode: 'CHANNEL' | 'THREAD'
 }
 type SendMessageMixinType = typeof SEND_MESSAGE
-
-const SEND_MESSAGE_OPTIONS = [
-	['channel', 'CHANNEL'],
-	['thread', 'THREAD'],
-	['response to trigger', 'TRIGGER']
-] satisfies [string, string][]
 
 const SEND_MESSAGE = {
 	init: function (this: SendMessageBlock) {
@@ -93,7 +87,10 @@ const SEND_MESSAGE = {
 				{
 					type: 'field_dropdown',
 					name: 'MODE',
-					options: SEND_MESSAGE_OPTIONS
+					options: [
+						['channel', 'CHANNEL'],
+						['thread', 'THREAD']
+					]
 				},
 				{
 					type: 'input_value',
@@ -124,50 +121,18 @@ const SEND_MESSAGE = {
 
 		this.mode = this.mode || 'CHANNEL'
 	},
-	onDropdownChange_: function (this: SendMessageBlock, newValue: string) {
-		this.mode = newValue as 'CHANNEL' | 'THREAD' | 'TRIGGER'
+	onDropdownChange_: function (this: SendMessageBlock, newValue: 'CHANNEL' | 'THREAD') {
+		this.mode = newValue
 		this.updateShape_()
 		return newValue
 	},
 	updateShape_: function (this: SendMessageBlock) {
-		if (this.mode === 'TRIGGER') {
-			this.removeInput('LOC', true)
-
-			if (!this.getInput('DUMMYLOC')) {
-				this.appendDummyInput('DUMMYLOC')
-					.appendField('send message in')
-					.appendField(
-						new Blockly.FieldDropdown(SEND_MESSAGE_OPTIONS, this.onDropdownChange_.bind(this)),
-						'MODE'
-					)
-				this.moveInputBefore('DUMMYLOC', 'TEXT')
-				this.setFieldValue(this.mode, 'MODE')
-			}
-		} else {
-			this.removeInput('DUMMYLOC', true)
-
-			const input = this.getInput('LOC')
-			if (input) {
-				input.setCheck(this.mode === 'THREAD' ? 'Message' : 'Channel')
-			} else {
-				this.appendValueInput('LOC')
-					.appendField('send message in')
-					.appendField(
-						new Blockly.FieldDropdown(SEND_MESSAGE_OPTIONS, this.onDropdownChange_.bind(this)),
-						'MODE'
-					)
-				this.moveInputBefore('LOC', 'TEXT')
-				this.setFieldValue('MODE', this.mode)
-			}
-		}
+		this.getInput('LOC')?.setCheck(this.mode === 'THREAD' ? 'Message' : 'Channel')
 	},
 	saveExtraState: function (this: SendMessageBlock) {
 		return { mode: this.mode }
 	},
-	loadExtraState: function (
-		this: SendMessageBlock,
-		state: { mode: 'CHANNEL' | 'THREAD' | 'TRIGGER' }
-	) {
+	loadExtraState: function (this: SendMessageBlock, state: { mode: 'CHANNEL' | 'THREAD' }) {
 		this.mode = state.mode || 'CHANNEL'
 		this.updateShape_()
 	}

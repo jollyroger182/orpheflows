@@ -5,6 +5,39 @@ import type { KnownBlock, ActionsBlockElement } from '@slack/web-api'
 export const stepHandlers: Record<string, (context: StepExecutionContext) => Promise<unknown>> = {
 	// statements
 
+	trigger_respond: async (ctx) => {
+		const text = await ctx.evaluate(ctx.params.TEXT as WorkflowStep)
+		const ephemeral = ctx.params.EPHEMERAL === 'TRUE'
+		const editOriginal = ctx.params.EDIT === 'TRUE'
+
+		const blocks = await generateBlocks({ ctx, text, components: ctx.params.COMPS as WorkflowStep })
+
+		const responseUrl = ctx.data.variables['trigger.response_url']
+		if (!responseUrl) {
+			throw new Error(
+				'This trigger cannot be responded to. Currently, only slash commands can be responded to with this block.'
+			)
+		}
+
+		const resp = await fetch(responseUrl, {
+			method: 'POST',
+			body: JSON.stringify({
+				response_type: ephemeral || editOriginal ? undefined : 'in_channel',
+				replace_original: editOriginal,
+				text,
+				blocks
+			}),
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		})
+		if (!resp.ok) {
+			console.error('sending message to response_url failed', await resp.text())
+			throw new Error('Failed to respond to trigger')
+		}
+		return ''
+	},
+
 	messaging_send_text: async (ctx) => {
 		const channel = await ctx.evaluate(ctx.params.CHANNEL as WorkflowStep)
 		const text = await ctx.evaluate(ctx.params.TEXT as WorkflowStep)
@@ -157,72 +190,31 @@ export const stepHandlers: Record<string, (context: StepExecutionContext) => Pro
 	},
 
 	messaging_send_v1: async (ctx) => {
-		const mode = ctx.params.MODE as 'CHANNEL' | 'THREAD' | 'TRIGGER'
+		const mode = ctx.params.MODE as 'CHANNEL' | 'THREAD'
 		const text = await ctx.evaluate(ctx.params.TEXT as WorkflowStep)
-		const components = JSON.parse(await ctx.evaluate(ctx.params.COMPS as WorkflowStep)) as string[]
 
-		const actionBlocks: KnownBlock[] = []
-		if (components.length) {
-			const actions: ActionsBlockElement[] = []
-			for (const def of components) {
-				const action = JSON.parse(def)
-				if (action.type === 'button') {
-					actions.push({
-						type: 'button',
-						text: { type: 'plain_text', text: action.text, emoji: true },
-						action_id: action.action_id,
-						value: action.value || undefined
-					})
-				}
-			}
-			actionBlocks.push({ type: 'actions', elements: actions })
-		}
+		const blocks = await generateBlocks({ ctx, text, components: ctx.params.COMPS as WorkflowStep })
 
-		if (mode === 'TRIGGER') {
-			const responseUrl = ctx.data.variables['trigger.response_url']
-			if (!responseUrl) {
-				throw new Error(
-					'This trigger cannot be responded to. Currently, only slash commands can be responded to with this block.'
-				)
-			}
-			const resp = await fetch(responseUrl, {
-				method: 'POST',
-				body: JSON.stringify({
-					response_type: 'in_channel',
-					text,
-					blocks: [{ type: 'section', text: { type: 'mrkdwn', text } }, ...actionBlocks]
-				}),
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			})
-			if (!resp.ok) {
-				console.error('sending message to response_url failed', await resp.text())
-				throw new Error('Failed to respond to trigger')
-			}
-			console.log(await resp.text())
-			return ''
-		} else {
-			const location = await ctx.evaluate(ctx.params.LOC as WorkflowStep)
-			const { channel, ts: thread_ts } =
-				mode === 'CHANNEL' ? { channel: location } : JSON.parse(location)
+		const location = await ctx.evaluate(ctx.params.LOC as WorkflowStep)
+		const { channel, ts: thread_ts } =
+			mode === 'CHANNEL' ? { channel: location } : JSON.parse(location)
 
-			const resp = await slack.chat.postMessage({
-				channel,
-				thread_ts,
-				text,
-				blocks: [{ type: 'section', text: { type: 'mrkdwn', text } }, ...actionBlocks],
-				token: await ctx.getToken()
-			})
-			return JSON.stringify({ channel, ts: resp.ts! })
-		}
+		const resp = await slack.chat.postMessage({
+			channel,
+			thread_ts,
+			text,
+			blocks,
+			token: await ctx.getToken()
+		})
+		return JSON.stringify({ channel, ts: resp.ts! })
 	},
 	messaging_action_button: async (ctx) => {
 		const text = await ctx.evaluate(ctx.params.TEXT as WorkflowStep)
 		const action_id = await ctx.evaluate(ctx.params.ACTIONID as WorkflowStep)
 		const value = await ctx.evaluate(ctx.params.VALUE as WorkflowStep)
+		const style = ctx.params.STYLE as string
 
-		return JSON.stringify({ type: 'button', text, action_id, value })
+		return JSON.stringify({ type: 'button', text, action_id, value, style })
 	},
 	messaging_get_text: async (ctx) => {
 		const message = JSON.parse(await ctx.evaluate(ctx.params.MESSAGE as WorkflowStep))
@@ -361,4 +353,37 @@ export const stepHandlers: Record<string, (context: StepExecutionContext) => Pro
 	// hidden
 
 	text_embed: async (ctx) => ctx.params.TEXT as string
+}
+
+async function generateBlocks({
+	ctx,
+	text,
+	components: componentsStep
+}: {
+	ctx: StepExecutionContext
+	text: string
+	components: WorkflowStep
+}): Promise<KnownBlock[]> {
+	const components = JSON.parse(await ctx.evaluate(componentsStep as WorkflowStep)) as string[]
+
+	const actionBlocks: KnownBlock[] = []
+	if (components.length) {
+		const actions: ActionsBlockElement[] = []
+		for (const def of components) {
+			const action = JSON.parse(def)
+			if (action.type === 'button') {
+				const style = action.style === 'NORMAL' ? undefined : action.style.toLowerCase()
+				actions.push({
+					type: 'button',
+					text: { type: 'plain_text', text: action.text, emoji: true },
+					action_id: action.action_id,
+					value: action.value || undefined,
+					style
+				})
+			}
+		}
+		actionBlocks.push({ type: 'actions', elements: actions })
+	}
+
+	return [{ type: 'section', text: { type: 'mrkdwn', text } }, ...actionBlocks]
 }
