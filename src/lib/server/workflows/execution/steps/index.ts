@@ -235,14 +235,14 @@ export const stepHandlers: Record<string, (context: StepExecutionContext) => Pro
 		return msg?.text || ''
 	},
 	messaging_send_v1: async (ctx) => {
-		const mode = ctx.params.MODE as 'CHANNEL' | 'THREAD'
+		const mode = ctx.params.MODE as 'CHANNEL' | 'THREAD' | 'USER'
 		const text = await ctx.evaluate(ctx.params.TEXT as WorkflowStep)
 
 		const blocks = await generateBlocks({ ctx, text, components: ctx.params.COMPS as WorkflowStep })
 
 		const location = await ctx.evaluate(ctx.params.LOC as WorkflowStep)
 		const { channel, ts: thread_ts } =
-			mode === 'CHANNEL' ? { channel: location } : JSON.parse(location)
+			mode === 'CHANNEL' || mode === 'USER' ? { channel: location } : JSON.parse(location)
 
 		const resp = await slack.chat.postMessage({
 			channel,

@@ -73,7 +73,7 @@ const TRIGGER = {
 
 type SendMessageBlock = Blockly.Block & SendMessageMixin
 interface SendMessageMixin extends SendMessageMixinType {
-	mode: 'CHANNEL' | 'THREAD'
+	mode: 'CHANNEL' | 'THREAD' | 'USER'
 }
 type SendMessageMixinType = typeof SEND_MESSAGE
 
@@ -89,7 +89,8 @@ const SEND_MESSAGE = {
 					name: 'MODE',
 					options: [
 						['channel', 'CHANNEL'],
-						['thread', 'THREAD']
+						['thread', 'THREAD'],
+						['user', 'USER']
 					]
 				},
 				{
@@ -121,18 +122,23 @@ const SEND_MESSAGE = {
 
 		this.mode = this.mode || 'CHANNEL'
 	},
-	onDropdownChange_: function (this: SendMessageBlock, newValue: 'CHANNEL' | 'THREAD') {
+	onDropdownChange_: function (this: SendMessageBlock, newValue: 'CHANNEL' | 'THREAD' | 'USER') {
 		this.mode = newValue
 		this.updateShape_()
 		return newValue
 	},
 	updateShape_: function (this: SendMessageBlock) {
-		this.getInput('LOC')?.setCheck(this.mode === 'THREAD' ? 'Message' : 'Channel')
+		this.getInput('LOC')?.setCheck(
+			{ CHANNEL: 'Channel', THREAD: 'Message', USER: 'User' }[this.mode]
+		)
 	},
 	saveExtraState: function (this: SendMessageBlock) {
 		return { mode: this.mode }
 	},
-	loadExtraState: function (this: SendMessageBlock, state: { mode: 'CHANNEL' | 'THREAD' }) {
+	loadExtraState: function (
+		this: SendMessageBlock,
+		state: { mode: 'CHANNEL' | 'THREAD' | 'USER' }
+	) {
 		this.mode = state.mode || 'CHANNEL'
 		this.updateShape_()
 	}
