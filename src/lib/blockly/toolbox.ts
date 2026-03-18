@@ -169,7 +169,14 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 				{ kind: 'block', type: 'text' },
 				{ kind: 'block', type: 'text_join' },
 				{ kind: 'block', type: 'text_length2' },
-				{ kind: 'block', type: 'text_indexOf2' }
+				{ kind: 'block', type: 'text_indexOf' },
+				{ kind: 'block', type: 'text_charAt' },
+				{ kind: 'block', type: 'text_getSubstring' },
+				{ kind: 'block', type: 'text_changeCase' },
+				{ kind: 'block', type: 'text_trim' },
+				{ kind: 'block', type: 'text_count' },
+				{ kind: 'block', type: 'text_replace' },
+				{ kind: 'block', type: 'text_reverse' }
 			],
 			categorystyle: 'text_category'
 		},
@@ -200,6 +207,7 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 			kind: 'category',
 			name: 'Legacy',
 			contents: [
+				{ kind: 'block', type: 'text_indexOf2' },
 				{
 					kind: 'block',
 					type: 'messaging_send_text',
