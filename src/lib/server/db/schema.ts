@@ -181,3 +181,23 @@ export const users = pgTable('users', {
 export const usersRelations = relations(users, ({ many }) => ({
 	workflows: many(workflows)
 }))
+
+// audit logs
+
+export const auditLogs = pgTable(
+	'audit_logs',
+	{
+		id: serial('id').primaryKey(),
+		user: text('user').references(() => users.id),
+		action: text('action').notNull(),
+		resourceType: text('resource_type').notNull(),
+		resourceId: text('resource_id').notNull(),
+		metadata: text('metadata'),
+		createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow()
+	},
+	(table) => [
+		index().on(table.user),
+		index().on(table.action, table.user),
+		index().on(table.createdAt)
+	]
+)

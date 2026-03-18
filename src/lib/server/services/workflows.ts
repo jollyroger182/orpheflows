@@ -2,7 +2,7 @@ import { and, desc, eq } from 'drizzle-orm'
 import { db } from '../db'
 import { installations, listeners, versions, workflows } from '../db/schema'
 import { slack } from '../slack'
-import { Slack } from '.'
+import { AuditLogs, Slack } from '.'
 
 interface GetWorkflows {
 	limit?: number
@@ -86,7 +86,7 @@ export async function createWorkflow({
 	verificationToken,
 	signingSecret
 }: CreateWorkflow) {
-	return (
+	const workflow = (
 		await db
 			.insert(workflows)
 			.values({
@@ -101,6 +101,14 @@ export async function createWorkflow({
 			})
 			.returning()
 	)[0]!
+	await AuditLogs.create({
+		action: 'workflow.create',
+		user: author,
+		resourceType: 'workflow',
+		resourceId: workflow.id,
+		metadata: { name, description }
+	})
+	return workflow
 }
 
 interface CreateWorkflowInstallation {
@@ -110,12 +118,19 @@ interface CreateWorkflowInstallation {
 
 export async function createWorkflowInstallation({ id, token }: CreateWorkflowInstallation) {
 	const resp = await slack.auth.test({ token })
-	return (
+	const installation = (
 		await db
 			.insert(installations)
 			.values({ token, workflowId: id, userId: resp.user_id! })
 			.returning()
 	)[0]!
+	await AuditLogs.create({
+		action: 'installation.create',
+		resourceType: 'installation',
+		resourceId: installation.id,
+		metadata: { workflowId: id }
+	})
+	return installation
 }
 
 interface SetCode {
@@ -167,6 +182,13 @@ export async function setDetails({
 			.returning()
 	)[0]
 	if (workflow) {
+		await AuditLogs.create({
+			action: 'workflow.editDetails',
+			user: userId,
+			resourceType: 'workflow',
+			resourceId: workflow.id,
+			metadata: { name, description }
+		})
 		await Slack.updateApp({ workflow })
 	}
 	return workflow
@@ -254,6 +276,13 @@ export async function publishVersion({ id, blocks, code, userId }: PublishVersio
 		return { workflow, version }
 	})
 	if (result) {
+		await AuditLogs.create({
+			action: 'workflow.publish',
+			user: userId,
+			resourceType: 'workflow',
+			resourceId: id,
+			metadata: { versionId: result.version.id }
+		})
 		await Slack.updateApp({ workflow: result.workflow })
 	}
 	return result
@@ -273,14 +302,33 @@ export async function getLatestVersion({ id }: GetLatestVersion) {
 interface Delete {
 	id: number
 	appId: string
+	userId: string
 }
 
-export async function deleteWorkflow({ id, appId }: Delete) {
-	try {
-		await Slack.deleteApp({ id: appId })
-	} catch (e) {
-		console.error('failed to delete slack app', e)
-		throw e
+export async function deleteWorkflow({ id, appId, userId }: Delete) {
+	const workflow = await db.transaction(async (tx) => {
+		const result = (
+			await tx
+				.delete(workflows)
+				.where(and(eq(workflows.id, id), eq(workflows.authorId, userId)))
+				.returning()
+		)[0]
+		if (!result) return
+		try {
+			await Slack.deleteApp({ id: appId })
+		} catch (e) {
+			console.error('failed to delete slack app', e)
+			throw e
+		}
+		return result
+	})
+	if (workflow) {
+		await AuditLogs.create({
+			action: 'workflow.delete',
+			user: userId,
+			resourceType: 'workflow',
+			resourceId: id,
+			metadata: { name: workflow.name }
+		})
 	}
-	await db.delete(workflows).where(eq(workflows.id, id))
 }

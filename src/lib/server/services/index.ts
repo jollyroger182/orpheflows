@@ -1,3 +1,4 @@
+export * as AuditLogs from './audit_logs'
 export * as ConfigTokens from './config_tokens'
 export * as Executions from './executions'
 export * as Listeners from './listeners'

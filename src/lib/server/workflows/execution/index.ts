@@ -48,7 +48,8 @@ export async function startWorkflow({
 	const { id } = await Executions.create({
 		workflowId,
 		versionId: version.id,
-		data: JSON.stringify(data)
+		data: JSON.stringify(data),
+		user: variables['trigger.user']
 	})
 
 	await progressWorkflow({ executionId: id, continuationToken })

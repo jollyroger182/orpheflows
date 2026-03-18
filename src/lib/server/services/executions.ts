@@ -1,15 +1,27 @@
 import { eq } from 'drizzle-orm'
 import { db } from '../db'
 import { executions } from '../db/schema'
+import { AuditLogs } from '.'
 
 interface Create {
 	workflowId: number
 	versionId: number
 	data: string
+	user?: string
 }
 
-export async function create({ workflowId, versionId, data }: Create) {
-	return (await db.insert(executions).values({ workflowId, versionId, data }).returning())[0]!
+export async function create({ workflowId, versionId, data, user }: Create) {
+	const execution = (
+		await db.insert(executions).values({ workflowId, versionId, data }).returning()
+	)[0]!
+	await AuditLogs.create({
+		action: 'execution.start',
+		user,
+		resourceType: 'execution',
+		resourceId: execution.id,
+		metadata: { workflowId, versionId }
+	})
+	return execution
 }
 
 interface Get {
