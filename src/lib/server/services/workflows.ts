@@ -214,6 +214,14 @@ export async function publishVersion({ id, blocks, code, userId }: PublishVersio
 					handler: 'start',
 					data: JSON.stringify({ trigger: trigger.id })
 				})
+			} else if (trigger.params.TRIGGER === 'SLASH') {
+				await tx.insert(listeners).values({
+					triggersWorkflowId: id,
+					event: 'slash_command',
+					param: trigger.params.NAME as string,
+					handler: 'start',
+					data: JSON.stringify({ trigger: trigger.id })
+				})
 			}
 		}
 

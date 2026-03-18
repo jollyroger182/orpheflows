@@ -157,8 +157,7 @@ export const stepHandlers: Record<string, (context: StepExecutionContext) => Pro
 	},
 
 	messaging_send_v1: async (ctx) => {
-		const mode = ctx.params.MODE as 'CHANNEL' | 'THREAD'
-		const location = await ctx.evaluate(ctx.params.LOC as WorkflowStep)
+		const mode = ctx.params.MODE as 'CHANNEL' | 'THREAD' | 'TRIGGER'
 		const text = await ctx.evaluate(ctx.params.TEXT as WorkflowStep)
 		const components = JSON.parse(await ctx.evaluate(ctx.params.COMPS as WorkflowStep)) as string[]
 
@@ -179,17 +178,44 @@ export const stepHandlers: Record<string, (context: StepExecutionContext) => Pro
 			actionBlocks.push({ type: 'actions', elements: actions })
 		}
 
-		const { channel, ts: thread_ts } =
-			mode === 'CHANNEL' ? { channel: location } : JSON.parse(location)
+		if (mode === 'TRIGGER') {
+			const responseUrl = ctx.data.variables['trigger.response_url']
+			if (!responseUrl) {
+				throw new Error(
+					'This trigger cannot be responded to. Currently, only slash commands can be responded to with this block.'
+				)
+			}
+			const resp = await fetch(responseUrl, {
+				method: 'POST',
+				body: JSON.stringify({
+					response_type: 'in_channel',
+					text,
+					blocks: [{ type: 'section', text: { type: 'mrkdwn', text } }, ...actionBlocks]
+				}),
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			})
+			if (!resp.ok) {
+				console.error('sending message to response_url failed', await resp.text())
+				throw new Error('Failed to respond to trigger')
+			}
+			console.log(await resp.text())
+			return ''
+		} else {
+			const location = await ctx.evaluate(ctx.params.LOC as WorkflowStep)
+			const { channel, ts: thread_ts } =
+				mode === 'CHANNEL' ? { channel: location } : JSON.parse(location)
 
-		const resp = await slack.chat.postMessage({
-			channel,
-			thread_ts,
-			text,
-			blocks: [{ type: 'section', text: { type: 'mrkdwn', text } }, ...actionBlocks],
-			token: await ctx.getToken()
-		})
-		return JSON.stringify({ channel, ts: resp.ts! })
+			const resp = await slack.chat.postMessage({
+				channel,
+				thread_ts,
+				text,
+				blocks: [{ type: 'section', text: { type: 'mrkdwn', text } }, ...actionBlocks],
+				token: await ctx.getToken()
+			})
+			return JSON.stringify({ channel, ts: resp.ts! })
+		}
 	},
 	messaging_action_button: async (ctx) => {
 		const text = await ctx.evaluate(ctx.params.TEXT as WorkflowStep)

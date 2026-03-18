@@ -12,6 +12,7 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 				{ kind: 'block', type: 'trigger', extraState: { trigger: 'MESSAGE' } },
 				{ kind: 'block', type: 'trigger', extraState: { trigger: 'DM' } },
 				{ kind: 'block', type: 'trigger', extraState: { trigger: 'BUTTON' } },
+				{ kind: 'block', type: 'trigger', extraState: { trigger: 'SLASH' } },
 				{ kind: 'block', type: 'trigger_user' },
 				{ kind: 'block', type: 'trigger_trigger_id' },
 				{ kind: 'block', type: 'trigger_message' },

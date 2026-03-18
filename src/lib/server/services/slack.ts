@@ -63,6 +63,14 @@ export async function generateManifest({ name, triggers = [] }: GenerateManifest
 		? (['message.channels', 'message.groups', 'message.mpim'] as const)
 		: []
 	const dmEvents = triggers.find((s) => s.params.TRIGGER === 'DM') ? (['message.im'] as const) : []
+	const slashCommands = triggers
+		.filter((s) => s.params.TRIGGER === 'SLASH')
+		.map((s) => ({
+			command: `/${s.params.NAME}`,
+			description: 'Trigger the workflow',
+			should_escape: true,
+			url: `${EXTERNAL_URL}/api/slack/slash`
+		}))
 
 	const manifest = {
 		display_information: {
@@ -78,7 +86,8 @@ export async function generateManifest({ name, triggers = [] }: GenerateManifest
 			bot_user: {
 				display_name: name,
 				always_online: false
-			}
+			},
+			slash_commands: slashCommands.length ? slashCommands : undefined
 		},
 		oauth_config: {
 			redirect_urls: [`${EXTERNAL_URL}/api/slack/callback`],
