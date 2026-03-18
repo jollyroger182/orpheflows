@@ -1,10 +1,13 @@
 <script lang="ts">
 	import { resolve } from '$app/paths'
 	import { PUBLIC_SLACK_DOMAIN } from '$env/static/public'
+	import WorkflowForm from '$lib/components/WorkflowForm.svelte'
 	import { WORKFLOW_APP_SCOPES } from '$lib/consts'
 	import type { PageProps } from './$types'
 
 	let { data, form }: PageProps = $props()
+
+	let showDetailsForm = $state(false)
 
 	let deleteForm: HTMLFormElement | undefined = $state()
 
@@ -35,6 +38,12 @@
 	</p>
 {/if}
 
+{#if form?.error}
+	<p class="mb-4 rounded border border-red-300 bg-red-50 p-4 dark:border-red-700 dark:bg-red-950">
+		{form.error}
+	</p>
+{/if}
+
 <h1 class="mb-4 text-3xl font-semibold">{data.workflow.name}</h1>
 
 <p class="mb-4 flex items-center gap-2">
@@ -62,8 +71,11 @@
 <p class="mb-4">{data.workflow.description}</p>
 
 {#if data.workflow.installation}
-	<div class="mb-4 flex gap-2">
+	<div class="mb-4 flex flex-wrap gap-2">
 		{#if data.isOwner}
+			<button onclick={() => (showDetailsForm = !showDetailsForm)} class="btn btn-secondary"
+				>Edit details</button
+			>
 			<a href={resolve(`/workflows/${data.workflow.id}/edit`)} class="btn btn-primary"
 				>Edit workflow</a
 			>
@@ -92,4 +104,13 @@
 
 {#if data.isOwner}
 	<form method="POST" action="?/delete" bind:this={deleteForm}></form>
+{/if}
+
+{#if showDetailsForm}
+	<WorkflowForm
+		action="?/edit"
+		button="Save"
+		name={data.workflow.name}
+		description={data.workflow.description}
+	/>
 {/if}

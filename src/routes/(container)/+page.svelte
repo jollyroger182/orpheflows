@@ -8,7 +8,7 @@
 	let user = $derived(page.data.session?.user)
 </script>
 
-<div class="mb-4 flex items-center gap-20">
+<div class="mb-4 flex flex-wrap items-center gap-x-20 gap-y-2">
 	<h1 class="text-3xl font-semibold">Your workflows</h1>
 	{#if user}
 		<a href={resolve('/workflows/new')} class="btn btn-success">Create</a>

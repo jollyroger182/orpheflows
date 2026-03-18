@@ -3,6 +3,7 @@ import { Workflows } from '$lib/server/services'
 import { error, redirect } from '@sveltejs/kit'
 import type { PageServerLoad } from './$types'
 import { startWorkflow } from '$lib/server/workflows/execution'
+import z from 'zod'
 
 export const load: PageServerLoad = async ({ locals, params }) => {
 	const id = parseInt(params.id)
@@ -33,6 +34,11 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 		canRun
 	}
 }
+
+const EditSchema = z.object({
+	name: z.string().nonempty().max(36),
+	description: z.string().nonempty().max(200)
+})
 
 export const actions = {
 	run: async ({ locals, params }) => {
@@ -68,5 +74,31 @@ export const actions = {
 		await Workflows.deleteWorkflow({ id, appId: flow.appId })
 
 		redirect(303, '/')
+	},
+	edit: async ({ locals, params, request }) => {
+		const id = parseInt(params.id)
+		if (isNaN(id)) return error(404, 'Workflow not found')
+
+		const session = await locals.auth()
+		if (!session?.user.slackId) return error(401, 'You are not logged in')
+
+		const form = await request.formData()
+		const {
+			success,
+			error: err,
+			data
+		} = EditSchema.safeParse({
+			name: form.get('name'),
+			description: form.get('description')
+		})
+		if (!success) {
+			return { error: z.prettifyError(err) }
+		}
+		const { name, description } = data
+
+		const flow = await Workflows.setDetails({ id, name, description, userId: session.user.slackId })
+		if (!flow) return error(403, 'You cannot edit this workflow')
+
+		return { message: 'Workflow edited!' }
 	}
 }

@@ -146,6 +146,32 @@ export async function setCode({
 	)[0]
 }
 
+interface SetDetails {
+	id: number
+	name: string
+	description: string
+	userId: string
+}
+
+export async function setDetails({
+	id,
+	name,
+	description,
+	userId
+}: SetDetails): Promise<typeof workflows.$inferSelect | undefined> {
+	const workflow = (
+		await db
+			.update(workflows)
+			.set({ name, description })
+			.where(and(eq(workflows.id, id), eq(workflows.authorId, userId)))
+			.returning()
+	)[0]
+	if (workflow) {
+		await Slack.updateApp({ workflow })
+	}
+	return workflow
+}
+
 interface PublishVersion {
 	id: number
 	blocks?: string
