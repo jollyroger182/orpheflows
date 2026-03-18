@@ -243,3 +243,18 @@ export async function getLatestVersion({ id }: GetLatestVersion) {
 		orderBy: desc(versions.createdAt)
 	})
 }
+
+interface Delete {
+	id: number
+	appId: string
+}
+
+export async function deleteWorkflow({ id, appId }: Delete) {
+	try {
+		await Slack.deleteApp({ id: appId })
+	} catch (e) {
+		console.error('failed to delete slack app', e)
+		throw e
+	}
+	await db.delete(workflows).where(eq(workflows.id, id))
+}

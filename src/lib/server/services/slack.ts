@@ -50,6 +50,19 @@ export async function updateApp({ workflow }: UpdateApp) {
 	await slack.apps.manifest.update({ app_id: workflow.appId, manifest, token })
 }
 
+interface DeleteApp {
+	id: string
+}
+
+export async function deleteApp({ id }: DeleteApp) {
+	const token = await ConfigTokens.getActiveConfigToken()
+	if (!token) {
+		throw new Error('No app config token set')
+	}
+
+	await slack.apps.manifest.delete({ app_id: id, token })
+}
+
 interface GenerateManifest {
 	name: string
 	triggers?: WorkflowStep[]

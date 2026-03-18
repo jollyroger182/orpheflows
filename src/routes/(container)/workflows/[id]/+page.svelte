@@ -6,6 +6,8 @@
 
 	let { data, form }: PageProps = $props()
 
+	let deleteForm: HTMLFormElement | undefined = $state()
+
 	const oauthUrl = $derived.by(() => {
 		const url = new URL('https://slack.com/oauth/v2/authorize')
 		url.searchParams.set('client_id', data.clientId || '')
@@ -13,6 +15,16 @@
 		url.searchParams.set('state', data.clientId || '')
 		return url.toString()
 	})
+
+	function confirmDelete() {
+		if (
+			confirm(
+				'This action cannot be undone and will delete and uninstall the workflow. Are you sure you want to delete it?'
+			)
+		) {
+			deleteForm?.submit()
+		}
+	}
 </script>
 
 {#if form?.message}
@@ -65,6 +77,9 @@
 				<button type="submit" class="btn btn-success">Run workflow</button>
 			</form>
 		{/if}
+		{#if data.isOwner}
+			<button onclick={confirmDelete} class="btn btn-danger">Delete workflow</button>
+		{/if}
 	</div>
 {:else if data.isOwner}
 	<p class="mb-4">
@@ -73,4 +88,8 @@
 	</p>
 {:else}
 	<p class="mb-4">The workflow creator hasn't installed the workflow yet.</p>
+{/if}
+
+{#if data.isOwner}
+	<form method="POST" action="?/delete" bind:this={deleteForm}></form>
 {/if}

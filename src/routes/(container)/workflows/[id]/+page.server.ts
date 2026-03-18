@@ -1,6 +1,6 @@
 import { convertWorkflowToPublic } from '$lib/server/convert'
 import { Workflows } from '$lib/server/services'
-import { error } from '@sveltejs/kit'
+import { error, redirect } from '@sveltejs/kit'
 import type { PageServerLoad } from './$types'
 import { startWorkflow } from '$lib/server/workflows/execution'
 
@@ -52,5 +52,21 @@ export const actions = {
 		})
 
 		return { message: 'Workflow started!' }
+	},
+	delete: async ({ locals, params }) => {
+		const id = parseInt(params.id)
+		if (isNaN(id)) return error(404, 'Workflow not found')
+
+		const session = await locals.auth()
+		if (!session?.user.slackId) return error(401, 'You are not logged in')
+
+		const flow = await Workflows.getWorkflow({ id })
+		if (!flow) return error(404, 'Workflow not found')
+
+		if (flow.authorId !== session.user.slackId) return error(403, 'You cannot delete this workflow')
+
+		await Workflows.deleteWorkflow({ id, appId: flow.appId })
+
+		redirect(303, '/')
 	}
 }
