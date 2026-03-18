@@ -17,7 +17,8 @@ const TRIGGER = {
 			.appendField(
 				new Blockly.FieldDropdown(
 					[
-						['workflow is executed', 'MANUAL'],
+						['workflow is executed in slack', 'MANUAL'],
+						['workflow is executed on website', 'WEBSITE'],
 						['reaction is added', 'REACTION'],
 						['message is received', 'MESSAGE'],
 						['message is received in DM', 'DM'],
@@ -40,7 +41,7 @@ const TRIGGER = {
 			this.removeInput('DYNAMIC')
 		}
 
-		if (value === 'MANUAL' || value === 'DM') return
+		if (value === 'MANUAL' || value === 'WEBSITE' || value === 'DM') return
 
 		const input = this.appendDummyInput('DYNAMIC')
 

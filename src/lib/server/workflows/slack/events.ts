@@ -1,11 +1,11 @@
 import { EXTERNAL_URL } from '$env/static/private'
+import { ID } from '$lib/consts'
+import { listeners as listenersSchema } from '$lib/server/db/schema'
 import { Listeners, Workflows } from '$lib/server/services'
 import { slack } from '$lib/server/slack'
 import type { ActionsBlockElement, AppHomeOpenedEvent, ContextBlockElement } from '@slack/web-api'
-import { startWorkflow } from '../execution'
 import { and, eq } from 'drizzle-orm'
-import { listeners as listenersSchema } from '$lib/server/db/schema'
-import { ID } from '$lib/consts'
+import { startWorkflow } from '../execution'
 
 export async function handleWorkflowEvent(
 	payload: Slack.EventCallback,
@@ -106,6 +106,13 @@ async function updateAppHome(
 	workflow: Awaited<ReturnType<typeof Workflows.getWorkflowByVerificationToken>> & {},
 	event: AppHomeOpenedEvent
 ) {
+	const version = await Workflows.getLatestVersion({ id: workflow.id })
+	const hasManualTrigger =
+		!!version &&
+		!!(JSON.parse(version.code) as WorkflowStep[]).find(
+			(s) => s.type === 'trigger' && s.params.TRIGGER === 'MANUAL'
+		)
+
 	const pfpElements: ContextBlockElement[] = workflow.author.photo_url
 		? [{ type: 'image', image_url: workflow.author.photo_url, alt_text: 'Profile picture' }]
 		: []
@@ -120,6 +127,17 @@ async function updateAppHome(
 					}
 				]
 			: []
+
+	const runElements: ActionsBlockElement[] = hasManualTrigger
+		? [
+				{
+					type: 'button',
+					text: { type: 'plain_text', text: 'Run workflow' },
+					style: 'primary',
+					action_id: ID.runWorkflow
+				}
+			]
+		: []
 
 	await slack.views.publish({
 		user_id: event.user,
@@ -147,15 +165,7 @@ async function updateAppHome(
 				},
 				{
 					type: 'actions',
-					elements: [
-						...editElements,
-						{
-							type: 'button',
-							text: { type: 'plain_text', text: 'Run workflow' },
-							style: 'primary',
-							action_id: ID.runWorkflow
-						}
-					]
+					elements: [...editElements, ...runElements]
 				}
 			]
 		},

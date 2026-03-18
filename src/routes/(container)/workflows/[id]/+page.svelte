@@ -4,7 +4,7 @@
 	import { WORKFLOW_APP_SCOPES } from '$lib/consts'
 	import type { PageProps } from './$types'
 
-	let { data }: PageProps = $props()
+	let { data, form }: PageProps = $props()
 
 	const oauthUrl = $derived.by(() => {
 		const url = new URL('https://slack.com/oauth/v2/authorize')
@@ -14,6 +14,14 @@
 		return url.toString()
 	})
 </script>
+
+{#if form?.message}
+	<p
+		class="mb-4 rounded border border-green-300 bg-green-50 p-4 dark:border-green-700 dark:bg-green-950"
+	>
+		{form.message}
+	</p>
+{/if}
 
 <h1 class="mb-4 text-3xl font-semibold">{data.workflow.name}</h1>
 
@@ -52,6 +60,11 @@
 			href={`https://${PUBLIC_SLACK_DOMAIN}.slack.com/team/${data.workflow.installation.userId}`}
 			class="btn btn-success">Open in Slack</a
 		>
+		{#if data.canRun}
+			<form method="POST" action="?/run">
+				<button type="submit" class="btn btn-success">Run workflow</button>
+			</form>
+		{/if}
 	</div>
 {:else if data.isOwner}
 	<p class="mb-4">

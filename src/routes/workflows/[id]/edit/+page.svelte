@@ -11,6 +11,7 @@
 	import * as En from 'blockly/msg/en'
 	import { mode } from 'mode-watcher'
 	import { onMount } from 'svelte'
+	import { resolve } from '$app/paths'
 
 	const { data } = $props()
 
@@ -161,7 +162,7 @@
 
 <div class="grid h-full grid-cols-2 grid-rows-[auto_1fr]">
 	<div class="col-span-2 flex items-center gap-2 px-4 py-2">
-		<span class="text-lg">{data.workflow.name}</span>
+		<a href={resolve(`/workflows/${data.workflow.id}`)} class="text-lg">{data.workflow.name}</a>
 		<button onclick={onSave} class="btn btn-sm btn-secondary">Save</button>
 		<button onclick={onPublish} class="btn btn-sm btn-success">Publish</button>
 	</div>

@@ -2,6 +2,7 @@ import { convertWorkflowToPublic } from '$lib/server/convert'
 import { Workflows } from '$lib/server/services'
 import { error } from '@sveltejs/kit'
 import type { PageServerLoad } from './$types'
+import { startWorkflow } from '$lib/server/workflows/execution'
 
 export const load: PageServerLoad = async ({ locals, params }) => {
 	const id = parseInt(params.id)
@@ -15,10 +16,41 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 	const isOwner = flow.authorId == session?.user.slackId
 	const isInstalled = !!flow.installation
 
+	let canRun = false
+	if (session) {
+		const version = await Workflows.getLatestVersion({ id })
+		if (version) {
+			const steps = JSON.parse(version.code) as WorkflowStep[]
+			canRun = !!steps.find((s) => s.type === 'trigger' && s.params.TRIGGER === 'WEBSITE')
+		}
+	}
+
 	return {
 		workflow: convertWorkflowToPublic(flow),
 		clientId: isOwner ? flow.clientId : null,
 		isOwner,
-		isInstalled
+		isInstalled,
+		canRun
+	}
+}
+
+export const actions = {
+	run: async ({ locals, params }) => {
+		const id = parseInt(params.id)
+		if (isNaN(id)) return error(404, 'Workflow not found')
+
+		const session = await locals.auth()
+		if (!session?.user.slackId) return error(401, 'You are not logged in')
+
+		const flow = await Workflows.getWorkflow({ id })
+		if (!flow) return error(404, 'Workflow not found')
+
+		await startWorkflow({
+			workflowId: id,
+			variables: { 'trigger.user': session.user.slackId },
+			findTrigger: (step) => step.params.TRIGGER === 'WEBSITE'
+		})
+
+		return { message: 'Workflow started!' }
 	}
 }
