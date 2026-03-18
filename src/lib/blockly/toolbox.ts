@@ -79,7 +79,6 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 						QUESTIONS: {
 							block: {
 								type: 'lists_create_with',
-								inline: true,
 								extraState: { itemCount: 1 },
 								inputs: {
 									ADD0: {
@@ -123,40 +122,57 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 			],
 			categorystyle: 'user_category'
 		},
+
+		{ kind: 'sep' },
+
 		{
 			kind: 'category',
-			name: 'Control',
+			name: 'Logic',
 			contents: [
 				{ kind: 'block', type: 'controls_if' },
 				{ kind: 'block', type: 'controls_if', extraState: { hasElse: true } },
 				{ kind: 'block', type: 'controls_if', extraState: { elseIfCount: 1, hasElse: true } },
+				{ kind: 'block', type: 'logic_compare' },
+				{ kind: 'block', type: 'logic_boolean' },
 				{ kind: 'block', type: 'ignore_output' }
 			],
 			categorystyle: 'logic_category'
 		},
 		{
+			kind: 'Category',
+			name: 'Math',
+			contents: [
+				{ kind: 'block', type: 'math_number' },
+				{ kind: 'block', type: 'math_round' },
+				{ kind: 'block', type: 'convert_float' },
+				{ kind: 'block', type: 'convert_int' }
+			],
+			categorystyle: 'math_category'
+		},
+		{
 			kind: 'category',
-			name: 'Primitives',
+			name: 'Text',
 			contents: [
 				{ kind: 'block', type: 'text' },
-				{ kind: 'block', type: 'text_join', inline: true },
-				{ kind: 'block', type: 'logic_boolean' },
-				{ kind: 'block', type: 'math_number' },
-				{ kind: 'block', type: 'lists_create_with', inline: true, extraState: { itemCount: 0 } },
-				{ kind: 'block', type: 'lists_create_with', inline: true },
-				{ kind: 'block', type: 'logic_compare' },
+				{ kind: 'block', type: 'text_join' },
 				{ kind: 'block', type: 'text_length2' },
-				{ kind: 'block', type: 'text_indexOf2' },
+				{ kind: 'block', type: 'text_indexOf2' }
+			],
+			categorystyle: 'text_category'
+		},
+		{
+			kind: 'category',
+			name: 'Lists',
+			contents: [
+				{ kind: 'block', type: 'lists_create_with', extraState: { itemCount: 0 } },
+				{ kind: 'block', type: 'lists_create_with' },
 				{
 					kind: 'block',
 					type: 'lists_custom_getindex',
 					inputs: { INDEX: { shadow: { type: 'math_number' } } }
-				},
-				{ kind: 'block', type: 'convert_float' },
-				{ kind: 'block', type: 'convert_int' },
-				{ kind: 'block', type: 'math_round' }
+				}
 			],
-			categorystyle: 'text_category'
+			categorystyle: 'list_category'
 		},
 		{
 			kind: 'category',
@@ -164,6 +180,9 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 			custom: 'VARIABLE',
 			categorystyle: 'variable_category'
 		},
+
+		{ kind: 'sep' },
+
 		{
 			kind: 'category',
 			name: 'Legacy',

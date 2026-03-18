@@ -89,154 +89,7 @@
 		"style": "trigger_blocks",
 		"inputsInline": false
 	},
-	{
-		"type": "ignore_output",
-		"message0": "execute and ignore output %1",
-		"args0": [
-			{
-				"type": "input_value",
-				"name": "VALUE"
-			}
-		],
-		"previousStatement": null,
-		"nextStatement": null,
-		"style": "logic_blocks"
-	},
-	{
-		"type": "messaging_action_button",
-		"message0": "button with text %1 action ID %2 value %3 style %4 %5",
-		"args0": [
-			{
-				"type": "input_value",
-				"name": "TEXT",
-				"align": "RIGHT"
-			},
-			{
-				"type": "input_value",
-				"name": "ACTIONID",
-				"align": "RIGHT"
-			},
-			{
-				"type": "input_value",
-				"name": "VALUE",
-				"align": "RIGHT"
-			},
-			{
-				"type": "field_dropdown",
-				"name": "STYLE",
-				"options": [
-					["normal", "NORMAL"],
-					["primary", "PRIMARY"],
-					["danger", "DANGER"]
-				]
-			},
-			{
-				"type": "input_dummy",
-				"name": "DUMMY",
-				"align": "RIGHT"
-			}
-		],
-		"output": "Action",
-		"style": "messaging_blocks",
-		"inputsInline": false
-	},
-	{
-		"type": "messaging_send_text",
-		"message0": "send message to channel %1 text %2",
-		"args0": [
-			{
-				"type": "input_value",
-				"name": "CHANNEL",
-				"align": "RIGHT",
-				"check": "Channel"
-			},
-			{
-				"type": "input_value",
-				"name": "TEXT",
-				"align": "RIGHT",
-				"check": "String"
-			}
-		],
-		"previousStatement": null,
-		"nextStatement": null,
-		"style": "messaging_blocks"
-	},
-	{
-		"type": "messaging_reply",
-		"message0": "reply to message %1 text %2",
-		"args0": [
-			{
-				"type": "input_value",
-				"name": "THREAD",
-				"align": "RIGHT",
-				"check": "Message"
-			},
-			{
-				"type": "input_value",
-				"name": "TEXT",
-				"align": "RIGHT",
-				"check": "String"
-			}
-		],
-		"previousStatement": null,
-		"nextStatement": null,
-		"style": "messaging_blocks"
-	},
-	{
-		"type": "messaging_add_reaction",
-		"message0": "add reaction %2 to message %1",
-		"args0": [
-			{
-				"type": "input_value",
-				"name": "MESSAGE",
-				"align": "RIGHT",
-				"check": "Message"
-			},
-			{
-				"type": "input_value",
-				"name": "EMOJI",
-				"align": "RIGHT",
-				"check": "String"
-			}
-		],
-		"previousStatement": null,
-		"nextStatement": null,
-		"style": "messaging_blocks",
-		"inputsInline": true
-	},
-	{
-		"type": "messaging_unreact",
-		"message0": "remove reaction %1 from message %2",
-		"args0": [
-			{
-				"type": "input_value",
-				"name": "EMOJI",
-				"check": "String"
-			},
-			{
-				"type": "input_value",
-				"name": "MESSAGE",
-				"check": "Message"
-			}
-		],
-		"previousStatement": null,
-		"nextStatement": null,
-		"style": "messaging_blocks",
-		"inputsInline": true
-	},
-	{
-		"type": "messaging_get_text",
-		"message0": "get text from message %1",
-		"args0": [
-			{
-				"type": "input_value",
-				"name": "MESSAGE",
-				"check": "Message"
-			}
-		],
-		"output": "String",
-		"style": "messaging_blocks"
-	},
+
 	{
 		"type": "message_from_ts",
 		"message0": "message in channel %1 with timestamp %2",
@@ -284,6 +137,100 @@
 		"output": "String",
 		"style": "messaging_blocks"
 	},
+	{
+		"type": "messaging_get_text",
+		"message0": "get text from message %1",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "MESSAGE",
+				"check": "Message"
+			}
+		],
+		"output": "String",
+		"style": "messaging_blocks"
+	},
+	{
+		"type": "messaging_action_button",
+		"message0": "button with text %1 action ID %2 value %3 style %4 %5",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "TEXT",
+				"align": "RIGHT"
+			},
+			{
+				"type": "input_value",
+				"name": "ACTIONID",
+				"align": "RIGHT"
+			},
+			{
+				"type": "input_value",
+				"name": "VALUE",
+				"align": "RIGHT"
+			},
+			{
+				"type": "field_dropdown",
+				"name": "STYLE",
+				"options": [
+					["normal", "NORMAL"],
+					["primary", "PRIMARY"],
+					["danger", "DANGER"]
+				]
+			},
+			{
+				"type": "input_dummy",
+				"name": "DUMMY",
+				"align": "RIGHT"
+			}
+		],
+		"output": "Action",
+		"style": "messaging_blocks",
+		"inputsInline": false
+	},
+	{
+		"type": "messaging_add_reaction",
+		"message0": "add reaction %2 to message %1",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "MESSAGE",
+				"align": "RIGHT",
+				"check": "Message"
+			},
+			{
+				"type": "input_value",
+				"name": "EMOJI",
+				"align": "RIGHT",
+				"check": "String"
+			}
+		],
+		"previousStatement": null,
+		"nextStatement": null,
+		"style": "messaging_blocks",
+		"inputsInline": true
+	},
+	{
+		"type": "messaging_unreact",
+		"message0": "remove reaction %1 from message %2",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "EMOJI",
+				"check": "String"
+			},
+			{
+				"type": "input_value",
+				"name": "MESSAGE",
+				"check": "Message"
+			}
+		],
+		"previousStatement": null,
+		"nextStatement": null,
+		"style": "messaging_blocks",
+		"inputsInline": true
+	},
+
 	{
 		"type": "form_present",
 		"message0": "present form with title %1 text %2 questions %3 using trigger_id %4 storing responses in %5 %6 trigger_id in %7 %8",
@@ -338,6 +285,7 @@
 		"inputsInline": false,
 		"style": "form_blocks"
 	},
+
 	{
 		"type": "channel_from_id",
 		"message0": "channel with ID %1",
@@ -419,6 +367,7 @@
 		"nextStatement": null,
 		"style": "channel_blocks"
 	},
+
 	{
 		"type": "user_from_id",
 		"message0": "user with ID %1",
@@ -439,6 +388,46 @@
 		"output": "String",
 		"style": "user_blocks"
 	},
+
+	{
+		"type": "ignore_output",
+		"message0": "execute and ignore output %1",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "VALUE"
+			}
+		],
+		"previousStatement": null,
+		"nextStatement": null,
+		"style": "logic_blocks"
+	},
+
+	{
+		"type": "convert_float",
+		"message0": "convert to float %1",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "VALUE"
+			}
+		],
+		"output": "Number",
+		"style": "math_blocks"
+	},
+	{
+		"type": "convert_int",
+		"message0": "convert to int %1",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "VALUE"
+			}
+		],
+		"output": "Number",
+		"style": "math_blocks"
+	},
+
 	{
 		"type": "text",
 		"message0": "%1 %2",
@@ -506,6 +495,7 @@
 		"style": "text_blocks",
 		"inputsInline": true
 	},
+
 	{
 		"type": "lists_custom_getindex",
 		"message0": "in list %1 get item at index %2",
@@ -525,28 +515,47 @@
 		"inputsInline": true,
 		"style": "list_blocks"
 	},
+
 	{
-		"type": "convert_float",
-		"message0": "convert to float %1",
+		"type": "messaging_send_text",
+		"message0": "send message to channel %1 text %2",
 		"args0": [
 			{
 				"type": "input_value",
-				"name": "VALUE"
+				"name": "CHANNEL",
+				"align": "RIGHT",
+				"check": "Channel"
+			},
+			{
+				"type": "input_value",
+				"name": "TEXT",
+				"align": "RIGHT",
+				"check": "String"
 			}
 		],
-		"output": "Number",
-		"style": "math_blocks"
+		"previousStatement": null,
+		"nextStatement": null,
+		"style": "messaging_blocks"
 	},
 	{
-		"type": "convert_int",
-		"message0": "convert to int %1",
+		"type": "messaging_reply",
+		"message0": "reply to message %1 text %2",
 		"args0": [
 			{
 				"type": "input_value",
-				"name": "VALUE"
+				"name": "THREAD",
+				"align": "RIGHT",
+				"check": "Message"
+			},
+			{
+				"type": "input_value",
+				"name": "TEXT",
+				"align": "RIGHT",
+				"check": "String"
 			}
 		],
-		"output": "Number",
-		"style": "math_blocks"
+		"previousStatement": null,
+		"nextStatement": null,
+		"style": "messaging_blocks"
 	}
 ]
