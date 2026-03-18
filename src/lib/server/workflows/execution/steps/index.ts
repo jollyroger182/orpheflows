@@ -1,6 +1,7 @@
 import { slack } from '$lib/server/slack'
 import { progressWorkflow, type StepExecutionContext } from '..'
-import type { KnownBlock, ActionsBlockElement } from '@slack/web-api'
+import { type KnownBlock, type ActionsBlockElement } from '@slack/web-api'
+import { isSlackPlatformError } from '$lib/server/utils'
 
 export const stepHandlers: Record<string, (context: StepExecutionContext) => Promise<unknown>> = {
 	// statements
@@ -38,38 +39,41 @@ export const stepHandlers: Record<string, (context: StepExecutionContext) => Pro
 		return ''
 	},
 
-	messaging_send_text: async (ctx) => {
-		const channel = await ctx.evaluate(ctx.params.CHANNEL as WorkflowStep)
-		const text = await ctx.evaluate(ctx.params.TEXT as WorkflowStep)
-		await slack.chat.postMessage({
-			channel,
-			text,
-			token: await ctx.getToken()
-		})
-		await progressWorkflow({
-			executionId: ctx.executionId,
-			continuationToken: ctx.data.continuationToken
-		})
-	},
-	messaging_reply: async (ctx) => {
-		const thread = await ctx.evaluate(ctx.params.THREAD as WorkflowStep)
-		const text = await ctx.evaluate(ctx.params.TEXT as WorkflowStep)
-		const { channel, ts } = JSON.parse(thread)
-		await slack.chat.postMessage({
-			channel,
-			thread_ts: ts,
-			text,
-			token: await ctx.getToken()
-		})
-		await progressWorkflow({
-			executionId: ctx.executionId,
-			continuationToken: ctx.data.continuationToken
-		})
-	},
 	messaging_add_reaction: async (ctx) => {
 		const { channel, ts } = JSON.parse(await ctx.evaluate(ctx.params.MESSAGE as WorkflowStep))
 		const emoji = await ctx.evaluate(ctx.params.EMOJI as WorkflowStep)
-		await slack.reactions.add({ channel, timestamp: ts, name: emoji, token: await ctx.getToken() })
+		try {
+			await slack.reactions.add({
+				channel,
+				timestamp: ts,
+				name: emoji,
+				token: await ctx.getToken()
+			})
+		} catch (e) {
+			if (!isSlackPlatformError(e, 'already_reacted')) {
+				throw e
+			}
+		}
+		await progressWorkflow({
+			executionId: ctx.executionId,
+			continuationToken: ctx.data.continuationToken
+		})
+	},
+	messaging_unreact: async (ctx) => {
+		const { channel, ts } = JSON.parse(await ctx.evaluate(ctx.params.MESSAGE as WorkflowStep))
+		const emoji = await ctx.evaluate(ctx.params.EMOJI as WorkflowStep)
+		try {
+			await slack.reactions.remove({
+				channel,
+				timestamp: ts,
+				name: emoji,
+				token: await ctx.getToken()
+			})
+		} catch (e) {
+			if (!isSlackPlatformError(e, 'no_reaction')) {
+				throw e
+			}
+		}
 		await progressWorkflow({
 			executionId: ctx.executionId,
 			continuationToken: ctx.data.continuationToken
@@ -113,6 +117,24 @@ export const stepHandlers: Record<string, (context: StepExecutionContext) => Pro
 				blocks: [...sectionBlocks, ...questionBlocks]
 			},
 			token: await ctx.getToken()
+		})
+	},
+
+	channel_invite: async (ctx) => {
+		const user = await ctx.evaluate(ctx.params.USER as WorkflowStep)
+		const channel = await ctx.evaluate(ctx.params.CHANNEL as WorkflowStep)
+		await slack.conversations.invite({ channel, users: user, token: await ctx.getToken() })
+		await progressWorkflow({
+			executionId: ctx.executionId,
+			continuationToken: ctx.data.continuationToken
+		})
+	},
+	channel_archive: async (ctx) => {
+		const channel = await ctx.evaluate(ctx.params.CHANNEL as WorkflowStep)
+		await slack.conversations.archive({ channel, token: await ctx.getToken() })
+		await progressWorkflow({
+			executionId: ctx.executionId,
+			continuationToken: ctx.data.continuationToken
 		})
 	},
 
@@ -189,6 +211,29 @@ export const stepHandlers: Record<string, (context: StepExecutionContext) => Pro
 		return ctx.data.variables['trigger.data']
 	},
 
+	message_from_ts: async (ctx) =>
+		JSON.stringify({
+			channel: await ctx.evaluate(ctx.params.CHANNEL as WorkflowStep),
+			ts: await ctx.evaluate(ctx.params.TS as WorkflowStep)
+		}),
+	message_to_channel: async (ctx) =>
+		JSON.parse(await ctx.evaluate(ctx.params.MESSAGE as WorkflowStep)).channel,
+	message_to_ts: async (ctx) =>
+		JSON.parse(await ctx.evaluate(ctx.params.MESSAGE as WorkflowStep)).ts,
+	messaging_get_text: async (ctx) => {
+		const message = JSON.parse(await ctx.evaluate(ctx.params.MESSAGE as WorkflowStep))
+		if ('text' in message) return message.text
+
+		const resp = await slack.conversations.replies({
+			channel: message.channel,
+			ts: message.ts,
+			limit: 1,
+			token: await ctx.getToken()
+		})
+		const msg = resp.messages?.[0]
+		if (msg?.ts !== message.ts) return ''
+		return msg?.text || ''
+	},
 	messaging_send_v1: async (ctx) => {
 		const mode = ctx.params.MODE as 'CHANNEL' | 'THREAD'
 		const text = await ctx.evaluate(ctx.params.TEXT as WorkflowStep)
@@ -216,31 +261,16 @@ export const stepHandlers: Record<string, (context: StepExecutionContext) => Pro
 
 		return JSON.stringify({ type: 'button', text, action_id, value, style })
 	},
-	messaging_get_text: async (ctx) => {
-		const message = JSON.parse(await ctx.evaluate(ctx.params.MESSAGE as WorkflowStep))
-		if ('text' in message) return message.text
-
-		const resp = await slack.conversations.replies({
-			channel: message.channel,
-			ts: message.ts,
-			limit: 1,
-			token: await ctx.getToken()
-		})
-		const msg = resp.messages?.[0]
-		if (msg?.ts !== message.ts) return ''
-		return msg?.text || ''
-	},
-	message_from_ts: async (ctx) =>
-		JSON.stringify({
-			channel: await ctx.evaluate(ctx.params.CHANNEL as WorkflowStep),
-			ts: await ctx.evaluate(ctx.params.TS as WorkflowStep)
-		}),
-	message_to_channel: async (ctx) =>
-		JSON.parse(await ctx.evaluate(ctx.params.MESSAGE as WorkflowStep)).channel,
-	message_to_ts: async (ctx) =>
-		JSON.parse(await ctx.evaluate(ctx.params.MESSAGE as WorkflowStep)).ts,
 
 	channel_from_id: async (ctx) => ctx.evaluate(ctx.params.ID as WorkflowStep),
+	channel_to_id: async (ctx) => ctx.evaluate(ctx.params.CHANNEL as WorkflowStep),
+	channel_create: async (ctx) => {
+		const name = await ctx.evaluate(ctx.params.NAME as WorkflowStep)
+		const is_private = ctx.params.MODE === 'PRIVATE'
+
+		const resp = await slack.conversations.create({ name, is_private, token: await ctx.getToken() })
+		return resp.channel!.id!
+	},
 
 	user_from_id: async (ctx) => ctx.evaluate(ctx.params.ID as WorkflowStep),
 	user_to_id: async (ctx) => ctx.evaluate(ctx.params.USER as WorkflowStep),
@@ -352,7 +382,38 @@ export const stepHandlers: Record<string, (context: StepExecutionContext) => Pro
 
 	// hidden
 
-	text_embed: async (ctx) => ctx.params.TEXT as string
+	text_embed: async (ctx) => ctx.params.TEXT as string,
+
+	// legacy
+
+	messaging_send_text: async (ctx) => {
+		const channel = await ctx.evaluate(ctx.params.CHANNEL as WorkflowStep)
+		const text = await ctx.evaluate(ctx.params.TEXT as WorkflowStep)
+		await slack.chat.postMessage({
+			channel,
+			text,
+			token: await ctx.getToken()
+		})
+		await progressWorkflow({
+			executionId: ctx.executionId,
+			continuationToken: ctx.data.continuationToken
+		})
+	},
+	messaging_reply: async (ctx) => {
+		const thread = await ctx.evaluate(ctx.params.THREAD as WorkflowStep)
+		const text = await ctx.evaluate(ctx.params.TEXT as WorkflowStep)
+		const { channel, ts } = JSON.parse(thread)
+		await slack.chat.postMessage({
+			channel,
+			thread_ts: ts,
+			text,
+			token: await ctx.getToken()
+		})
+		await progressWorkflow({
+			executionId: ctx.executionId,
+			continuationToken: ctx.data.continuationToken
+		})
+	}
 }
 
 async function generateBlocks({

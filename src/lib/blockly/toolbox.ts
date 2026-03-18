@@ -25,6 +25,10 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 			kind: 'category',
 			name: 'Messaging',
 			contents: [
+				{ kind: 'block', type: 'message_from_ts' },
+				{ kind: 'block', type: 'message_to_channel' },
+				{ kind: 'block', type: 'message_to_ts' },
+				{ kind: 'block', type: 'messaging_get_text' },
 				{
 					kind: 'block',
 					type: 'messaging_send_v1',
@@ -46,34 +50,14 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 				},
 				{
 					kind: 'block',
-					type: 'messaging_send_text',
-					inputs: {
-						CHANNEL: {
-							shadow: {
-								type: 'channel_from_id',
-								inputs: { ID: { shadow: { type: 'text_embed', fields: { TEXT: 'C' } } } }
-							}
-						},
-						TEXT: { shadow: { type: 'text_embed', fields: { TEXT: 'Hello World' } } }
-					}
-				},
-				{
-					kind: 'block',
-					type: 'messaging_reply',
-					inputs: {
-						THREAD: { shadow: { type: 'trigger_message' } },
-						TEXT: { shadow: { type: 'text_embed', fields: { TEXT: 'Hello World' } } }
-					}
-				},
-				{
-					kind: 'block',
 					type: 'messaging_add_reaction',
 					inputs: { EMOJI: { shadow: { type: 'text_embed', fields: { TEXT: 'yay' } } } }
 				},
-				{ kind: 'block', type: 'messaging_get_text' },
-				{ kind: 'block', type: 'message_from_ts' },
-				{ kind: 'block', type: 'message_to_channel' },
-				{ kind: 'block', type: 'message_to_ts' }
+				{
+					kind: 'block',
+					type: 'messaging_unreact',
+					inputs: { EMOJI: { shadow: { type: 'text_embed', fields: { TEXT: 'yay' } } } }
+				}
 			],
 			categorystyle: 'messaging_category'
 		},
@@ -118,7 +102,11 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 					kind: 'block',
 					type: 'channel_from_id',
 					inputs: { ID: { shadow: { type: 'text_embed', fields: { TEXT: 'C' } } } }
-				}
+				},
+				{ kind: 'block', type: 'channel_to_id' },
+				{ kind: 'block', type: 'channel_create' },
+				{ kind: 'block', type: 'channel_invite' },
+				{ kind: 'block', type: 'channel_archive' }
 			],
 			categorystyle: 'channel_category'
 		},
@@ -175,6 +163,34 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 			name: 'Variables',
 			custom: 'VARIABLE',
 			categorystyle: 'variable_category'
+		},
+		{
+			kind: 'category',
+			name: 'Legacy',
+			contents: [
+				{
+					kind: 'block',
+					type: 'messaging_send_text',
+					inputs: {
+						CHANNEL: {
+							shadow: {
+								type: 'channel_from_id',
+								inputs: { ID: { shadow: { type: 'text_embed', fields: { TEXT: 'C' } } } }
+							}
+						},
+						TEXT: { shadow: { type: 'text_embed', fields: { TEXT: 'Hello World' } } }
+					}
+				},
+				{
+					kind: 'block',
+					type: 'messaging_reply',
+					inputs: {
+						THREAD: { shadow: { type: 'trigger_message' } },
+						TEXT: { shadow: { type: 'text_embed', fields: { TEXT: 'Hello World' } } }
+					}
+				}
+			],
+			categorystyle: 'legacy_category'
 		}
 	]
 }

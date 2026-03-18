@@ -184,7 +184,7 @@
 	},
 	{
 		"type": "messaging_add_reaction",
-		"message0": "add reaction to message %1 emoji %2",
+		"message0": "add reaction %2 to message %1",
 		"args0": [
 			{
 				"type": "input_value",
@@ -201,7 +201,28 @@
 		],
 		"previousStatement": null,
 		"nextStatement": null,
-		"style": "messaging_blocks"
+		"style": "messaging_blocks",
+		"inputsInline": true
+	},
+	{
+		"type": "messaging_unreact",
+		"message0": "remove reaction %1 from message %2",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "EMOJI",
+				"check": "String"
+			},
+			{
+				"type": "input_value",
+				"name": "MESSAGE",
+				"check": "Message"
+			}
+		],
+		"previousStatement": null,
+		"nextStatement": null,
+		"style": "messaging_blocks",
+		"inputsInline": true
 	},
 	{
 		"type": "messaging_get_text",
@@ -331,6 +352,74 @@
 		"style": "channel_blocks"
 	},
 	{
+		"type": "channel_to_id",
+		"message0": "get ID of channel %1",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "CHANNEL",
+				"check": "Channel"
+			}
+		],
+		"output": "String",
+		"style": "channel_blocks"
+	},
+	{
+		"type": "channel_create",
+		"message0": "create %1 channel with name %2",
+		"args0": [
+			{
+				"type": "field_dropdown",
+				"name": "MODE",
+				"options": [
+					["public", "PUBLIC"],
+					["private", "PRIVATE"]
+				]
+			},
+			{
+				"type": "input_value",
+				"name": "NAME",
+				"check": "String"
+			}
+		],
+		"output": "Channel",
+		"style": "channel_blocks"
+	},
+	{
+		"type": "channel_invite",
+		"message0": "invite user %1 to channel %2",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "USER",
+				"check": "User"
+			},
+			{
+				"type": "input_value",
+				"name": "CHANNEL",
+				"check": "Channel"
+			}
+		],
+		"previousStatement": null,
+		"nextStatement": null,
+		"style": "channel_blocks",
+		"inputsInline": true
+	},
+	{
+		"type": "channel_archive",
+		"message0": "archive channel %1",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "CHANNEL",
+				"check": "Channel"
+			}
+		],
+		"previousStatement": null,
+		"nextStatement": null,
+		"style": "channel_blocks"
+	},
+	{
 		"type": "user_from_id",
 		"message0": "user with ID %1",
 		"args0": [{ "type": "input_value", "name": "ID", "check": "String" }],
@@ -349,6 +438,23 @@
 		],
 		"output": "String",
 		"style": "user_blocks"
+	},
+	{
+		"type": "text",
+		"message0": "%1 %2",
+		"args0": [
+			{
+				"type": "field_input",
+				"name": "TEXT",
+				"text": ""
+			},
+			{
+				"type": "input_dummy",
+				"name": "NAME"
+			}
+		],
+		"output": "String",
+		"style": "text_blocks"
 	},
 	{
 		"type": "text_embed",
