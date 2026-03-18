@@ -9,7 +9,6 @@
 			"display_name": "orpheflows (dev)",
 			"always_online": false
 		},
-		"slash_commands": [],
 		"unfurl_domains": ["orpheflows-dev.example.com"]
 	},
 	"oauth_config": {
