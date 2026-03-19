@@ -27,6 +27,17 @@
 	@apply bg-red-500 text-white enabled:hover:bg-red-600;
 }
 
+.alert {
+	@apply mb-4 rounded border p-4;
+}
+
+.alert-success {
+	@apply border-green-300 bg-green-50 dark:border-green-700 dark:bg-green-950;
+}
+.alert-danger {
+	@apply border-red-300 bg-red-50 dark:border-red-700 dark:bg-red-950;
+}
+
 /* hide ghost scrollbar in blockly */
 .blocklyFlyoutScrollbar[display='none'] {
 	display: none;

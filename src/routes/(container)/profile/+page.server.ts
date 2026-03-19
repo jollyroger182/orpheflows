@@ -1,0 +1,65 @@
+import type { PageServerLoad } from './$types'
+import { Users } from '$lib/server/services'
+import z from 'zod'
+
+export const load: PageServerLoad = async ({ locals }) => {
+	const session = await locals.auth()
+	if (!session?.user.slackId) return await locals.signIn('slack')
+
+	const user = await Users.get({ id: session.user.slackId })
+	if (!user) return await locals.signOut()
+
+	return {
+		tokens: user.tokens.map((token) => ({
+			id: token.id,
+			name: token.name,
+			lastUsed: token.lastUsed,
+			createdAt: token.createdAt,
+			expiresAt: token.expiresAt
+		}))
+	}
+}
+
+const CreateTokenSchema = z.object({
+	name: z.string().optional(),
+	expiry: z.enum(['30', '60', '90', '0'])
+})
+
+const DeleteTokenSchema = z.object({
+	id: z.coerce.number().int()
+})
+
+export const actions = {
+	token: async ({ locals, request }) => {
+		const session = await locals.auth()
+		if (!session?.user.slackId) return await locals.signIn('slack')
+
+		const form = await request.formData()
+		const result = CreateTokenSchema.safeParse({
+			name: form.get('name'),
+			expiry: form.get('expiry')
+		})
+		if (!result.success) return { tokenError: z.prettifyError(result.error) }
+		const { name, expiry } = result.data
+
+		const days = parseInt(expiry)
+		const expiresAt = days ? new Date(Date.now() + days * 24 * 60 * 60 * 1000) : undefined
+
+		const token = await Users.createUserToken({ userId: session.user.slackId, name, expiresAt })
+
+		return { token: token.token }
+	},
+	deleteToken: async ({ locals, request }) => {
+		const session = await locals.auth()
+		if (!session?.user.slackId) return await locals.signIn('slack')
+
+		const form = await request.formData()
+		const result = DeleteTokenSchema.safeParse({
+			id: form.get('id')
+		})
+		if (!result.success) return { deleteError: z.prettifyError(result.error) }
+		const { id } = result.data
+
+		await Users.deleteUserToken({ id })
+	}
+}

@@ -179,7 +179,33 @@ export const users = pgTable('users', {
 })
 
 export const usersRelations = relations(users, ({ many }) => ({
-	workflows: many(workflows)
+	workflows: many(workflows),
+	tokens: many(tokens)
+}))
+
+// tokens
+
+export const tokens = pgTable(
+	'user_tokens',
+	{
+		id: serial('id').primaryKey(),
+		userId: text('user_id')
+			.references(() => users.id)
+			.notNull(),
+		tokenHash: text('token_hash').notNull().unique(),
+		name: text('name').notNull().default('Unnamed token'),
+		lastUsed: timestamp('last_used', { withTimezone: true }),
+		createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+		expiresAt: timestamp('expires_at', { withTimezone: true })
+	},
+	(table) => [index().on(table.tokenHash), index().on(table.userId)]
+)
+
+export const tokensRelations = relations(tokens, ({ one }) => ({
+	user: one(users, {
+		fields: [tokens.userId],
+		references: [users.id]
+	})
 }))
 
 // audit logs
@@ -192,6 +218,7 @@ export const auditLogs = pgTable(
 		action: text('action').notNull(),
 		resourceType: text('resource_type').notNull(),
 		resourceId: text('resource_id').notNull(),
+		source: text(),
 		metadata: text('metadata'),
 		createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow()
 	},

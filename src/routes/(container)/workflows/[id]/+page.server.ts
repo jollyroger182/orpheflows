@@ -66,12 +66,8 @@ export const actions = {
 		const session = await locals.auth()
 		if (!session?.user.slackId) return error(401, 'You are not logged in')
 
-		const flow = await Workflows.getWorkflow({ id })
-		if (!flow) return error(404, 'Workflow not found')
-
-		if (flow.authorId !== session.user.slackId) return error(403, 'You cannot delete this workflow')
-
-		await Workflows.deleteWorkflow({ id, appId: flow.appId })
+		const deleted = await Workflows.deleteWorkflow({ id, userId: session.user.slackId })
+		if (!deleted) return error(403, 'You cannot delete this workflow')
 
 		redirect(303, '/')
 	},

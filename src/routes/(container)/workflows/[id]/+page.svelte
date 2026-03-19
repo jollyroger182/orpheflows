@@ -31,17 +31,11 @@
 </script>
 
 {#if form?.message}
-	<p
-		class="mb-4 rounded border border-green-300 bg-green-50 p-4 dark:border-green-700 dark:bg-green-950"
-	>
-		{form.message}
-	</p>
+	<p class="alert alert-success">{form.message}</p>
 {/if}
 
 {#if form?.error}
-	<p class="mb-4 rounded border border-red-300 bg-red-50 p-4 dark:border-red-700 dark:bg-red-950">
-		{form.error}
-	</p>
+	<p class="alert alert-danger">{form.error}</p>
 {/if}
 
 <h1 class="mb-4 text-3xl font-semibold">{data.workflow.name}</h1>

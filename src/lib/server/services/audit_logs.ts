@@ -7,9 +7,10 @@ interface Create {
 	resourceType: string
 	resourceId: string | number
 	metadata?: unknown
+	source?: string
 }
 
-export async function create({ action, user, resourceType, resourceId, metadata }: Create) {
+export async function create({ action, user, resourceType, resourceId, metadata, source }: Create) {
 	return (
 		await db
 			.insert(auditLogs)
@@ -18,7 +19,8 @@ export async function create({ action, user, resourceType, resourceId, metadata 
 				userId: user,
 				resourceType,
 				resourceId: String(resourceId),
-				metadata: metadata ? JSON.stringify(metadata) : undefined
+				metadata: metadata ? JSON.stringify(metadata) : undefined,
+				source
 			})
 			.returning()
 	)[0]

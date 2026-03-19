@@ -1,0 +1,71 @@
+import { and, eq, gt } from 'drizzle-orm'
+import { db } from '../db'
+import { tokens, users } from '../db/schema'
+import { createHash, randomUUID } from 'crypto'
+import { AuditLogs } from '.'
+
+interface Get {
+	id: string
+}
+
+export async function get({ id }: Get) {
+	return await db.query.users.findFirst({ where: eq(users.id, id), with: { tokens: true } })
+}
+
+interface CreateUserToken {
+	userId: string
+	name?: string
+	expiresAt?: Date
+}
+
+export async function createUserToken({ userId, name, expiresAt }: CreateUserToken) {
+	const token = randomUUID()
+
+	const hasher = createHash('sha256')
+	hasher.update(token)
+	const hash = hasher.digest('hex')
+
+	const result = (
+		await db.insert(tokens).values({ userId, tokenHash: hash, name, expiresAt }).returning()
+	)[0]!
+	await AuditLogs.create({
+		action: 'token.create',
+		user: userId,
+		resourceType: 'token',
+		resourceId: result.id,
+		metadata: { name, expiresAt: expiresAt?.toISOString() }
+	})
+	return { ...result, token }
+}
+
+interface GetUserToken {
+	token: string
+}
+
+export async function getUserToken({ token }: GetUserToken) {
+	const hasher = createHash('sha256')
+	hasher.update(token)
+	const hash = hasher.digest('hex')
+
+	return await db.query.tokens.findFirst({
+		where: and(eq(tokens.tokenHash, hash), gt(tokens.expiresAt, new Date())),
+		with: { user: true }
+	})
+}
+
+interface DeleteUserToken {
+	id: number
+}
+
+export async function deleteUserToken({ id }: DeleteUserToken) {
+	const deleted = (await db.delete(tokens).where(eq(tokens.id, id)).returning())[0]
+	if (deleted) {
+		await AuditLogs.create({
+			action: 'token.delete',
+			user: deleted.userId,
+			resourceType: 'token',
+			resourceId: id,
+			metadata: { lastUsed: deleted.lastUsed?.toISOString() || null }
+		})
+	}
+}

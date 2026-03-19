@@ -5,11 +5,13 @@ import { slack } from '../slack'
 import { AuditLogs, Slack } from '.'
 
 interface GetWorkflows {
+	offset?: number
 	limit?: number
 }
 
-export async function getWorkflows({ limit = 10 }: GetWorkflows = {}) {
+export async function getWorkflows({ offset = 0, limit = 10 }: GetWorkflows = {}) {
 	return await db.query.workflows.findMany({
+		offset,
 		limit,
 		orderBy: desc(workflows.createdAt),
 		with: { author: true }
@@ -86,6 +88,7 @@ interface CreateWorkflow {
 	clientSecret: string
 	verificationToken: string
 	signingSecret: string
+	source?: string
 }
 
 export async function createWorkflow({
@@ -96,7 +99,8 @@ export async function createWorkflow({
 	clientId,
 	clientSecret,
 	verificationToken,
-	signingSecret
+	signingSecret,
+	source
 }: CreateWorkflow) {
 	const workflow = (
 		await db
@@ -118,7 +122,8 @@ export async function createWorkflow({
 		user: author,
 		resourceType: 'workflow',
 		resourceId: workflow.id,
-		metadata: { name, description }
+		metadata: { name, description },
+		source
 	})
 	return workflow
 }
@@ -313,11 +318,10 @@ export async function getLatestVersion({ id }: GetLatestVersion) {
 
 interface Delete {
 	id: number
-	appId: string
 	userId: string
 }
 
-export async function deleteWorkflow({ id, appId, userId }: Delete) {
+export async function deleteWorkflow({ id, userId }: Delete) {
 	const workflow = await db.transaction(async (tx) => {
 		const result = (
 			await tx
@@ -327,7 +331,7 @@ export async function deleteWorkflow({ id, appId, userId }: Delete) {
 		)[0]
 		if (!result) return
 		try {
-			await Slack.deleteApp({ id: appId })
+			await Slack.deleteApp({ id: result.appId })
 		} catch (e) {
 			console.error('failed to delete slack app', e)
 			throw e
@@ -343,4 +347,5 @@ export async function deleteWorkflow({ id, appId, userId }: Delete) {
 			metadata: { name: workflow.name }
 		})
 	}
+	return workflow
 }

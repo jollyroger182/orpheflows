@@ -1,4 +1,4 @@
-import { and, eq, SQL } from 'drizzle-orm'
+import { and, eq, type SQL } from 'drizzle-orm'
 import { db } from '../db'
 import { listeners } from '../db/schema'
 
