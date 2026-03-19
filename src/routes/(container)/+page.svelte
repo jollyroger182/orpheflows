@@ -16,9 +16,9 @@
 </div>
 
 {#if user}
-	{#if data.workflows.length}
+	{#if data.total}
 		<p class="mb-4">
-			You have {data.workflows.length} workflow{data.workflows.length > 1 ? 's' : ''}.
+			You have {data.total} workflow{data.total > 1 ? 's' : ''}.
 		</p>
 
 		<ul class="mb-4 grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -39,6 +39,18 @@
 				</li>
 			{/each}
 		</ul>
+
+		<div class="mb-4 flex flex-wrap items-center gap-4">
+			<form>
+				<input type="hidden" name="page" value={data.page - 1} />
+				<button type="submit" class="btn btn-secondary" disabled={data.page === 1}>&lt;</button>
+			</form>
+			<span>Page {data.page} of {data.totalPages}</span>
+			<form>
+				<input type="hidden" name="page" value={data.page + 1} />
+				<button class="btn btn-secondary" disabled={data.page === data.totalPages}>&gt;</button>
+			</form>
+		</div>
 	{:else}
 		<p class="mb-4">You have no workflows.</p>
 	{/if}

@@ -1,4 +1,4 @@
-import { and, desc, eq } from 'drizzle-orm'
+import { and, count, desc, eq } from 'drizzle-orm'
 import { db } from '../db'
 import { installations, listeners, versions, workflows } from '../db/schema'
 import { slack } from '../slack'
@@ -54,15 +54,27 @@ export async function getWorkflowByVerificationToken({
 interface GetWorkflowsByUser {
 	author: string
 	limit?: number
+	offset?: number
 }
 
-export async function getWorkflowsByAuthor({ author, limit = 10 }: GetWorkflowsByUser) {
+export async function getWorkflowsByAuthor({ author, limit = 10, offset = 0 }: GetWorkflowsByUser) {
 	return await db.query.workflows.findMany({
 		where: eq(workflows.authorId, author),
 		limit,
+		offset,
 		orderBy: desc(workflows.createdAt),
 		with: { author: true }
 	})
+}
+
+interface CountWorkflowsByUser {
+	author: string
+}
+
+export async function countWorkflowsByUser({ author }: CountWorkflowsByUser) {
+	return (
+		await db.select({ count: count() }).from(workflows).where(eq(workflows.authorId, author))
+	)[0]!.count
 }
 
 interface CreateWorkflow {
