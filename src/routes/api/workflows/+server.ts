@@ -11,8 +11,8 @@ const QuerySchema = z.object({
 
 export async function GET({ url }) {
 	const query = QuerySchema.safeParse({
-		page: url.searchParams.get('page'),
-		limit: url.searchParams.get('limit')
+		page: url.searchParams.get('page') || '1',
+		limit: url.searchParams.get('limit') || '25'
 	})
 	if (!query.success) return error(400, z.prettifyError(query.error))
 	const { page, limit } = query.data
