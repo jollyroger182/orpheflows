@@ -37,7 +37,8 @@ const darkTheme = Blockly.Theme.defineTheme('orpheflows-dark', {
 		insertionMarkerOpacity: 0.3,
 		scrollbarOpacity: 0.4,
 		cursorColour: '#d0d0d0'
-	}
+	},
+	startHats: true
 })
 
 export default theme
