@@ -1,5 +1,11 @@
 import { isCodedError } from '@slack/bolt'
-import { ErrorCode, type WebAPIPlatformError } from '@slack/web-api'
+import {
+	ErrorCode,
+	type ActionsBlockElement,
+	type KnownBlock,
+	type WebAPIPlatformError
+} from '@slack/web-api'
+import type { StepExecutionContext } from './workflows/execution'
 
 export function isSlackPlatformError(e: unknown, error: string) {
 	try {
@@ -55,4 +61,37 @@ export function isPrime(n: bigint) {
 		return false
 	}
 	return true
+}
+
+export async function generateStepBlocks({
+	ctx,
+	text,
+	components: componentsStep
+}: {
+	ctx: StepExecutionContext
+	text: string
+	components: WorkflowStep
+}): Promise<KnownBlock[]> {
+	const components = JSON.parse(await ctx.evaluate(componentsStep as WorkflowStep)) as string[]
+
+	const actionBlocks: KnownBlock[] = []
+	if (components.length) {
+		const actions: ActionsBlockElement[] = []
+		for (const def of components) {
+			const action = JSON.parse(def)
+			if (action.type === 'button') {
+				const style = action.style === 'NORMAL' ? undefined : action.style.toLowerCase()
+				actions.push({
+					type: 'button',
+					text: { type: 'plain_text', text: action.text, emoji: true },
+					action_id: action.action_id,
+					value: action.value || undefined,
+					style
+				})
+			}
+		}
+		actionBlocks.push({ type: 'actions', elements: actions })
+	}
+
+	return [{ type: 'section', text: { type: 'mrkdwn', text } }, ...actionBlocks]
 }

@@ -33,7 +33,7 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 					kind: 'block',
 					type: 'messaging_send_v1',
 					inputs: {
-						TEXT: { shadow: { type: 'text_embed', fields: { TEXT: 'Hello World' } } },
+						TEXT: { shadow: { type: 'text', fields: { TEXT: 'Hello World' } } },
 						COMPS: {
 							block: { type: 'lists_create_with', extraState: { itemCount: 0 } }
 						}
@@ -43,20 +43,20 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 					kind: 'block',
 					type: 'messaging_action_button',
 					inputs: {
-						TEXT: { shadow: { type: 'text_embed', fields: { TEXT: 'OK' } } },
-						ACTIONID: { shadow: { type: 'text_embed', fields: { TEXT: 'confirm_action' } } },
-						VALUE: { shadow: { type: 'text_embed', fields: { TEXT: 'additional state' } } }
+						TEXT: { shadow: { type: 'text', fields: { TEXT: 'OK' } } },
+						ACTIONID: { shadow: { type: 'text', fields: { TEXT: 'confirm_action' } } },
+						VALUE: { shadow: { type: 'text', fields: { TEXT: 'additional state' } } }
 					}
 				},
 				{
 					kind: 'block',
 					type: 'messaging_add_reaction',
-					inputs: { EMOJI: { shadow: { type: 'text_embed', fields: { TEXT: 'yay' } } } }
+					inputs: { EMOJI: { shadow: { type: 'text', fields: { TEXT: 'yay' } } } }
 				},
 				{
 					kind: 'block',
 					type: 'messaging_unreact',
-					inputs: { EMOJI: { shadow: { type: 'text_embed', fields: { TEXT: 'yay' } } } }
+					inputs: { EMOJI: { shadow: { type: 'text', fields: { TEXT: 'yay' } } } }
 				}
 			],
 			categorystyle: 'messaging_category'
@@ -69,10 +69,10 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 					kind: 'block',
 					type: 'form_present',
 					inputs: {
-						TITLE: { shadow: { type: 'text_embed', fields: { TEXT: 'Join my channel' } } },
+						TITLE: { shadow: { type: 'text', fields: { TEXT: 'Join my channel' } } },
 						TEXT: {
 							shadow: {
-								type: 'text_embed',
+								type: 'text',
 								fields: { TEXT: 'Please answer the following questions!' }
 							}
 						},
@@ -82,7 +82,7 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 								extraState: { itemCount: 1 },
 								inputs: {
 									ADD0: {
-										block: { type: 'text_embed', fields: { TEXT: 'Why would you like to join?' } }
+										block: { type: 'text', fields: { TEXT: 'Why would you like to join?' } }
 									}
 								}
 							}
@@ -100,7 +100,7 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 				{
 					kind: 'block',
 					type: 'channel_from_id',
-					inputs: { ID: { shadow: { type: 'text_embed', fields: { TEXT: 'C' } } } }
+					inputs: { ID: { shadow: { type: 'text', fields: { TEXT: 'C' } } } }
 				},
 				{ kind: 'block', type: 'channel_to_id' },
 				{ kind: 'block', type: 'channel_create' },
@@ -116,7 +116,7 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 				{
 					kind: 'block',
 					type: 'user_from_id',
-					inputs: { ID: { shadow: { type: 'text_embed', fields: { TEXT: 'U' } } } }
+					inputs: { ID: { shadow: { type: 'text', fields: { TEXT: 'U' } } } }
 				},
 				{ kind: 'block', type: 'user_to_id' }
 			],
@@ -215,10 +215,10 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 						CHANNEL: {
 							shadow: {
 								type: 'channel_from_id',
-								inputs: { ID: { shadow: { type: 'text_embed', fields: { TEXT: 'C' } } } }
+								inputs: { ID: { shadow: { type: 'text', fields: { TEXT: 'C' } } } }
 							}
 						},
-						TEXT: { shadow: { type: 'text_embed', fields: { TEXT: 'Hello World' } } }
+						TEXT: { shadow: { type: 'text', fields: { TEXT: 'Hello World' } } }
 					}
 				},
 				{
@@ -226,7 +226,7 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 					type: 'messaging_reply',
 					inputs: {
 						THREAD: { shadow: { type: 'trigger_message' } },
-						TEXT: { shadow: { type: 'text_embed', fields: { TEXT: 'Hello World' } } }
+						TEXT: { shadow: { type: 'text', fields: { TEXT: 'Hello World' } } }
 					}
 				}
 			],
