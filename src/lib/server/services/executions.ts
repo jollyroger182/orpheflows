@@ -15,11 +15,11 @@ export async function create({ workflowId, versionId, data, user }: Create) {
 		await db.insert(executions).values({ workflowId, versionId, data }).returning()
 	)[0]!
 	await AuditLogs.create({
-		action: 'execution.start',
+		action: 'workflow.execute',
 		user,
-		resourceType: 'execution',
-		resourceId: execution.id,
-		metadata: { workflowId, versionId }
+		resourceType: 'workflow',
+		resourceId: workflowId,
+		metadata: { id: execution.id, versionId }
 	})
 	return execution
 }

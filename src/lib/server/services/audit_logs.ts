@@ -15,7 +15,7 @@ export async function create({ action, user, resourceType, resourceId, metadata 
 			.insert(auditLogs)
 			.values({
 				action,
-				user,
+				userId: user,
 				resourceType,
 				resourceId: String(resourceId),
 				metadata: metadata ? JSON.stringify(metadata) : undefined
