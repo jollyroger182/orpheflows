@@ -1,4 +1,4 @@
-import type { installations, users, workflows } from './db/schema'
+import type { installations, users, versions, workflows } from './db/schema'
 
 type WorkflowWithAuthor = typeof workflows.$inferSelect & {
 	author: typeof users.$inferSelect
@@ -32,5 +32,20 @@ export function convertWorkflowToSelf(workflow: WorkflowWithAuthor) {
 		blocksUpdatedAt: workflow.blocksUpdatedAt,
 		code: workflow.code,
 		codeUpdatedAt: workflow.codeUpdatedAt
+	}
+}
+
+export function convertVersionToPublic(version: typeof versions.$inferSelect) {
+	return {
+		id: version.id,
+		createdAt: version.createdAt
+	}
+}
+
+export function convertVersionToSelf(version: typeof versions.$inferSelect) {
+	return {
+		...convertVersionToPublic(version),
+		blocks: version.blocks,
+		code: version.code
 	}
 }
