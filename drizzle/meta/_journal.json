@@ -92,6 +92,13 @@
       "when": 1773844518920,
       "tag": "0012_material_hobgoblin",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1773878673463,
+      "tag": "0013_classy_punisher",
+      "breakpoints": true
     }
   ]
 }

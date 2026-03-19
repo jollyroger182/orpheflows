@@ -188,7 +188,7 @@ export const auditLogs = pgTable(
 	'audit_logs',
 	{
 		id: serial('id').primaryKey(),
-		user: text('user').references(() => users.id),
+		userId: text('user_id'),
 		action: text('action').notNull(),
 		resourceType: text('resource_type').notNull(),
 		resourceId: text('resource_id').notNull(),
@@ -196,8 +196,9 @@ export const auditLogs = pgTable(
 		createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow()
 	},
 	(table) => [
-		index().on(table.user),
-		index().on(table.action, table.user),
+		index().on(table.userId),
+		index().on(table.action, table.userId),
+		index().on(table.resourceType, table.resourceId),
 		index().on(table.createdAt)
 	]
 )
