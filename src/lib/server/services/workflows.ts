@@ -1,9 +1,14 @@
+import {
+	BLOCKS_LENGTH_LIMIT,
+	CODE_LENGTH_LIMIT,
+	EXECUTE_RATE_LIMIT_COUNT,
+	EXECUTE_RATE_LIMIT_TIME
+} from '$lib/consts'
 import { and, count, desc, eq, isNull, lt, or } from 'drizzle-orm'
+import { AuditLogs, Slack } from '.'
 import { db } from '../db'
 import { installations, listeners, versions, workflows } from '../db/schema'
 import { slack } from '../slack'
-import { AuditLogs, Slack } from '.'
-import { EXECUTE_RATE_LIMIT_COUNT, EXECUTE_RATE_LIMIT_TIME } from '$lib/consts'
 
 interface GetWorkflows {
 	offset?: number
@@ -164,6 +169,14 @@ export async function setCode({
 	code,
 	userId
 }: SetCode): Promise<typeof workflows.$inferSelect | undefined> {
+	if (blocks && blocks.length > BLOCKS_LENGTH_LIMIT) {
+		throw new Error(
+			`Your serialized blocks is longer than the limit of ${BLOCKS_LENGTH_LIMIT} bytes.`
+		)
+	}
+	if (code.length > CODE_LENGTH_LIMIT) {
+		throw new Error(`Your transpiled code is longer than the limit of ${CODE_LENGTH_LIMIT} bytes.`)
+	}
 	const now = new Date()
 	return (
 		await db

@@ -1,3 +1,4 @@
+import { PERSISTENCE_VAR_LENGTH_LIMIT } from '$lib/consts'
 import { and, eq } from 'drizzle-orm'
 import { db } from '../db'
 import { variables } from '../db/schema'
@@ -20,6 +21,12 @@ interface SetVariable {
 }
 
 export async function set({ workflowId, name, value }: SetVariable) {
+	const length = name.length + value.length
+	if (length > PERSISTENCE_VAR_LENGTH_LIMIT) {
+		throw new Error(
+			`Persistent variable ${name} exceeded limit of ${PERSISTENCE_VAR_LENGTH_LIMIT} bytes per variable`
+		)
+	}
 	return (
 		await db
 			.insert(variables)
