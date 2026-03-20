@@ -6,6 +6,10 @@ export const ID = {
 	runWorkflow: 'run_workflow_80b152f4-c481-4781-8c34-edb5f8488c9f'
 }
 
+export const EXECUTE_RATE_LIMIT_TIME = 60_000
+export const EXECUTE_RATE_LIMIT_COUNT = 60
+export const EXECUTE_RATE_LIMIT_NOTIFY_INTERVAL = 600_000
+
 export const WORKFLOW_APP_SCOPES: BotScope[] = [
 	'app_mentions:read',
 	'bookmarks:read',

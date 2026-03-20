@@ -46,7 +46,8 @@ export const workflows = pgTable(
 		code: text('code').notNull().default(''),
 		blocksUpdatedAt: timestamp('blocks_updated_at', { withTimezone: true }).notNull().defaultNow(),
 		codeUpdatedAt: timestamp('code_updated_at', { withTimezone: true }).notNull().defaultNow(),
-		createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow()
+		createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+		rateLimitNotifiedAt: timestamp('rate_limit_notified_at', { withTimezone: true })
 	},
 	(table) => [index().on(table.clientId), index().on(table.verificationToken)]
 )

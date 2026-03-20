@@ -3,6 +3,11 @@ import { Executions, Workflows } from '../../services'
 import { stepHandlers } from './steps'
 import { slack } from '$lib/server/slack'
 import { SLACK_BOT_TOKEN } from '$env/static/private'
+import {
+	EXECUTE_RATE_LIMIT_COUNT,
+	EXECUTE_RATE_LIMIT_NOTIFY_INTERVAL,
+	EXECUTE_RATE_LIMIT_TIME
+} from '$lib/consts'
 
 export interface StepExecutionContext {
 	workflowId: number
@@ -30,6 +35,22 @@ export async function startWorkflow({
 	variables = {},
 	findTrigger = () => true
 }: Start) {
+	const count = await Executions.countWhere({
+		workflowId,
+		createdAfter: new Date(Date.now() - EXECUTE_RATE_LIMIT_TIME)
+	})
+	if (count >= EXECUTE_RATE_LIMIT_COUNT) {
+		const workflow = await Workflows.shouldSendNotification({ id: workflowId })
+		if (!workflow) return
+		const mention = workflow.installation ? `<@${workflow.installation.userId}>` : workflow.name
+		await slack.chat.postMessage({
+			channel: workflow.authorId,
+			text: `Your workflow, ${mention}, has reached its execution limit of ${workflow.rateLimitCount} executions per ${workflow.rateLimitTime} ms. Please try again later or request an increase. (This message will only be sent once per ${EXECUTE_RATE_LIMIT_NOTIFY_INTERVAL / 1000} seconds.)`,
+			token: SLACK_BOT_TOKEN
+		})
+		return
+	}
+
 	const version = await Workflows.getLatestVersion({ id: workflowId })
 	if (!version) return
 
@@ -93,8 +114,7 @@ export async function progressWorkflow({
 			'failed to find next step for',
 			data.blockId
 		)
-		// TODO: log
-		return
+		throw new Error('Workflow next step not found. This should never happen.')
 	}
 	if (step === NEXT || step.type === 'trigger') {
 		// execution finished

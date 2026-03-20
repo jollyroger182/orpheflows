@@ -17,7 +17,6 @@ export async function handleWorkflowEvent(
 		if (event.tab !== 'home') return
 		await updateAppHome(workflow, event)
 	} else if (event.type === 'reaction_added') {
-		console.log(payload)
 		const listeners = await Listeners.getByFilter({
 			filter: and(
 				eq(listenersSchema.event, 'reaction_added'),
@@ -47,6 +46,7 @@ export async function handleWorkflowEvent(
 				event.channel_type === 'group' ||
 				event.channel_type === 'mpim')
 		) {
+			if (event.user === workflow.installation?.userId) return
 			const listeners = await Listeners.getByFilter({
 				filter: and(
 					eq(listenersSchema.event, 'message_received'),
@@ -75,6 +75,7 @@ export async function handleWorkflowEvent(
 			(!event.subtype || event.subtype === 'file_share' || event.subtype === 'thread_broadcast') &&
 			(event.channel_type === 'im' || event.channel_type === 'app_home')
 		) {
+			if (event.user === workflow.installation?.userId) return
 			const listeners = await Listeners.getByFilter({
 				filter: and(
 					eq(listenersSchema.event, 'dm_received'),

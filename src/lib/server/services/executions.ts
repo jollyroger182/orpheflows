@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm'
+import { and, count, eq, gt } from 'drizzle-orm'
 import { db } from '../db'
 import { executions } from '../db/schema'
 import { AuditLogs } from '.'
@@ -33,6 +33,20 @@ export async function getWithVersion({ id }: Get) {
 		where: eq(executions.id, id),
 		with: { version: true }
 	})
+}
+
+interface Count {
+	workflowId: number
+	createdAfter: Date
+}
+
+export async function countWhere({ workflowId, createdAfter }: Count) {
+	return (
+		await db
+			.select({ count: count() })
+			.from(executions)
+			.where(and(eq(executions.workflowId, workflowId), gt(executions.createdAt, createdAfter)))
+	)[0]!.count
 }
 
 interface UpdateData {

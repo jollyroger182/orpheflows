@@ -1,8 +1,9 @@
-import { and, count, desc, eq } from 'drizzle-orm'
+import { and, count, desc, eq, isNull, lt, or } from 'drizzle-orm'
 import { db } from '../db'
 import { installations, listeners, versions, workflows } from '../db/schema'
 import { slack } from '../slack'
 import { AuditLogs, Slack } from '.'
+import { EXECUTE_RATE_LIMIT_COUNT, EXECUTE_RATE_LIMIT_TIME } from '$lib/consts'
 
 interface GetWorkflows {
 	offset?: number
@@ -348,4 +349,30 @@ export async function deleteWorkflow({ id, userId }: Delete) {
 		})
 	}
 	return workflow
+}
+
+export async function shouldSendNotification({ id }: { id: number }) {
+	return await db.transaction(async (tx) => {
+		const workflow = await tx.query.workflows.findFirst({
+			where: and(
+				eq(workflows.id, id),
+				or(
+					isNull(workflows.rateLimitNotifiedAt),
+					lt(workflows.rateLimitNotifiedAt, new Date(Date.now() - EXECUTE_RATE_LIMIT_TIME))
+				)
+			),
+			with: { installation: true }
+		})
+		if (workflow) {
+			await tx
+				.update(workflows)
+				.set({ rateLimitNotifiedAt: new Date() })
+				.where(eq(workflows.id, id))
+			return {
+				...workflow,
+				rateLimitTime: EXECUTE_RATE_LIMIT_TIME,
+				rateLimitCount: EXECUTE_RATE_LIMIT_COUNT
+			}
+		}
+	})
 }

@@ -1,0 +1,1 @@
+ALTER TABLE "workflows" ADD COLUMN "rate_limit_notified_at" timestamp with time zone;
