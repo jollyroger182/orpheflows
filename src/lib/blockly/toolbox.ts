@@ -50,6 +50,16 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 				},
 				{
 					kind: 'block',
+					type: 'messaging_send_v1_stmt',
+					inputs: {
+						TEXT: { shadow: { type: 'text', fields: { TEXT: 'Hello World' } } },
+						COMPS: {
+							block: { type: 'lists_create_with', extraState: { itemCount: 0 } }
+						}
+					}
+				},
+				{
+					kind: 'block',
 					type: 'messaging_action_button',
 					inputs: {
 						TEXT: { shadow: { type: 'text', fields: { TEXT: 'OK' } } },
@@ -131,7 +141,8 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 					type: 'user_from_id',
 					inputs: { ID: { shadow: { type: 'text', fields: { TEXT: 'U' } } } }
 				},
-				{ kind: 'block', type: 'user_to_id' }
+				{ kind: 'block', type: 'user_to_id' },
+				{ kind: 'block', type: 'user_mention' }
 			],
 			categorystyle: 'user_category'
 		},
@@ -303,7 +314,11 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 					inputs: { INDEX: { shadow: { type: 'math_number', fields: { NUM: '1' } } } }
 				},
 				{ kind: 'block', type: 'lists_getSublist' },
-				{ kind: 'block', type: 'lists_split' },
+				{
+					kind: 'block',
+					type: 'lists_split',
+					inputs: { DELIM: { shadow: { type: 'text', fields: { TEXT: ',' } } } }
+				},
 				{ kind: 'block', type: 'lists_sort' }
 			],
 			categorystyle: 'list_category'

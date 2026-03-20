@@ -26,28 +26,13 @@ export default {
 		if (msg?.ts !== message.ts) return ''
 		return msg?.text || ''
 	},
-	messaging_send_v1: async (ctx) => {
-		const mode = ctx.params.MODE as 'CHANNEL' | 'THREAD' | 'USER'
-		const text = await ctx.evaluate(ctx.params.TEXT as WorkflowStep)
-
-		const blocks = await generateStepBlocks({
-			ctx,
-			text,
-			components: ctx.params.COMPS as WorkflowStep
+	messaging_send_v1: sendMessage,
+	messaging_send_v1_stmt: async (ctx) => {
+		await sendMessage(ctx)
+		await progressWorkflow({
+			executionId: ctx.executionId,
+			continuationToken: ctx.data.continuationToken
 		})
-
-		const location = await ctx.evaluate(ctx.params.LOC as WorkflowStep)
-		const { channel, ts: thread_ts } =
-			mode === 'CHANNEL' || mode === 'USER' ? { channel: location } : JSON.parse(location)
-
-		const resp = await slack.chat.postMessage({
-			channel,
-			thread_ts,
-			text,
-			blocks,
-			token: await ctx.getToken()
-		})
-		return JSON.stringify({ channel, ts: resp.ts! })
 	},
 	messaging_action_button: async (ctx) => {
 		const text = await ctx.evaluate(ctx.params.TEXT as WorkflowStep)
@@ -98,3 +83,41 @@ export default {
 		})
 	}
 } satisfies Record<string, (context: StepExecutionContext) => Promise<unknown>>
+
+async function sendMessage(ctx: StepExecutionContext) {
+	const mode = ctx.params.MODE as 'CHANNEL' | 'THREAD' | 'USER'
+	const text = await ctx.evaluate(ctx.params.TEXT as WorkflowStep)
+	const ephemeral = (ctx.params.EPHEMERAL || 'FALSE') as 'TRUE' | 'FALSE'
+
+	const blocks = await generateStepBlocks({
+		ctx,
+		text,
+		components: ctx.params.COMPS as WorkflowStep
+	})
+
+	const location = await ctx.evaluate(ctx.params.LOC as WorkflowStep)
+	const { channel, ts: thread_ts } =
+		mode === 'CHANNEL' || mode === 'USER' ? { channel: location } : JSON.parse(location)
+
+	if (ephemeral) {
+		const user = await ctx.evaluate(ctx.params.USER as WorkflowStep)
+		await slack.chat.postEphemeral({
+			user,
+			channel,
+			thread_ts,
+			text,
+			blocks,
+			token: await ctx.getToken()
+		})
+		return ''
+	} else {
+		const resp = await slack.chat.postMessage({
+			channel,
+			thread_ts,
+			text,
+			blocks,
+			token: await ctx.getToken()
+		})
+		return JSON.stringify({ channel, ts: resp.ts! })
+	}
+}

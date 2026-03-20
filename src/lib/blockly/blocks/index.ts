@@ -72,81 +72,118 @@ const TRIGGER = {
 	}
 }
 
-type SendMessageBlock = Blockly.Block & SendMessageMixin
-interface SendMessageMixin extends SendMessageMixinType {
-	mode: 'CHANNEL' | 'THREAD' | 'USER'
-}
-type SendMessageMixinType = typeof SEND_MESSAGE
-
-const SEND_MESSAGE = {
-	init: function (this: SendMessageBlock) {
-		this.jsonInit({
-			type: 'messaging_send_v1',
-			tooltip: 'Returns the message sent.',
-			message0: 'send message in %1 %2 with text %3 actions %4',
-			args0: [
-				{
-					type: 'field_dropdown',
-					name: 'MODE',
-					options: [
-						['channel', 'CHANNEL'],
-						['thread', 'THREAD'],
-						['user', 'USER']
-					]
-				},
-				{
-					type: 'input_value',
-					name: 'LOC',
-					align: 'RIGHT',
-					check: 'Channel'
-				},
-				{
-					type: 'input_value',
-					name: 'TEXT',
-					align: 'RIGHT',
-					check: 'String'
-				},
-				{
-					type: 'input_value',
-					name: 'COMPS',
-					align: 'RIGHT',
-					check: 'Array'
-				}
-			],
-			output: 'Message',
-			style: 'messaging_blocks'
-		})
-
-		this.setStyle('messaging_blocks')
-
-		this.getField('MODE')?.setValidator(this.onDropdownChange_.bind(this))
-
-		this.mode = this.mode || 'CHANNEL'
-	},
-	onDropdownChange_: function (this: SendMessageBlock, newValue: 'CHANNEL' | 'THREAD' | 'USER') {
-		this.mode = newValue
-		this.updateShape_()
-		return newValue
-	},
-	updateShape_: function (this: SendMessageBlock) {
-		this.getInput('LOC')?.setCheck(
-			{ CHANNEL: 'Channel', THREAD: 'Message', USER: 'User' }[this.mode]
-		)
-	},
-	saveExtraState: function (this: SendMessageBlock) {
-		return { mode: this.mode }
-	},
-	loadExtraState: function (
-		this: SendMessageBlock,
-		state: { mode: 'CHANNEL' | 'THREAD' | 'USER' }
-	) {
-		this.mode = state.mode || 'CHANNEL'
-		this.updateShape_()
+function generateSendMessageBlock(withOutput: boolean) {
+	type SendMessageBlock = Blockly.Block & SendMessageMixin
+	interface SendMessageMixin extends SendMessageMixinType {
+		mode: 'CHANNEL' | 'THREAD' | 'USER'
+		ephemeral: boolean
 	}
+	type SendMessageMixinType = typeof SEND_MESSAGE
+
+	const SEND_MESSAGE = {
+		init: function (this: SendMessageBlock) {
+			this.jsonInit({
+				type: 'messaging_send_v1',
+				tooltip: 'Returns the message sent.',
+				message0: `send message in %1 %2 with text %3 actions %4${withOutput ? '' : ' ephemeral %5 %6'}`,
+				args0: [
+					{
+						type: 'field_dropdown',
+						name: 'MODE',
+						options: [
+							['channel', 'CHANNEL'],
+							['thread', 'THREAD'],
+							['user', 'USER']
+						]
+					},
+					{ type: 'input_value', name: 'LOC', align: 'RIGHT', check: 'Channel' },
+					{ type: 'input_value', name: 'TEXT', align: 'RIGHT', check: 'String' },
+					{ type: 'input_value', name: 'COMPS', align: 'RIGHT', check: 'Array' },
+					...(withOutput
+						? []
+						: [
+								{ type: 'field_checkbox', name: 'EPHEMERAL', checked: 'FALSE' },
+								{ type: 'input_dummy', name: 'USER', align: 'RIGHT' }
+							])
+				],
+				output: withOutput ? 'Message' : undefined,
+				previousStatement: withOutput ? undefined : null,
+				nextStatement: withOutput ? undefined : null,
+				style: 'messaging_blocks',
+				inputsInline: false
+			})
+
+			this.setStyle('messaging_blocks')
+
+			this.getField('MODE')?.setValidator(this.onDropdownChange_.bind(this))
+			this.getField('EPHEMERAL')?.setValidator(this.onEphemeralChange_.bind(this))
+
+			this.mode = this.mode || 'CHANNEL'
+			this.ephemeral = this.ephemeral || false
+		},
+		onDropdownChange_: function (this: SendMessageBlock, newValue: 'CHANNEL' | 'THREAD' | 'USER') {
+			this.updateShape_()
+			return newValue
+		},
+		onEphemeralChange_: function (this: SendMessageBlock, newValue: 'FALSE' | 'TRUE' | boolean) {
+			this.updateShape_()
+			return newValue
+		},
+		updateShape_: function (this: SendMessageBlock) {
+			this.mode = this.getFieldValue('MODE')
+			this.getInput('LOC')?.setCheck(
+				{ CHANNEL: 'Channel', THREAD: 'Message', USER: 'User' }[this.mode]
+			)
+			if (!withOutput) {
+				setTimeout(() => {
+					const ephemeral = this.getFieldValue('EPHEMERAL') === 'TRUE'
+					if (this.ephemeral !== ephemeral) {
+						this.removeInput('USER', true)
+						if (ephemeral) {
+							this.appendValueInput('USER')
+								.setAlign(Blockly.inputs.Align.RIGHT)
+								.setCheck('User')
+								.appendField('ephemeral')
+								.appendField(
+									new Blockly.FieldCheckbox('TRUE', this.onEphemeralChange_.bind(this)),
+									'EPHEMERAL'
+								)
+								.appendField('to user')
+						} else {
+							this.appendDummyInput('USER')
+								.setAlign(Blockly.inputs.Align.RIGHT)
+								.appendField('ephemeral')
+								.appendField(
+									new Blockly.FieldCheckbox('FALSE', this.onEphemeralChange_.bind(this)),
+									'EPHEMERAL'
+								)
+						}
+						this.ephemeral = ephemeral
+					}
+				}, 0)
+			}
+		},
+		saveExtraState: function (this: SendMessageBlock) {
+			return { mode: this.mode, ephemeral: this.ephemeral }
+		},
+		loadExtraState: function (
+			this: SendMessageBlock,
+			state: { mode: 'CHANNEL' | 'THREAD' | 'USER'; ephemeral: boolean }
+		) {
+			this.setFieldValue(state.mode || 'CHANNEL', 'MODE')
+			if (!withOutput) this.setFieldValue(state.ephemeral || false, 'EPHEMERAL')
+			this.updateShape_()
+		}
+	}
+	return SEND_MESSAGE
 }
+
+const SEND_MESSAGE = generateSendMessageBlock(true)
+const SEND_MESSAGE_STMT = generateSendMessageBlock(false)
 
 export const blocks = {
 	...Blockly.common.createBlockDefinitionsFromJsonArray(data),
 	trigger: TRIGGER,
-	messaging_send_v1: SEND_MESSAGE
+	messaging_send_v1: SEND_MESSAGE,
+	messaging_send_v1_stmt: SEND_MESSAGE_STMT
 }

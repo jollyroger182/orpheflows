@@ -388,6 +388,19 @@
 		"output": "String",
 		"style": "user_blocks"
 	},
+	{
+		"type": "user_mention",
+		"message0": "get @mention for user %1",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "USER",
+				"check": "User"
+			}
+		],
+		"output": "String",
+		"style": "user_blocks"
+	},
 
 	{
 		"type": "ignore_output",
