@@ -200,6 +200,19 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 			custom: 'VARIABLE',
 			categorystyle: 'variable_category'
 		},
+		{
+			kind: 'category',
+			name: 'Persistence',
+			contents: [
+				{ kind: 'block', type: 'pvar_get' },
+				// { kind: 'block', type: 'pvar_get_keyed' },
+				{ kind: 'block', type: 'pvar_set' },
+				// { kind: 'block', type: 'pvar_set_keyed' },
+				{ kind: 'block', type: 'pvar_delete' }
+				// { kind: 'block', type: 'pvar_delete_keyed' }
+			],
+			categorystyle: 'pvar_category'
+		},
 
 		{ kind: 'sep' },
 

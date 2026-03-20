@@ -58,7 +58,8 @@ export const workflowsRelations = relations(workflows, ({ one, many }) => ({
 		fields: [workflows.authorId],
 		references: [users.id]
 	}),
-	triggeringListener: one(listeners)
+	triggeringListener: one(listeners),
+	variables: many(variables)
 }))
 
 // installations
@@ -141,6 +142,28 @@ export const executionsRelations = relations(executions, ({ one }) => ({
 	}),
 	workflow: one(workflows, {
 		fields: [executions.workflowId],
+		references: [workflows.id]
+	})
+}))
+
+// workflow persistence
+
+export const variables = pgTable(
+	'workflow_variables',
+	{
+		id: serial('id').primaryKey(),
+		workflowId: integer('workflow_id')
+			.references(() => workflows.id)
+			.notNull(),
+		name: text().notNull(),
+		value: text().notNull()
+	},
+	(table) => [unique().on(table.workflowId, table.name), index().on(table.workflowId)]
+)
+
+export const variablesRelations = relations(variables, ({ one }) => ({
+	workflow: one(workflows, {
+		fields: [variables.workflowId],
 		references: [workflows.id]
 	})
 }))

@@ -557,5 +557,115 @@
 		"previousStatement": null,
 		"nextStatement": null,
 		"style": "messaging_blocks"
+	},
+	{
+		"type": "pvar_get",
+		"tooltip": "Persistent variables persist throughout all workflow runs. Beware of race conditions!",
+		"message0": "persistent variable %1 default %2",
+		"args0": [
+			{
+				"type": "field_input",
+				"name": "NAME",
+				"text": "name"
+			},
+			{
+				"type": "input_value",
+				"name": "DEFAULT"
+			}
+		],
+		"output": null,
+		"style": "pvar_blocks"
+	},
+	{
+		"type": "pvar_get_keyed",
+		"tooltip": "Persistent variables persist throughout all workflow runs. Beware of race conditions!",
+		"message0": "persistent variable with name %1 default %2",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "NAME",
+				"check": "String"
+			},
+			{
+				"type": "input_value",
+				"name": "DEFAULT"
+			}
+		],
+		"output": null,
+		"style": "pvar_blocks",
+		"inputsInline": true
+	},
+	{
+		"type": "pvar_set",
+		"tooltip": "Persistent variables persist throughout all workflow runs. Beware of race conditions!",
+		"message0": "set persistent variable %1 to %2",
+		"args0": [
+			{
+				"type": "field_input",
+				"name": "NAME",
+				"text": "name"
+			},
+			{
+				"type": "input_value",
+				"name": "VALUE"
+			}
+		],
+		"previousStatement": null,
+		"nextStatement": null,
+		"style": "pvar_blocks"
+	},
+	{
+		"type": "pvar_set_keyed",
+		"tooltip": "Persistent variables persist throughout all workflow runs. Beware of race conditions!",
+		"message0": "set persistent variable with name %1 to %2",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "NAME",
+				"check": "String"
+			},
+			{
+				"type": "input_value",
+				"name": "VALUE"
+			}
+		],
+		"previousStatement": null,
+		"nextStatement": null,
+		"style": "pvar_blocks",
+		"inputsInline": true
+	},
+	{
+		"type": "pvar_delete",
+		"tooltip": "Persistent variables persist throughout all workflow runs. Beware of race conditions!",
+		"message0": "delete persistent variable %1 %2",
+		"args0": [
+			{
+				"type": "field_input",
+				"name": "NAME",
+				"text": "name"
+			},
+			{
+				"type": "input_dummy",
+				"name": "NAME"
+			}
+		],
+		"previousStatement": null,
+		"nextStatement": null,
+		"style": "pvar_blocks"
+	},
+	{
+		"type": "pvar_delete_keyed",
+		"tooltip": "Persistent variables persist throughout all workflow runs. Beware of race conditions!",
+		"message0": "delete persistent variable with name %1",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "NAME",
+				"check": "String"
+			}
+		],
+		"previousStatement": null,
+		"nextStatement": null,
+		"style": "pvar_blocks"
 	}
 ]

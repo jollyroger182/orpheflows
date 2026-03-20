@@ -7,6 +7,7 @@ import lists from './lists'
 import logic from './logic'
 import math from './math'
 import messaging from './messaging'
+import persistence from './persistence'
 import text from './text'
 import trigger from './trigger'
 import users from './users'
@@ -24,6 +25,7 @@ export const stepHandlers: Record<string, (context: StepExecutionContext) => Pro
 	...text,
 	...lists,
 	...variables,
+	...persistence,
 
 	...legacy
 }

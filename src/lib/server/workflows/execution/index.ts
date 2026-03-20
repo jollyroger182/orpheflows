@@ -5,6 +5,7 @@ import { slack } from '$lib/server/slack'
 import { SLACK_BOT_TOKEN } from '$env/static/private'
 
 export interface StepExecutionContext {
+	workflowId: number
 	executionId: number
 	params: WorkflowStep['params']
 	data: ExecutionData
@@ -108,6 +109,7 @@ export async function progressWorkflow({
 
 	let workflow: ReturnType<typeof Workflows.getWorkflow> | undefined
 	const context: StepExecutionContext = {
+		workflowId: execution.workflowId,
 		executionId,
 		data,
 		params: step.params,
@@ -121,7 +123,7 @@ export async function progressWorkflow({
 		},
 		evaluate: async (step) => {
 			if (!workflow) workflow = Workflows.getWorkflow({ id: execution.workflowId })
-			return evaluateStep(step, data, workflow, executionId)
+			return evaluateStep(step, data, workflow, executionId, execution.workflowId)
 		}
 	}
 
@@ -160,11 +162,13 @@ async function evaluateStep(
 	step: WorkflowStep,
 	data: ExecutionData,
 	workflow: ReturnType<typeof Workflows.getWorkflow>,
-	executionId: number
+	executionId: number,
+	workflowId: number
 ) {
 	if (!step) throw new Error('A block is missing in the workflow')
 
 	const context: StepExecutionContext = {
+		workflowId,
 		executionId,
 		data,
 		params: step.params,
@@ -176,7 +180,7 @@ async function evaluateStep(
 			return w.installation.token
 		},
 		evaluate: async (step) => {
-			return evaluateStep(step, data, workflow, executionId)
+			return evaluateStep(step, data, workflow, executionId, workflowId)
 		}
 	}
 
