@@ -99,7 +99,7 @@ async function sendMessage(ctx: StepExecutionContext) {
 	const { channel, ts: thread_ts } =
 		mode === 'CHANNEL' || mode === 'USER' ? { channel: location } : JSON.parse(location)
 
-	if (ephemeral) {
+	if (ephemeral === 'TRUE') {
 		const user = await ctx.evaluate(ctx.params.USER as WorkflowStep)
 		await slack.chat.postEphemeral({
 			user,
