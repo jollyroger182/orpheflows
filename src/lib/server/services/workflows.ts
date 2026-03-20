@@ -233,6 +233,15 @@ interface PublishVersion {
 }
 
 export async function publishVersion({ id, blocks, code, userId }: PublishVersion) {
+	if (blocks && blocks.length > BLOCKS_LENGTH_LIMIT) {
+		throw new Error(
+			`Your serialized blocks is longer than the limit of ${BLOCKS_LENGTH_LIMIT} bytes.`
+		)
+	}
+	if (code.length > CODE_LENGTH_LIMIT) {
+		throw new Error(`Your transpiled code is longer than the limit of ${CODE_LENGTH_LIMIT} bytes.`)
+	}
+
 	const now = new Date()
 
 	const steps = JSON.parse(code) as WorkflowStep[]
