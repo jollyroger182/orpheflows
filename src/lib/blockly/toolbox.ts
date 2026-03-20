@@ -17,7 +17,16 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 				{ kind: 'block', type: 'trigger_trigger_id' },
 				{ kind: 'block', type: 'trigger_message' },
 				{ kind: 'block', type: 'trigger_data' },
-				{ kind: 'block', type: 'trigger_respond' }
+				{
+					kind: 'block',
+					type: 'trigger_respond',
+					inputs: {
+						TEXT: { shadow: { type: 'text', fields: { TEXT: 'Hello World' } } },
+						COMPS: {
+							block: { type: 'lists_create_with', extraState: { itemCount: 0 } }
+						}
+					}
+				}
 			],
 			categorystyle: 'trigger_category'
 		},
@@ -103,7 +112,11 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 					inputs: { ID: { shadow: { type: 'text', fields: { TEXT: 'C' } } } }
 				},
 				{ kind: 'block', type: 'channel_to_id' },
-				{ kind: 'block', type: 'channel_create' },
+				{
+					kind: 'block',
+					type: 'channel_create',
+					inputs: { NAME: { shadow: { type: 'text', fields: { TEXT: 'my-channel' } } } }
+				},
 				{ kind: 'block', type: 'channel_invite' },
 				{ kind: 'block', type: 'channel_archive' }
 			],
@@ -146,19 +159,71 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 			name: 'Math',
 			contents: [
 				{ kind: 'block', type: 'math_number' },
-				{ kind: 'block', type: 'math_arithmetic' },
-				{ kind: 'block', type: 'math_single' },
-				{ kind: 'block', type: 'math_trig' },
+				{ kind: 'block', type: 'convert_float' },
+				{
+					kind: 'block',
+					type: 'math_arithmetic',
+					inputs: {
+						A: { shadow: { type: 'math_number', fields: { NUM: '1' } } },
+						B: { shadow: { type: 'math_number', fields: { NUM: '1' } } }
+					}
+				},
+				{
+					kind: 'block',
+					type: 'math_single',
+					inputs: { NUM: { shadow: { type: 'math_number', fields: { NUM: '9' } } } }
+				},
+				{
+					kind: 'block',
+					type: 'math_trig',
+					inputs: { NUM: { shadow: { type: 'math_number', fields: { NUM: '45' } } } }
+				},
 				{ kind: 'block', type: 'math_constant' },
-				{ kind: 'block', type: 'math_number_property' },
-				{ kind: 'block', type: 'math_round' },
+				{
+					kind: 'block',
+					type: 'math_number_property',
+					inputs: { NUMBER_TO_CHECK: { shadow: { type: 'math_number', fields: { NUM: '2' } } } }
+				},
+				{
+					kind: 'block',
+					type: 'math_round',
+					inputs: { NUM: { shadow: { type: 'math_number', fields: { NUM: '3.1' } } } }
+				},
 				// { kind: 'block', type: 'math_on_list' },
-				{ kind: 'block', type: 'math_modulo' },
-				{ kind: 'block', type: 'math_constrain' },
-				{ kind: 'block', type: 'math_random_int' },
+				{
+					kind: 'block',
+					type: 'math_modulo',
+					inputs: {
+						DIVIDEND: { shadow: { type: 'math_number', fields: { NUM: '64' } } },
+						DIVISOR: { shadow: { type: 'math_number', fields: { NUM: '10' } } }
+					}
+				},
+				{
+					kind: 'block',
+					type: 'math_constrain',
+					inputs: {
+						VALUE: { shadow: { type: 'math_number', fields: { NUM: '50' } } },
+						LOW: { shadow: { type: 'math_number', fields: { NUM: '1' } } },
+						HIGH: { shadow: { type: 'math_number', fields: { NUM: '100' } } }
+					}
+				},
+				{
+					kind: 'block',
+					type: 'math_random_int',
+					inputs: {
+						FROM: { shadow: { type: 'math_number', fields: { NUM: '1' } } },
+						TO: { shadow: { type: 'math_number', fields: { NUM: '100' } } }
+					}
+				},
 				{ kind: 'block', type: 'math_random_float' },
-				{ kind: 'block', type: 'math_atan2' },
-				{ kind: 'block', type: 'convert_float' }
+				{
+					kind: 'block',
+					type: 'math_atan2',
+					inputs: {
+						X: { shadow: { type: 'math_number', fields: { NUM: '1' } } },
+						Y: { shadow: { type: 'math_number', fields: { NUM: '1' } } }
+					}
+				}
 			],
 			categorystyle: 'math_category'
 		},
@@ -168,15 +233,46 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 			contents: [
 				{ kind: 'block', type: 'text' },
 				{ kind: 'block', type: 'text_join' },
-				{ kind: 'block', type: 'text_length2' },
-				{ kind: 'block', type: 'text_indexOf' },
+				{
+					kind: 'block',
+					type: 'text_length2',
+					inputs: { TEXT: { shadow: { type: 'text', fields: { TEXT: 'abc' } } } }
+				},
+				{
+					kind: 'block',
+					type: 'text_indexOf',
+					inputs: { FIND: { shadow: { type: 'text', fields: { TEXT: 'abc' } } } }
+				},
 				{ kind: 'block', type: 'text_charAt' },
 				{ kind: 'block', type: 'text_getSubstring' },
-				{ kind: 'block', type: 'text_changeCase' },
-				{ kind: 'block', type: 'text_trim' },
-				{ kind: 'block', type: 'text_count' },
-				{ kind: 'block', type: 'text_replace' },
-				{ kind: 'block', type: 'text_reverse' }
+				{
+					kind: 'block',
+					type: 'text_changeCase',
+					inputs: { TEXT: { shadow: { type: 'text', fields: { TEXT: 'abc' } } } }
+				},
+				{
+					kind: 'block',
+					type: 'text_trim',
+					inputs: { TEXT: { shadow: { type: 'text', fields: { TEXT: 'abc' } } } }
+				},
+				{
+					kind: 'block',
+					type: 'text_count',
+					inputs: { SUB: { shadow: { type: 'text', fields: { TEXT: 'abc' } } } }
+				},
+				{
+					kind: 'block',
+					type: 'text_replace',
+					inputs: {
+						FROM: { shadow: { type: 'text', fields: { TEXT: 'abc' } } },
+						TO: { shadow: { type: 'text', fields: { TEXT: 'def' } } }
+					}
+				},
+				{
+					kind: 'block',
+					type: 'text_reverse',
+					inputs: { TEXT: { shadow: { type: 'text', fields: { TEXT: 'abc' } } } }
+				}
 			],
 			categorystyle: 'text_category'
 		},
@@ -188,9 +284,27 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 				{ kind: 'block', type: 'lists_create_with' },
 				{
 					kind: 'block',
+					type: 'lists_repeat',
+					inputs: { NUM: { shadow: { type: 'math_number', fields: { NUM: '5' } } } }
+				},
+				{ kind: 'block', type: 'lists_length' },
+				{ kind: 'block', type: 'lists_isEmpty' },
+				{ kind: 'block', type: 'lists_indexOf' },
+				// { kind: 'block', type: 'lists_getIndex' },
+				{
+					kind: 'block',
 					type: 'lists_custom_getindex',
-					inputs: { INDEX: { shadow: { type: 'math_number' } } }
-				}
+					inputs: { INDEX: { shadow: { type: 'math_number', fields: { NUM: '1' } } } }
+				},
+				// { kind: 'block', type: 'lists_setIndex' },
+				{
+					kind: 'block',
+					type: 'lists_setIndex2',
+					inputs: { INDEX: { shadow: { type: 'math_number', fields: { NUM: '1' } } } }
+				},
+				{ kind: 'block', type: 'lists_getSublist' },
+				{ kind: 'block', type: 'lists_split' },
+				{ kind: 'block', type: 'lists_sort' }
 			],
 			categorystyle: 'list_category'
 		},

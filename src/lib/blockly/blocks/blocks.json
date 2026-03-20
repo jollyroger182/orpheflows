@@ -405,7 +405,7 @@
 
 	{
 		"type": "convert_float",
-		"message0": "convert to float %1",
+		"message0": "convert to number %1",
 		"args0": [
 			{
 				"type": "input_value",
@@ -497,8 +497,52 @@
 	},
 
 	{
+		"type": "lists_length",
+		"message0": "length of %1",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "VALUE",
+				"check": "Array"
+			}
+		],
+		"output": null,
+		"style": "list_blocks"
+	},
+	{
+		"type": "lists_length",
+		"message0": "length of %1",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "VALUE",
+				"check": "Array"
+			}
+		],
+		"output": "Number",
+		"style": "list_blocks"
+	},
+	{
+		"type": "lists_isEmpty",
+		"message0": "%1 is empty %2",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "VALUE",
+				"check": "Array"
+			},
+			{
+				"type": "input_dummy",
+				"name": "NAME"
+			}
+		],
+		"output": "Boolean",
+		"style": "list_blocks"
+	},
+	{
 		"type": "lists_custom_getindex",
-		"message0": "in list %1 get item at index %2",
+		"tooltip": "Returns the item at the specified position in a list. #1 is the first item.",
+		"message0": "in list %1 get # %2",
 		"args0": [
 			{
 				"type": "input_value",
@@ -514,6 +558,30 @@
 		"output": null,
 		"inputsInline": true,
 		"style": "list_blocks"
+	},
+	{
+		"type": "lists_setIndex2",
+		"tooltip": "Sets the item at the specified position in a list. #1 is the first item.",
+		"message0": "in list %1 replace # %2 with %3",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "LIST",
+				"check": "Array"
+			},
+			{
+				"type": "input_value",
+				"name": "INDEX",
+				"check": "Number"
+			},
+			{
+				"type": "input_value",
+				"name": "VALUE"
+			}
+		],
+		"output": "Array",
+		"style": "list_blocks",
+		"inputsInline": true
 	},
 
 	{

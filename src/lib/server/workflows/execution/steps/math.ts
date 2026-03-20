@@ -24,7 +24,7 @@ export default {
 		}
 	},
 	math_single: async (ctx) => {
-		const value = parseFloat(await ctx.evaluate(ctx.params.A as WorkflowStep))
+		const value = parseFloat(await ctx.evaluate(ctx.params.NUM as WorkflowStep))
 		if (isNaN(value)) throw new Error('operand of math operation is an invalid number')
 		const op = ctx.params.OP as 'ROOT' | 'ABS' | 'NEG' | 'LN' | 'LOG10' | 'EXP' | 'POW10'
 
@@ -46,7 +46,7 @@ export default {
 		}
 	},
 	math_trig: async (ctx) => {
-		const value = parseFloat(await ctx.evaluate(ctx.params.A as WorkflowStep))
+		const value = parseFloat(await ctx.evaluate(ctx.params.NUM as WorkflowStep))
 		if (isNaN(value)) throw new Error('operand of trig operation is an invalid number')
 		const op = ctx.params.OP as 'SIN' | 'COS' | 'TAN' | 'ASIN' | 'ACOS' | 'ATAN'
 
