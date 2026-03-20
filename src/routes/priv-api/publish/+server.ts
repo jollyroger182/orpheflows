@@ -21,8 +21,8 @@ export async function POST({ request, locals }) {
 
 	const { id, blocks, code } = data
 
-	const steps = JSON.parse(code)
-	if (steps[0]?.type !== 'trigger') {
+	const steps = JSON.parse(code) as WorkflowStep[]
+	if (!steps.find((s) => s.type === 'trigger')) {
 		return error(400, 'No trigger block found')
 	}
 
@@ -34,5 +34,7 @@ export async function POST({ request, locals }) {
 	})
 	if (!workflow) return error(404, 'Workflow not found')
 
-	return json({ success: true })
+	const hasEditorTrigger = steps.find((s) => s.type === 'trigger' && s.params.TRIGGER === 'EDITOR')
+
+	return json({ success: true, hasEditorTrigger })
 }

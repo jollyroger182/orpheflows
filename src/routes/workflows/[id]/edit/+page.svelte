@@ -16,6 +16,7 @@
 	const { data } = $props()
 
 	let code = $state('')
+	let hasEditorTrigger = $state(data.hasEditorTrigger)
 
 	let blocklyContainer: HTMLDivElement
 	let workspace: Blockly.WorkspaceSvg
@@ -154,6 +155,32 @@
 		} else {
 			dirty = false
 			alert('Workflow successfully published!')
+			const data = await resp.json()
+			hasEditorTrigger = data.hasEditorTrigger
+		}
+	}
+
+	async function onRun() {
+		const resp = await fetch('/priv-api/editor-trigger', {
+			method: 'POST',
+			body: JSON.stringify({ id: data.workflow.id }),
+			headers: { 'Content-Type': 'application/json' }
+		})
+		if (!resp.ok) {
+			const text = await resp.text()
+			console.error('Failed to run workflow', text)
+			try {
+				const result = JSON.parse(text)
+				if ('message' in result) {
+					alert(result.message)
+				} else {
+					throw ''
+				}
+			} catch {
+				alert('Failed to run workflow. See console for more details.')
+			}
+		} else {
+			alert('Workflow successfully executed!')
 		}
 	}
 </script>
@@ -165,6 +192,10 @@
 		<a href={resolve(`/workflows/${data.workflow.id}`)} class="text-lg">{data.workflow.name}</a>
 		<button onclick={onSave} class="btn btn-sm btn-secondary">Save</button>
 		<button onclick={onPublish} class="btn btn-sm btn-success">Publish</button>
+		<span class="flex-1"></span>
+		{#if hasEditorTrigger}
+			<button onclick={onRun} class="btn btn-sm btn-success">Run</button>
+		{/if}
 	</div>
 
 	<div bind:this={blocklyContainer} class={`h-full ${data.dev ? '' : 'col-span-2'}`}></div>

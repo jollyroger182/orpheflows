@@ -19,6 +19,7 @@ const TRIGGER = {
 					[
 						['workflow is executed in slack', 'MANUAL'],
 						['workflow is executed on website', 'WEBSITE'],
+						['workflow is executed in editor', 'EDITOR'],
 						['reaction is added', 'REACTION'],
 						['message is received', 'MESSAGE'],
 						['message is received in DM', 'DM'],
@@ -41,7 +42,7 @@ const TRIGGER = {
 			this.removeInput('DYNAMIC')
 		}
 
-		if (value === 'MANUAL' || value === 'WEBSITE' || value === 'DM') return
+		if (value === 'MANUAL' || value === 'WEBSITE' || value === 'EDITOR' || value === 'DM') return
 
 		const input = this.appendDummyInput('DYNAMIC')
 
