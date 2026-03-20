@@ -267,49 +267,35 @@ export async function publishVersion({ id, blocks, code, userId }: PublishVersio
 
 		await tx.delete(listeners).where(eq(listeners.triggersWorkflowId, id))
 
+		const addListener = (
+			trigger: WorkflowStep,
+			{ event, param, paramNum }: { event: string; param?: string; paramNum?: number }
+		) =>
+			tx.insert(listeners).values({
+				triggersWorkflowId: id,
+				event,
+				param,
+				paramNum,
+				handler: 'start',
+				data: JSON.stringify({ trigger: trigger.id })
+			})
+
 		for (const trigger of triggers) {
 			if (trigger.params.TRIGGER === 'REACTION') {
 				const channel = trigger.params.CHANNEL as string
 				const emoji = trigger.params.EMOJI as string
-				await tx.insert(listeners).values({
-					triggersWorkflowId: id,
-					event: 'reaction_added',
-					param: `${channel};${emoji}`,
-					handler: 'start',
-					data: JSON.stringify({ trigger: trigger.id })
-				})
+				await addListener(trigger, { event: 'reaction_added', param: `${channel};${emoji}` })
 			} else if (trigger.params.TRIGGER === 'MESSAGE') {
 				const channel = trigger.params.CHANNEL as string
-				await tx.insert(listeners).values({
-					triggersWorkflowId: id,
-					event: 'message_received',
-					param: channel,
-					handler: 'start',
-					data: JSON.stringify({ trigger: trigger.id })
-				})
+				await addListener(trigger, { event: 'message_received', param: channel })
 			} else if (trigger.params.TRIGGER === 'DM') {
-				await tx.insert(listeners).values({
-					triggersWorkflowId: id,
-					event: 'dm_received',
-					handler: 'start',
-					data: JSON.stringify({ trigger: trigger.id })
-				})
+				await addListener(trigger, { event: 'dm_received' })
 			} else if (trigger.params.TRIGGER === 'BUTTON') {
-				await tx.insert(listeners).values({
-					triggersWorkflowId: id,
-					event: 'button_pressed',
-					param: trigger.params.ACTIONID as string,
-					handler: 'start',
-					data: JSON.stringify({ trigger: trigger.id })
-				})
+				const actionId = trigger.params.ACTIONID as string
+				await addListener(trigger, { event: 'button_pressed', param: actionId })
 			} else if (trigger.params.TRIGGER === 'SLASH') {
-				await tx.insert(listeners).values({
-					triggersWorkflowId: id,
-					event: 'slash_command',
-					param: trigger.params.NAME as string,
-					handler: 'start',
-					data: JSON.stringify({ trigger: trigger.id })
-				})
+				const name = trigger.params.NAME as string
+				await addListener(trigger, { event: 'slash_command', param: name })
 			}
 		}
 
