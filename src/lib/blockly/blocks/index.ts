@@ -129,13 +129,13 @@ function generateSendMessageBlock(withOutput: boolean) {
 			this.updateShape_()
 			return newValue
 		},
-		updateShape_: function (this: SendMessageBlock) {
-			this.mode = this.getFieldValue('MODE')
-			this.getInput('LOC')?.setCheck(
-				{ CHANNEL: 'Channel', THREAD: 'Message', USER: 'User' }[this.mode]
-			)
-			if (!withOutput) {
-				setTimeout(() => {
+		updateShape_: function (this: SendMessageBlock, immediate = false) {
+			const execute = () => {
+				this.mode = this.getFieldValue('MODE')
+				this.getInput('LOC')?.setCheck(
+					{ CHANNEL: 'Channel', THREAD: 'Message', USER: 'User' }[this.mode]
+				)
+				if (!withOutput) {
 					const ephemeral = this.getFieldValue('EPHEMERAL') === 'TRUE'
 					if (this.ephemeral !== ephemeral) {
 						this.removeInput('USER', true)
@@ -160,8 +160,10 @@ function generateSendMessageBlock(withOutput: boolean) {
 						}
 						this.ephemeral = ephemeral
 					}
-				}, 0)
+				}
 			}
+			if (immediate) execute()
+			else setTimeout(execute, 0)
 		},
 		saveExtraState: function (this: SendMessageBlock) {
 			return { mode: this.mode, ephemeral: this.ephemeral }
@@ -172,7 +174,7 @@ function generateSendMessageBlock(withOutput: boolean) {
 		) {
 			this.setFieldValue(state.mode || 'CHANNEL', 'MODE')
 			if (!withOutput) this.setFieldValue(state.ephemeral || false, 'EPHEMERAL')
-			this.updateShape_()
+			this.updateShape_(true)
 		}
 	}
 	return SEND_MESSAGE
