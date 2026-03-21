@@ -202,10 +202,10 @@ export const listenersRelations = relations(listeners, ({ one }) => ({
 // users
 
 export const users = pgTable('users', {
-	id: text().primaryKey(),
-	name: text().notNull(),
-	photo_url: text(),
-	workflowLimit: integer().notNull().default(WORKFLOW_LIMIT)
+	id: text('id').primaryKey(),
+	name: text('name').notNull(),
+	photo_url: text('photo_url'),
+	workflowLimit: integer('workflow_limit').notNull().default(WORKFLOW_LIMIT)
 })
 
 export const usersRelations = relations(users, ({ many }) => ({
@@ -248,7 +248,7 @@ export const auditLogs = pgTable(
 		action: text('action').notNull(),
 		resourceType: text('resource_type').notNull(),
 		resourceId: text('resource_id').notNull(),
-		source: text(),
+		source: text('source'),
 		metadata: text('metadata'),
 		createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow()
 	},
