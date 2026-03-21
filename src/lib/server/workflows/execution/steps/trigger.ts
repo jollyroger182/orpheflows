@@ -1,5 +1,5 @@
 import { generateStepBlocks } from '$lib/server/utils'
-import type { StepExecutionContext } from '..'
+import { progressWorkflow, type StepExecutionContext } from '..'
 
 export default {
 	trigger_respond: async (ctx) => {
@@ -36,7 +36,11 @@ export default {
 			console.error('sending message to response_url failed', await resp.text())
 			throw new Error('Failed to respond to trigger')
 		}
-		return ''
+
+		await progressWorkflow({
+			executionId: ctx.executionId,
+			continuationToken: ctx.data.continuationToken
+		})
 	},
 	trigger_user: async (ctx) => {
 		if (!ctx.data.variables['trigger.user']) {
