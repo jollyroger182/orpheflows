@@ -1,0 +1,259 @@
+openapi: '3.0.4'
+
+info:
+  version: '0.0.1'
+  title: Orpheflows
+  description: The public Orpheflows API.
+
+servers:
+  - url: 'https://orpheflows.jollyy.dev/api'
+
+paths:
+  /workflows:
+    get:
+      summary: 'Fetches a list of workflows'
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 25
+        - in: query
+          name: search
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArrayOfPublicWorkflows'
+    post:
+      summary: 'Creates a new workflow'
+      security:
+        - api_key: []
+      requestBody:
+        $ref: '#/components/requestBodies/CreateWorkflow'
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicWorkflow'
+  /workflows/{id}:
+    get:
+      summary: Fetches a given workflow
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicOrSelfWorkflow'
+        404:
+          description: Not found
+    patch:
+      summary: Updates a workflow
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateWorkflow'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SelfWorkflow'
+        403:
+          description: Forbidden
+  /workflows/{id}/execute:
+    post:
+      summary: Executes a workflow
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+      requestBody:
+        $ref: '#/components/requestBodies/ExecuteWorkflow'
+      responses:
+        201:
+          description: Workflow started
+        404:
+          description: Workflow not found
+        500:
+          description: Internal server error
+  /users/{id}/workflows:
+    get:
+      summary: "Fetches a user's workflows"
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: page
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 25
+        - in: query
+          name: search
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArrayOfPublicWorkflows'
+
+components:
+  securitySchemes:
+    api_key:
+      type: http
+      scheme: bearer
+  requestBodies:
+    CreateWorkflow:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateWorkflow'
+    UpdateWorkflow:
+      content:
+        application/json:
+          schema:
+            allOf:
+              - oneOf:
+                  - $ref: '#/components/schemas/CreateWorkflow'
+                  - type: object
+                    properties: {}
+              - $ref: '#/components/schemas/UpdateCode'
+    ExecuteWorkflow:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: string
+
+  schemas:
+    ArrayOfPublicWorkflows:
+      type: array
+      items:
+        $ref: '#/components/schemas/PublicWorkflow'
+    PublicWorkflow:
+      type: object
+      properties:
+        id:
+          type: integer
+        author:
+          $ref: '#/components/schemas/PublicUser'
+        installation:
+          $ref: '#/components/schemas/PublicInstallation'
+          nullable: true
+        name:
+          type: string
+        description:
+          type: string
+        appId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+    SelfWorkflow:
+      allOf:
+        - $ref: '#/components/schemas/PublicWorkflow'
+        - type: object
+          properties:
+            author:
+              $ref: '#/components/schemas/SelfUser'
+            blocks:
+              type: string
+              nullable: true
+            blocksUpdatedAt:
+              type: string
+              format: date-time
+            code:
+              type: string
+            codeUpdatedAt:
+              type: string
+              format: date-time
+    PublicOrSelfWorkflow:
+      oneOf:
+        - $ref: '#/components/schemas/PublicWorkflow'
+        - $ref: '#/components/schemas/SelfWorkflow'
+    PublicUser:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        photo_url:
+          type: string
+          nullable: true
+    SelfUser:
+      allOf:
+        - $ref: '#/components/schemas/PublicUser'
+        - type: object
+          properties:
+            workflowLimit:
+              type: integer
+    PublicInstallation:
+      type: object
+      properties:
+        userId:
+          type: string
+
+    CreateWorkflow:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 36
+        description:
+          type: string
+          minLength: 1
+          maxLength: 200
+      required: [name, description]
+    UpdateCode:
+      type: object
+      properties:
+        blocks:
+          type: string
+        code:
+          type: string
