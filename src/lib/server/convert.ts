@@ -8,11 +8,7 @@ type WorkflowWithAuthor = typeof workflows.$inferSelect & {
 export function convertWorkflowToPublic(workflow: WorkflowWithAuthor) {
 	return {
 		id: workflow.id,
-		author: {
-			id: workflow.author.id,
-			name: workflow.author.name,
-			photo_url: workflow.author.photo_url
-		},
+		author: convertUserToPublic(workflow.author),
 		installation: workflow.installation
 			? {
 					userId: workflow.installation.userId
@@ -28,6 +24,7 @@ export function convertWorkflowToPublic(workflow: WorkflowWithAuthor) {
 export function convertWorkflowToSelf(workflow: WorkflowWithAuthor) {
 	return {
 		...convertWorkflowToPublic(workflow),
+		author: convertUserToSelf(workflow.author),
 		blocks: workflow.blocks,
 		blocksUpdatedAt: workflow.blocksUpdatedAt,
 		code: workflow.code,
@@ -47,5 +44,20 @@ export function convertVersionToSelf(version: typeof versions.$inferSelect) {
 		...convertVersionToPublic(version),
 		blocks: version.blocks,
 		code: version.code
+	}
+}
+
+export function convertUserToPublic(user: typeof users.$inferSelect) {
+	return {
+		id: user.id,
+		name: user.name,
+		photo_url: user.photo_url
+	}
+}
+
+export function convertUserToSelf(user: typeof users.$inferSelect) {
+	return {
+		...convertUserToPublic(user),
+		workflowLimit: user.workflowLimit
 	}
 }

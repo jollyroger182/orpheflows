@@ -13,7 +13,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 	const session = await locals.auth()
 
 	const flows = session?.user.slackId
-		? await Workflows.getWorkflowsByAuthor({ author: session.user.slackId, limit, offset })
+		? await Workflows.getWorkflows({ authorId: session.user.slackId, limit, offset })
 		: []
 
 	const total = session?.user.slackId

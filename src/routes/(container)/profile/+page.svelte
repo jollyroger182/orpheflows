@@ -63,7 +63,7 @@
 			<li class="mb-4">
 				{#if increase === 'IDV'}
 					<a href="https://auth.hackclub.com" class="underline">Verify your identity on HCA</a> and
-					click the button. ID verified users get an increase to
+					click the button. ID verified users get a limit of
 					<strong class="font-bold">{WORKFLOW_LIMIT_VERIFIED}</strong> workflows.
 					<form action="?/idv" method="POST" class="inline">
 						<button type="submit" class="btn btn-sm btn-secondary">Check IDV status</button>

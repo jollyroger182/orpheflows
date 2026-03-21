@@ -1,0 +1,1 @@
+ALTER TABLE "users" ALTER COLUMN "workflow_limit" SET DEFAULT 0;
