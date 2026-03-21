@@ -53,6 +53,9 @@ paths:
   /workflows/{id}:
     get:
       summary: Fetches a given workflow
+      security:
+        - api_key: []
+        - {}
       parameters:
         - in: path
           name: id
@@ -70,6 +73,8 @@ paths:
           description: Not found
     patch:
       summary: Updates a workflow
+      security:
+        - api_key: []
       parameters:
         - in: path
           name: id
@@ -90,6 +95,8 @@ paths:
   /workflows/{id}/execute:
     post:
       summary: Executes a workflow
+      security:
+        - api_key: []
       parameters:
         - in: path
           name: id
@@ -138,6 +145,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ArrayOfPublicWorkflows'
+  /me:
+    get:
+      summary: "Fetches the calling user's info"
+      security:
+        - api_key: []
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SelfUser'
 
 components:
   securitySchemes:
