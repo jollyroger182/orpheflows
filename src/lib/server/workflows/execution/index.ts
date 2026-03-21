@@ -35,6 +35,15 @@ export async function startWorkflow({
 	variables = {},
 	findTrigger = () => true
 }: Start) {
+	const version = await Workflows.getLatestVersion({ id: workflowId })
+	if (!version) return
+
+	const steps = JSON.parse(version.code) as WorkflowStep[]
+	const trigger = steps.find(findTrigger)
+	if (!trigger) {
+		throw new Error(`workflow trigger for ${workflowId} not found`)
+	}
+
 	const count = await Executions.countWhere({
 		workflowId,
 		createdAfter: new Date(Date.now() - EXECUTE_RATE_LIMIT_TIME)
@@ -49,15 +58,6 @@ export async function startWorkflow({
 			token: SLACK_BOT_TOKEN
 		})
 		return
-	}
-
-	const version = await Workflows.getLatestVersion({ id: workflowId })
-	if (!version) return
-
-	const steps = JSON.parse(version.code) as WorkflowStep[]
-	const trigger = steps.find(findTrigger)
-	if (!trigger) {
-		throw new Error(`workflow trigger for ${workflowId} not found`)
 	}
 
 	const continuationToken = randomUUID()

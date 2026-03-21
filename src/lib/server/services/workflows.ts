@@ -4,7 +4,7 @@ import {
 	EXECUTE_RATE_LIMIT_COUNT,
 	EXECUTE_RATE_LIMIT_TIME
 } from '$lib/consts'
-import { and, count, desc, eq, isNull, lt, or } from 'drizzle-orm'
+import { and, count, desc, eq, ilike, isNull, lt, or } from 'drizzle-orm'
 import { AuditLogs, Slack } from '.'
 import { db } from '../db'
 import { installations, listeners, versions, workflows } from '../db/schema'
@@ -13,14 +13,26 @@ import { slack } from '../slack'
 interface GetWorkflows {
 	offset?: number
 	limit?: number
+	search?: string
+	authorId?: string
 }
 
-export async function getWorkflows({ offset = 0, limit = 10 }: GetWorkflows = {}) {
+export async function getWorkflows({
+	offset = 0,
+	limit = 10,
+	search,
+	authorId
+}: GetWorkflows = {}) {
+	const where = and(
+		search ? ilike(workflows.name, `%${search}%`) : undefined,
+		authorId ? eq(workflows.authorId, authorId) : undefined
+	)
 	return await db.query.workflows.findMany({
 		offset,
 		limit,
+		where,
 		orderBy: desc(workflows.createdAt),
-		with: { author: true }
+		with: { author: true, installation: true }
 	})
 }
 

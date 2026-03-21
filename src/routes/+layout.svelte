@@ -23,12 +23,18 @@
 	<span class="flex-1"></span>
 
 	{#if user}
-		<img
-			src={user.image}
-			alt="Profile"
-			title={`Logged in as: ${user.name}`}
-			class="inline h-[2em] rounded-full"
-		/>
+		<a href={resolve('/profile')}>
+			{#if user.image}
+				<img
+					src={user.image}
+					alt={user.name}
+					title={`Logged in as: ${user.name}`}
+					class="inline h-[2em] rounded-full"
+				/>
+			{:else}
+				<span>{user.name}</span>
+			{/if}
+		</a>
 		<button
 			onclick={() => {
 				signOut()

@@ -4,8 +4,9 @@ import {
 	convertWorkflowToPublic,
 	convertWorkflowToSelf
 } from '$lib/server/convert.js'
+import type { workflows } from '$lib/server/db/schema.js'
 import { authorize } from '$lib/server/middleware.js'
-import { Workflows } from '$lib/server/services'
+import { Users, Workflows } from '$lib/server/services'
 import { error, json } from '@sveltejs/kit'
 import z from 'zod'
 
@@ -42,4 +43,60 @@ export async function GET({ url, params, locals, request }) {
 	}
 
 	return json(result)
+}
+
+const UpdateSchema = z
+	.union([
+		z.object({
+			name: z.string().nonempty().max(36),
+			description: z.string().nonempty().max(200)
+		}),
+		z.object({
+			name: z.undefined(),
+			description: z.undefined()
+		})
+	])
+	.and(
+		z.union([
+			z.object({
+				blocks: z.string().optional(),
+				code: z.string()
+			}),
+			z.object({
+				blocks: z.undefined(),
+				code: z.undefined()
+			})
+		])
+	)
+
+export async function PATCH({ params, locals, request }) {
+	const userId = await authorize({ locals, request })
+
+	const id = Number(params.id)
+	if (!Number.isInteger(id)) return error(404)
+
+	const result = UpdateSchema.safeParse(await request.json())
+	if (!result.success) return error(400, z.prettifyError(result.error))
+	const data = result.data
+
+	if (!data.name && !data.code) return error(400, 'No fields to update provided')
+
+	let workflow: typeof workflows.$inferSelect | undefined
+	if (data.name) {
+		workflow = await Workflows.setDetails({
+			id,
+			name: data.name,
+			description: data.description,
+			userId
+		})
+		if (!workflow) return error(403, 'You cannot edit this workflow')
+	}
+	if (data.code) {
+		workflow = await Workflows.setCode({ id, blocks: data.blocks, code: data.code, userId })
+		if (!workflow) return error(403, 'You cannot edit this workflow')
+	}
+
+	const author = (await Users.get({ id: userId }))!
+
+	return json(convertWorkflowToSelf({ ...workflow!, author }))
 }

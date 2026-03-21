@@ -6,20 +6,22 @@ import z from 'zod'
 
 const QuerySchema = z.object({
 	page: z.coerce.number().int().positive().default(1),
-	limit: z.coerce.number().int().min(0).max(100).default(25)
+	limit: z.coerce.number().int().min(1).max(100).default(25),
+	search: z.string().optional()
 })
 
 export async function GET({ url }) {
 	const query = QuerySchema.safeParse({
-		page: url.searchParams.get('page') || '1',
-		limit: url.searchParams.get('limit') || '25'
+		page: url.searchParams.get('page') || undefined,
+		limit: url.searchParams.get('limit') || undefined,
+		search: url.searchParams.get('search') || undefined
 	})
 	if (!query.success) return error(400, z.prettifyError(query.error))
-	const { page, limit } = query.data
+	const { page, limit, search } = query.data
 
 	const offset = (page - 1) * limit
 
-	const flows = await Workflows.getWorkflows({ offset, limit })
+	const flows = await Workflows.getWorkflows({ offset, limit, search })
 
 	return json(flows.map((f) => convertWorkflowToPublic(f)))
 }
