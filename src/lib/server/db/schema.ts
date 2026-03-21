@@ -11,6 +11,7 @@ import {
 	real
 } from 'drizzle-orm/pg-core'
 import { relations } from 'drizzle-orm'
+import { WORKFLOW_LIMIT } from '../../consts'
 
 // config tokens
 
@@ -49,7 +50,11 @@ export const workflows = pgTable(
 		createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 		rateLimitNotifiedAt: timestamp('rate_limit_notified_at', { withTimezone: true })
 	},
-	(table) => [index().on(table.clientId), index().on(table.verificationToken)]
+	(table) => [
+		index().on(table.clientId),
+		index().on(table.verificationToken),
+		index().on(table.authorId)
+	]
 )
 
 export const workflowsRelations = relations(workflows, ({ one, many }) => ({
@@ -199,7 +204,8 @@ export const listenersRelations = relations(listeners, ({ one }) => ({
 export const users = pgTable('users', {
 	id: text().primaryKey(),
 	name: text().notNull(),
-	photo_url: text()
+	photo_url: text(),
+	workflowLimit: integer().notNull().default(WORKFLOW_LIMIT)
 })
 
 export const usersRelations = relations(users, ({ many }) => ({

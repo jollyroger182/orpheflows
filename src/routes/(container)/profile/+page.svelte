@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { WORKFLOW_LIMIT_VERIFIED } from '$lib/consts'
 	import type { PageProps } from './$types'
 
 	let { data, form }: PageProps = $props()
@@ -37,6 +38,46 @@
 <p class="mb-4">
 	Your name and email are automatically updated whenever you log in to the website.
 </p>
+
+<hr class="mb-4" />
+
+<h2 class="mb-4 text-2xl font-semibold">Workflow Limits</h2>
+
+{#if form?.limitMessage}
+	<p class="alert alert-success mb-4">{form.limitMessage}</p>
+{/if}
+
+{#if form?.limitError}
+	<p class="alert alert-danger mb-4">{form.limitError}</p>
+{/if}
+
+<p class="mb-4">
+	You have a limit of <strong class="font-bold">{data.workflowLimit}</strong> workflows.
+</p>
+
+{#if data.limitIncreases.length}
+	<p class="mb-4">You can take the following actions to increase your workflow limit:</p>
+
+	<ul class="ms-8 mb-4 list-disc">
+		{#each data.limitIncreases as increase (increase)}
+			<li class="mb-4">
+				{#if increase === 'IDV'}
+					<a href="https://auth.hackclub.com" class="underline">Verify your identity on HCA</a> and
+					click the button. ID verified users get an increase to
+					<strong class="font-bold">{WORKFLOW_LIMIT_VERIFIED}</strong> workflows.
+					<form action="?/idv" method="POST" class="inline">
+						<button type="submit" class="btn btn-sm btn-secondary">Check IDV status</button>
+					</form>
+				{:else if increase === 'REQUEST'}
+					Message <a href="https://hackclub.enterprise.slack.com/team/U08CJCZ2Z9S" class="underline"
+						>@Jolly</a
+					> on the Hack Club Slack for an increase. Please make sure you explain why you need the increase
+					and how much you want it increased to.
+				{/if}
+			</li>
+		{/each}
+	</ul>
+{/if}
 
 <hr class="mb-4" />
 

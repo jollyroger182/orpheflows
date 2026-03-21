@@ -1,0 +1,1 @@
+ALTER TABLE "users" ADD COLUMN "workflowLimit" integer DEFAULT 5 NOT NULL;

@@ -1,0 +1,1 @@
+CREATE INDEX "workflows_author_id_index" ON "workflows" USING btree ("author_id");

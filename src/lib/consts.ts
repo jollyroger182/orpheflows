@@ -6,6 +6,9 @@ export const ID = {
 	runWorkflow: 'run_workflow_80b152f4-c481-4781-8c34-edb5f8488c9f'
 }
 
+export const WORKFLOW_LIMIT = 5
+export const WORKFLOW_LIMIT_VERIFIED = 20
+
 export const BLOCKS_LENGTH_LIMIT = 1_000_000
 export const CODE_LENGTH_LIMIT = 1_000_000
 

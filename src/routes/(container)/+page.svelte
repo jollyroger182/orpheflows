@@ -18,7 +18,8 @@
 {#if user}
 	{#if data.total}
 		<p class="mb-4">
-			You have {data.total} workflow{data.total > 1 ? 's' : ''}.
+			You have used {data.total} of your limit of {data.workflowLimit} workflows. To see how you can increase
+			your limit, go to your <a class="underline" href={resolve('/profile')}>Profile page</a>.
 		</p>
 
 		<ul class="mb-4 grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

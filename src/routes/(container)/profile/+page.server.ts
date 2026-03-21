@@ -1,6 +1,7 @@
-import type { PageServerLoad } from './$types'
+import { WORKFLOW_LIMIT_VERIFIED } from '$lib/consts.js'
 import { Users } from '$lib/server/services'
 import z from 'zod'
+import type { PageServerLoad } from './$types'
 
 export const load: PageServerLoad = async ({ locals }) => {
 	const session = await locals.auth()
@@ -9,7 +10,15 @@ export const load: PageServerLoad = async ({ locals }) => {
 	const user = await Users.get({ id: session.user.slackId })
 	if (!user) return await locals.signOut()
 
+	const limitIncreases: string[] = []
+	if (user.workflowLimit < WORKFLOW_LIMIT_VERIFIED) {
+		limitIncreases.push('IDV')
+	}
+	limitIncreases.push('REQUEST')
+
 	return {
+		workflowLimit: user.workflowLimit,
+		limitIncreases,
 		tokens: user.tokens.map((token) => ({
 			id: token.id,
 			name: token.name,
@@ -61,5 +70,24 @@ export const actions = {
 		const { id } = result.data
 
 		await Users.deleteUserToken({ id })
+	},
+	idv: async ({ locals }) => {
+		const session = await locals.auth()
+		if (!session?.user.slackId) return await locals.signIn('slack')
+
+		const { result } = (await fetch(
+			`https://auth.hackclub.com/api/external/check?slack_id=${session.user.slackId}`
+		).then((r) => r.json())) as { result: string }
+
+		const isIdv = result === 'verified_eligible' || result === 'verified_but_over_18'
+		if (isIdv) {
+			await Users.updateWorkflowLimit({
+				id: session.user.slackId,
+				limit: WORKFLOW_LIMIT_VERIFIED
+			})
+			return { limitMessage: 'Successfully updated your limit!' }
+		} else {
+			return { limitError: 'You are not ID verified.' }
+		}
 	}
 }

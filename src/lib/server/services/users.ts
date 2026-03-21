@@ -1,4 +1,4 @@
-import { and, eq, gt } from 'drizzle-orm'
+import { and, eq, gt, lte, max } from 'drizzle-orm'
 import { db } from '../db'
 import { tokens, users } from '../db/schema'
 import { createHash, randomUUID } from 'crypto'
@@ -68,4 +68,18 @@ export async function deleteUserToken({ id }: DeleteUserToken) {
 			metadata: { lastUsed: deleted.lastUsed?.toISOString() || null }
 		})
 	}
+}
+
+interface UpdateWorkflowLimit {
+	id: string
+	limit: number
+}
+
+export async function updateWorkflowLimit({ id, limit }: UpdateWorkflowLimit) {
+	return (
+		await db
+			.update(users)
+			.set({ workflowLimit: limit })
+			.where(and(eq(users.id, id), lte(users.workflowLimit, limit)))
+	)[0]
 }

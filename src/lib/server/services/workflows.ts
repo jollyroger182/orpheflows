@@ -7,7 +7,7 @@ import {
 import { and, count, desc, eq, ilike, isNull, lt, or } from 'drizzle-orm'
 import { AuditLogs, Slack } from '.'
 import { db } from '../db'
-import { installations, listeners, versions, workflows } from '../db/schema'
+import { installations, listeners, users, versions, workflows } from '../db/schema'
 import { slack } from '../slack'
 
 interface GetWorkflows {
@@ -120,30 +120,39 @@ export async function createWorkflow({
 	signingSecret,
 	source
 }: CreateWorkflow) {
-	const workflow = (
-		await db
-			.insert(workflows)
-			.values({
-				authorId: author,
-				name,
-				description,
-				appId,
-				clientId,
-				clientSecret,
-				verificationToken,
-				signingSecret
-			})
-			.returning()
-	)[0]!
-	await AuditLogs.create({
-		action: 'workflow.create',
-		user: author,
-		resourceType: 'workflow',
-		resourceId: workflow.id,
-		metadata: { name, description },
-		source
+	return await db.transaction(async (tx) => {
+		const user = (await tx.select().from(users).where(eq(users.id, author)))[0]
+		if (!user) throw new Error('User is not registered')
+		const cnt = (
+			await tx.select({ count: count() }).from(workflows).where(eq(workflows.authorId, author))
+		)[0].count
+		if (cnt >= user.workflowLimit) throw new Error('User workflow limit reached')
+
+		const workflow = (
+			await tx
+				.insert(workflows)
+				.values({
+					authorId: author,
+					name,
+					description,
+					appId,
+					clientId,
+					clientSecret,
+					verificationToken,
+					signingSecret
+				})
+				.returning()
+		)[0]!
+		await AuditLogs.create({
+			action: 'workflow.create',
+			user: author,
+			resourceType: 'workflow',
+			resourceId: workflow.id,
+			metadata: { name, description },
+			source
+		})
+		return workflow
 	})
-	return workflow
 }
 
 interface CreateWorkflowInstallation {

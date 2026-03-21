@@ -1,6 +1,6 @@
 import { convertWorkflowToPublic } from '$lib/server/convert'
 import type { PageServerLoad } from './$types'
-import { Workflows } from '$lib/server/services'
+import { Users, Workflows } from '$lib/server/services'
 
 const PER_PAGE = 25
 
@@ -20,10 +20,15 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		? await Workflows.countWorkflowsByUser({ author: session.user.slackId })
 		: 0
 
+	const workflowLimit = session?.user.slackId
+		? (await Users.get({ id: session.user.slackId }))!.workflowLimit
+		: 0
+
 	return {
 		workflows: flows.map(convertWorkflowToPublic),
 		page,
 		total,
-		totalPages: Math.ceil(total / limit)
+		totalPages: Math.ceil(total / limit),
+		workflowLimit
 	}
 }
