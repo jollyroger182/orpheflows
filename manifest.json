@@ -20,7 +20,8 @@
 				"chat:write",
 				"chat:write.customize",
 				"chat:write.public",
-				"links:read"
+				"links:read",
+				"links:write"
 			]
 		}
 	},
@@ -28,6 +29,10 @@
 		"event_subscriptions": {
 			"request_url": "https://orpheflows-dev.example.com/api/slack/events",
 			"bot_events": ["link_shared"]
+		},
+		"interactivity": {
+			"is_enabled": true,
+			"request_url": "https://orpheflows-dev.example.com/api/slack/interaction"
 		},
 		"org_deploy_enabled": false,
 		"socket_mode_enabled": false,

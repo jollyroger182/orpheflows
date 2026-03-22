@@ -18,7 +18,7 @@ export async function handleWorkflowInteraction(
 					variables: { 'trigger.user': payload.user.id, 'trigger.trigger_id': payload.trigger_id },
 					findTrigger: (step) => step.params.TRIGGER === 'MANUAL'
 				})
-			} else {
+			} else if (!action.action_id.startsWith(ID.ignore)) {
 				if (action.type === 'button') {
 					const listeners = await Listeners.getByFilter({
 						filter: and(

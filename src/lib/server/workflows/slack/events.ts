@@ -1,11 +1,10 @@
-import { EXTERNAL_URL } from '$env/static/private'
-import { ID } from '$lib/consts'
 import { listeners as listenersSchema } from '$lib/server/db/schema'
 import { Listeners, Workflows } from '$lib/server/services'
 import { slack } from '$lib/server/slack'
-import type { ActionsBlockElement, AppHomeOpenedEvent, ContextBlockElement } from '@slack/web-api'
+import type { AppHomeOpenedEvent } from '@slack/web-api'
 import { and, eq } from 'drizzle-orm'
 import { startWorkflow } from '../execution'
+import { generateWorkflowBlocks } from './blocks'
 
 export async function handleWorkflowEvent(
 	payload: Slack.EventCallback,
@@ -107,68 +106,14 @@ async function updateAppHome(
 	workflow: Awaited<ReturnType<typeof Workflows.getWorkflowByVerificationToken>> & {},
 	event: AppHomeOpenedEvent
 ) {
-	const version = await Workflows.getLatestVersion({ id: workflow.id })
-	const hasManualTrigger =
-		!!version &&
-		!!(JSON.parse(version.code) as WorkflowStep[]).find(
-			(s) => s.type === 'trigger' && s.params.TRIGGER === 'MANUAL'
-		)
-
-	const pfpElements: ContextBlockElement[] = workflow.author.photo_url
-		? [{ type: 'image', image_url: workflow.author.photo_url, alt_text: 'Profile picture' }]
-		: []
-
-	const editElements: ActionsBlockElement[] =
-		workflow.authorId === event.user
-			? [
-					{
-						type: 'button',
-						text: { type: 'plain_text', text: 'Edit workflow' },
-						url: `${EXTERNAL_URL}/workflows/${workflow.id}/edit`
-					}
-				]
-			: []
-
-	const runElements: ActionsBlockElement[] = hasManualTrigger
-		? [
-				{
-					type: 'button',
-					text: { type: 'plain_text', text: 'Run workflow' },
-					style: 'primary',
-					action_id: ID.runWorkflow
-				}
-			]
-		: []
-
 	await slack.views.publish({
 		user_id: event.user,
 		view: {
 			type: 'home',
-			blocks: [
-				{
-					type: 'header',
-					text: { type: 'plain_text', text: workflow.name }
-				},
-				{
-					type: 'context',
-					elements: [
-						...pfpElements,
-						{ type: 'mrkdwn', text: `<@${workflow.author.id}>` },
-						{
-							type: 'mrkdwn',
-							text: `Created at <!date^${Math.round(workflow.createdAt.getTime() / 1000)}^{date}, {time}|${workflow.createdAt.toISOString()}>`
-						}
-					]
-				},
-				{
-					type: 'section',
-					text: { type: 'mrkdwn', text: workflow.description }
-				},
-				{
-					type: 'actions',
-					elements: [...editElements, ...runElements]
-				}
-			]
+			blocks: await generateWorkflowBlocks(workflow, {
+				view: workflow.authorId !== event.user,
+				edit: workflow.authorId === event.user
+			})
 		},
 		token: workflow.installation!.token
 	})

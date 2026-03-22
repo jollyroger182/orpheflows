@@ -3,7 +3,11 @@ import type { Manifest } from '@slack/web-api/dist/types/request/manifest'
 type BotScope = (((Manifest['oauth_config'] & {})['scopes'] & {})['bot'] & {})[number]
 
 export const ID = {
-	runWorkflow: 'run_workflow_80b152f4-c481-4781-8c34-edb5f8488c9f'
+	runWorkflow: 'run_workflow_80b152f4-c481-4781-8c34-edb5f8488c9f',
+	ignore: 'ignore_b113a421-624d-4598-91e3-32cfff49ec71',
+	ignore1: 'ignore_b113a421-624d-4598-91e3-32cfff49ec71_1',
+	ignore2: 'ignore_b113a421-624d-4598-91e3-32cfff49ec71_2',
+	ignore3: 'ignore_b113a421-624d-4598-91e3-32cfff49ec71_3'
 }
 
 export const WORKFLOW_LIMIT = 0
