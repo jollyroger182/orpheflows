@@ -9,6 +9,22 @@
 			"display_name": "orpheflows (dev)",
 			"always_online": false
 		},
+		"slash_commands": [
+			{
+				"command": "/dev-orpheflows-info",
+				"url": "https://orpheflows-dev.example.com/api/slack/slash",
+				"description": "Sends an embed with workflow details and an optional message",
+				"usage_hint": "<@workflow> [message]",
+				"should_escape": true
+			},
+			{
+				"command": "/dev-orpheflows-run",
+				"url": "https://orpheflows-dev.example.com/api/slack/slash",
+				"description": "Runs an Orpheflows workflow",
+				"usage_hint": "<@workflow>",
+				"should_escape": true
+			}
+		],
 		"unfurl_domains": ["orpheflows-dev.example.com"]
 	},
 	"oauth_config": {

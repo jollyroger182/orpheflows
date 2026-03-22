@@ -71,6 +71,15 @@ export async function getWorkflowByVerificationToken({
 	})
 }
 
+export async function getWorkflowByUserId({ userId }: { userId: string }) {
+	const installation = await db.query.installations.findFirst({
+		where: eq(installations.userId, userId),
+		with: { workflow: { with: { author: true } } }
+	})
+	if (!installation) return
+	return { ...installation.workflow, installation: { ...installation, workflow: undefined } }
+}
+
 interface GetWorkflowsByUser {
 	author: string
 	limit?: number
