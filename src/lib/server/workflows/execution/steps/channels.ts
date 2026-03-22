@@ -1,4 +1,5 @@
 import { slack } from '$lib/server/slack'
+import { isSlackPlatformError } from '$lib/server/utils'
 import { progressWorkflow, type StepExecutionContext } from '..'
 
 export default {
@@ -14,7 +15,13 @@ export default {
 	channel_invite: async (ctx) => {
 		const user = await ctx.evaluate(ctx.params.USER as WorkflowStep)
 		const channel = await ctx.evaluate(ctx.params.CHANNEL as WorkflowStep)
-		await slack.conversations.invite({ channel, users: user, token: await ctx.getToken() })
+		try {
+			await slack.conversations.invite({ channel, users: user, token: await ctx.getToken() })
+		} catch (e) {
+			if (!isSlackPlatformError(e, 'already_in_channel')) {
+				throw e
+			}
+		}
 		await progressWorkflow({
 			executionId: ctx.executionId,
 			continuationToken: ctx.data.continuationToken
