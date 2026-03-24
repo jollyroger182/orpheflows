@@ -5,7 +5,7 @@ import type { Actions, PageServerLoad } from './$types'
 
 export const load: PageServerLoad = async ({ locals }) => {
 	const session = await locals.auth()
-	if (!session?.user.slackId) return redirect(307, '/signin')
+	if (!session?.user.slackId) return await locals.signIn('slack')
 }
 
 const CreateSchema = z.object({
