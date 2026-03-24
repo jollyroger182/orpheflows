@@ -9,7 +9,8 @@ import {
 	index,
 	varchar,
 	real,
-	boolean
+	boolean,
+	pgEnum
 } from 'drizzle-orm/pg-core'
 import { relations } from 'drizzle-orm'
 import { WORKFLOW_LIMIT } from '../../consts'
@@ -233,10 +234,13 @@ export const listenersRelations = relations(listeners, ({ one }) => ({
 
 // users
 
+export const userRoleEnum = pgEnum('user_role', ['user', 'admin'])
+
 export const users = pgTable('users', {
 	id: text('id').primaryKey(),
 	name: text('name').notNull(),
 	photo_url: text('photo_url'),
+	role: userRoleEnum('role').notNull().default('user'),
 	workflowLimit: integer('workflow_limit').notNull().default(WORKFLOW_LIMIT)
 })
 

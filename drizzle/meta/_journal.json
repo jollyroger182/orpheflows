@@ -183,6 +183,13 @@
       "when": 1774357175367,
       "tag": "0025_loud_jazinda",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1774358104152,
+      "tag": "0026_omniscient_nomad",
+      "breakpoints": true
     }
   ]
 }
