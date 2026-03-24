@@ -12,7 +12,7 @@ interface Create {
 
 export async function create({ workflowId, versionId, data, user }: Create) {
 	const execution = (
-		await db.insert(executions).values({ workflowId, versionId, data }).returning()
+		await db.insert(executions).values({ workflowId, versionId, data, userId: user }).returning()
 	)[0]!
 	await AuditLogs.create({
 		action: 'workflow.execute',
@@ -38,14 +38,21 @@ export async function getWithVersion({ id }: Get) {
 interface Count {
 	workflowId: number
 	createdAfter: Date
+	userId?: string
 }
 
-export async function countWhere({ workflowId, createdAfter }: Count) {
+export async function countWhere({ workflowId, createdAfter, userId }: Count) {
 	return (
 		await db
 			.select({ count: count() })
 			.from(executions)
-			.where(and(eq(executions.workflowId, workflowId), gt(executions.createdAt, createdAfter)))
+			.where(
+				and(
+					eq(executions.workflowId, workflowId),
+					gt(executions.createdAt, createdAfter),
+					userId ? eq(executions.userId, userId) : undefined
+				)
+			)
 	)[0]!.count
 }
 

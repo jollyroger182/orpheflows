@@ -1,0 +1,1 @@
+ALTER TABLE "workflow_user_notifs" ALTER COLUMN "notified_at" SET NOT NULL;

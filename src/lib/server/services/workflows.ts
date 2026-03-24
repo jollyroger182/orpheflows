@@ -1,13 +1,20 @@
 import {
 	BLOCKS_LENGTH_LIMIT,
 	CODE_LENGTH_LIMIT,
-	EXECUTE_RATE_LIMIT_COUNT,
-	EXECUTE_RATE_LIMIT_TIME
+	EXECUTE_RATE_LIMIT_NOTIFY_INTERVAL,
+	USER_EXECUTE_RATE_LIMIT_NOTIFY_INTERVAL
 } from '$lib/consts'
 import { and, count, desc, eq, ilike, isNull, lt, or } from 'drizzle-orm'
 import { AuditLogs, Slack } from '.'
 import { db } from '../db'
-import { installations, listeners, users, versions, workflows } from '../db/schema'
+import {
+	installations,
+	listeners,
+	users,
+	versions,
+	workflows,
+	workflowUserNotifs
+} from '../db/schema'
 import { slack } from '../slack'
 
 interface GetWorkflows {
@@ -422,7 +429,10 @@ export async function shouldSendNotification({ id }: { id: number }) {
 				eq(workflows.id, id),
 				or(
 					isNull(workflows.rateLimitNotifiedAt),
-					lt(workflows.rateLimitNotifiedAt, new Date(Date.now() - EXECUTE_RATE_LIMIT_TIME))
+					lt(
+						workflows.rateLimitNotifiedAt,
+						new Date(Date.now() - EXECUTE_RATE_LIMIT_NOTIFY_INTERVAL)
+					)
 				)
 			),
 			with: { installation: true }
@@ -432,11 +442,30 @@ export async function shouldSendNotification({ id }: { id: number }) {
 				.update(workflows)
 				.set({ rateLimitNotifiedAt: new Date() })
 				.where(eq(workflows.id, id))
-			return {
-				...workflow,
-				rateLimitTime: EXECUTE_RATE_LIMIT_TIME,
-				rateLimitCount: EXECUTE_RATE_LIMIT_COUNT
-			}
+			return workflow
+		}
+	})
+}
+
+export async function shouldSendUserNotif({ id, userId }: { id: number; userId: string }) {
+	return await db.transaction(async (tx) => {
+		const notif = await tx.query.workflowUserNotifs.findFirst({
+			where: and(eq(workflowUserNotifs.workflowId, id), eq(workflowUserNotifs.userId, userId)),
+			with: { workflow: { with: { installation: true } } }
+		})
+		if (notif) {
+			if (notif.notifiedAt.getTime() >= Date.now() - USER_EXECUTE_RATE_LIMIT_NOTIFY_INTERVAL) return
+			await tx
+				.update(workflowUserNotifs)
+				.set({ notifiedAt: new Date() })
+				.where(eq(workflows.id, id))
+			return notif.workflow
+		} else {
+			await tx.insert(workflowUserNotifs).values({ workflowId: id, userId, notifiedAt: new Date() })
+			return await tx.query.workflows.findFirst({
+				where: eq(workflows.id, id),
+				with: { installation: true }
+			})
 		}
 	})
 }

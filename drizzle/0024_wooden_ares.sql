@@ -1,0 +1,3 @@
+ALTER TABLE "workflow_executions" ADD COLUMN "user_id" text;--> statement-breakpoint
+ALTER TABLE "workflow_executions" ADD CONSTRAINT "workflow_executions_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+CREATE INDEX "workflow_executions_workflow_id_created_at_user_id_index" ON "workflow_executions" USING btree ("workflow_id","created_at","user_id");

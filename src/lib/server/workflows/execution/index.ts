@@ -6,7 +6,10 @@ import { SLACK_BOT_TOKEN } from '$env/static/private'
 import {
 	EXECUTE_RATE_LIMIT_COUNT,
 	EXECUTE_RATE_LIMIT_NOTIFY_INTERVAL,
-	EXECUTE_RATE_LIMIT_TIME
+	EXECUTE_RATE_LIMIT_TIME,
+	USER_EXECUTE_RATE_LIMIT_COUNT,
+	USER_EXECUTE_RATE_LIMIT_NOTIFY_INTERVAL,
+	USER_EXECUTE_RATE_LIMIT_TIME
 } from '$lib/consts'
 
 export interface StepExecutionContext {
@@ -54,10 +57,31 @@ export async function startWorkflow({
 		const mention = workflow.installation ? `<@${workflow.installation.userId}>` : workflow.name
 		await slack.chat.postMessage({
 			channel: workflow.authorId,
-			text: `Your workflow, ${mention}, has reached its execution limit of ${workflow.rateLimitCount} executions per ${workflow.rateLimitTime} ms. Please try again later or request an increase. (This message will only be sent once per ${EXECUTE_RATE_LIMIT_NOTIFY_INTERVAL / 1000} seconds.)`,
+			text: `Your workflow, ${mention}, has reached its execution limit of ${EXECUTE_RATE_LIMIT_COUNT} executions per ${EXECUTE_RATE_LIMIT_TIME} ms. Please try again later or request an increase. (This message will only be sent once per ${EXECUTE_RATE_LIMIT_NOTIFY_INTERVAL / 1000} seconds.)`,
 			token: SLACK_BOT_TOKEN
 		})
 		return
+	}
+
+	if (variables['trigger.user']) {
+		const userId = variables['trigger.user']!
+		const userCount = await Executions.countWhere({
+			workflowId,
+			createdAfter: new Date(Date.now() - USER_EXECUTE_RATE_LIMIT_TIME),
+			userId
+		})
+		console.log(userCount)
+		if (userCount >= USER_EXECUTE_RATE_LIMIT_COUNT) {
+			const workflow = await Workflows.shouldSendUserNotif({ id: workflowId, userId })
+			if (!workflow) return
+			const mention = workflow.installation ? `<@${workflow.installation.userId}>` : workflow.name
+			await slack.chat.postMessage({
+				channel: workflow.authorId,
+				text: `The workflow you executed, ${mention}, has reached its per-user execution limit of ${USER_EXECUTE_RATE_LIMIT_COUNT} executions per ${USER_EXECUTE_RATE_LIMIT_TIME} ms. Please try again later. (This message will only be sent once per ${USER_EXECUTE_RATE_LIMIT_NOTIFY_INTERVAL / 1000} seconds.)`,
+				token: SLACK_BOT_TOKEN
+			})
+			return
+		}
 	}
 
 	const continuationToken = randomUUID()
