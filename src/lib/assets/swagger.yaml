@@ -158,6 +158,29 @@ paths:
               schema:
                 $ref: '#/components/schemas/SelfUser'
 
+  /users/{id}:
+    patch:
+      summary: Update a user's workflow limit
+      tags:
+        - admin
+      security:
+        - api_key: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateUser'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SelfUser'
+
 components:
   securitySchemes:
     api_key:
@@ -187,6 +210,17 @@ components:
             properties:
               data:
                 type: string
+
+    UpdateUser:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              workflowLimit:
+                type: integer
+            required:
+              - workflowLimit
 
   schemas:
     ArrayOfPublicWorkflows:

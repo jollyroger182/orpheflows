@@ -1,4 +1,4 @@
-import { and, eq, gt, lte } from 'drizzle-orm'
+import { and, eq, gt } from 'drizzle-orm'
 import { db } from '../db'
 import { tokens, users } from '../db/schema'
 import { createHash, randomUUID } from 'crypto'
@@ -89,13 +89,21 @@ export async function deleteUserToken({ id }: DeleteUserToken) {
 interface UpdateWorkflowLimit {
 	id: string
 	limit: number
+	actorId?: string
 }
 
-export async function updateWorkflowLimit({ id, limit }: UpdateWorkflowLimit) {
-	return (
-		await db
-			.update(users)
-			.set({ workflowLimit: limit })
-			.where(and(eq(users.id, id), lte(users.workflowLimit, limit)))
+export async function updateWorkflowLimit({ id, limit, actorId }: UpdateWorkflowLimit) {
+	const result = (
+		await db.update(users).set({ workflowLimit: limit }).where(eq(users.id, id)).returning()
 	)[0]
+	if (result) {
+		await AuditLogs.create({
+			action: 'user.updateLimit',
+			user: actorId,
+			resourceType: 'user',
+			resourceId: id,
+			metadata: { limit }
+		})
+	}
+	return result
 }

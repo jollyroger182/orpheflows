@@ -1,5 +1,5 @@
 import { convertWorkflowToPublic } from '$lib/server/convert'
-import { authorize } from '$lib/server/middleware.js'
+import { authorize } from '$lib/server/middleware'
 import { Slack, Users, Workflows } from '$lib/server/services'
 import { error, json } from '@sveltejs/kit'
 import z from 'zod'

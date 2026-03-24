@@ -59,7 +59,8 @@ export function convertUserToPublic(user: typeof users.$inferSelect) {
 	return {
 		id: user.id,
 		name: user.name,
-		photo_url: user.photo_url
+		photo_url: user.photo_url,
+		role: user.role
 	}
 }
 

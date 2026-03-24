@@ -3,7 +3,7 @@ import { Users } from './services'
 
 export async function authorize(
 	{ locals, request }: { locals: App.Locals; request: Request },
-	required?: true
+	required?: true | 'admin'
 ): Promise<string>
 export async function authorize(
 	{ locals, request }: { locals: App.Locals; request: Request },
@@ -12,16 +12,18 @@ export async function authorize(
 
 export async function authorize(
 	{ locals, request }: { locals: App.Locals; request: Request },
-	required: boolean = true
+	required: boolean | 'admin' = true
 ) {
 	const auth = request.headers.get('Authorization')
 	if (auth?.startsWith('Bearer ')) {
 		const token = await Users.getUserToken({ token: auth.substring(7) })
 		if (!token && required) throw error(401, 'Invalid or expired token')
+		if (required === 'admin' && token?.user.role !== 'admin') throw error(401, 'Not an admin')
 		return token?.user.id
 	}
 
 	const session = await locals.auth()
 	if (!session?.user.slackId && required) throw error(403, 'Not logged in')
+	if (required === 'admin' && session?.user.role !== 'admin') throw error(401, 'Not an admin')
 	return session?.user.slackId
 }

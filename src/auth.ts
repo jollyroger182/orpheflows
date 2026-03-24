@@ -28,15 +28,18 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 			return true
 		},
 
-		jwt({ token, account }) {
+		async jwt({ token, account }) {
 			if (account?.providerAccountId) {
 				token.slackId = account.providerAccountId
+				const user = await Users.get({ id: token.slackId })
+				token.role = user?.role
 			}
 			return token
 		},
 
 		session({ session, token }) {
 			session.user.slackId = token.slackId
+			session.user.role = token.role
 			return session
 		}
 	},
