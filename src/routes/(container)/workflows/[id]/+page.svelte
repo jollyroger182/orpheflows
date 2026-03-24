@@ -116,8 +116,9 @@
 		{/if}
 	</div>
 {:else if data.isOwner}
-	<p class="mb-4">
-		<a href={oauthUrl} rel="external" class="btn btn-success">Install app</a>
+	<p class="mb-4 flex flex-wrap items-center gap-2">
+		<button onclick={confirmDelete} class="btn btn-danger">Delete workflow</button>
+		<a href={oauthUrl} rel="external" class="btn btn-success">Install workflow</a>
 		<span>Your workflow must be installed before you can edit it.</span>
 	</p>
 {:else}
