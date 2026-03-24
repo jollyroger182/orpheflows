@@ -2,6 +2,7 @@ import { WORKFLOW_LIMIT_VERIFIED } from '$lib/consts.js'
 import { Users } from '$lib/server/services'
 import z from 'zod'
 import type { PageServerLoad } from './$types'
+import { checkIdv } from '$lib/server/utils.js'
 
 export const load: PageServerLoad = async ({ locals }) => {
 	const session = await locals.auth()
@@ -75,11 +76,7 @@ export const actions = {
 		const session = await locals.auth()
 		if (!session?.user.slackId) return await locals.signIn('slack')
 
-		const { result } = (await fetch(
-			`https://auth.hackclub.com/api/external/check?slack_id=${session.user.slackId}`
-		).then((r) => r.json())) as { result: string }
-
-		const isIdv = result === 'verified_eligible' || result === 'verified_but_over_18'
+		const isIdv = await checkIdv(session.user.slackId)
 		if (isIdv) {
 			await Users.updateWorkflowLimit({
 				id: session.user.slackId,

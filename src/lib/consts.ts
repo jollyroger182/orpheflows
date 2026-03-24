@@ -11,7 +11,7 @@ export const ID = {
 }
 
 export const WORKFLOW_LIMIT = 0
-export const WORKFLOW_LIMIT_VERIFIED = 20
+export const WORKFLOW_LIMIT_VERIFIED = 100
 
 export const BLOCKS_LENGTH_LIMIT = 1_000_000
 export const CODE_LENGTH_LIMIT = 1_000_000

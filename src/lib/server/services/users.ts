@@ -1,8 +1,24 @@
-import { and, eq, gt, lte, max } from 'drizzle-orm'
+import { and, eq, gt, lte } from 'drizzle-orm'
 import { db } from '../db'
 import { tokens, users } from '../db/schema'
 import { createHash, randomUUID } from 'crypto'
 import { AuditLogs } from '.'
+
+interface CreateOrUpdate {
+	id: string
+	name: string
+	photo_url: string | null
+}
+
+export async function createOrUpdate({ id, name, photo_url }: CreateOrUpdate) {
+	return (
+		await db
+			.insert(users)
+			.values({ id, name, photo_url })
+			.onConflictDoUpdate({ target: users.id, set: { name, photo_url } })
+			.returning()
+	)[0]!
+}
 
 interface Get {
 	id: string

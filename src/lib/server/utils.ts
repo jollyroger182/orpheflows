@@ -95,3 +95,10 @@ export async function generateStepBlocks({
 
 	return [{ type: 'section', text: { type: 'mrkdwn', text } }, ...actionBlocks]
 }
+
+export async function checkIdv(slackId: string) {
+	const { result } = (await fetch(
+		`https://auth.hackclub.com/api/external/check?slack_id=${slackId}`
+	).then((r) => r.json())) as { result: string }
+	return result === 'verified_eligible' || result === 'verified_but_over_18'
+}

@@ -1,6 +1,6 @@
-import { db } from '$lib/server/db'
-import { users } from '$lib/server/db/schema'
-import { AuditLogs } from '$lib/server/services'
+import { WORKFLOW_LIMIT_VERIFIED } from '$lib/consts'
+import { AuditLogs, Users } from '$lib/server/services'
+import { checkIdv } from '$lib/server/utils'
 import { SvelteKitAuth } from '@auth/sveltekit'
 import Slack from '@auth/sveltekit/providers/slack'
 
@@ -14,10 +14,16 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
 			const name = user.name || 'unknown'
 			const photo_url = user.image || null
 			if (id) {
-				await db
-					.insert(users)
-					.values({ id, name, photo_url })
-					.onConflictDoUpdate({ target: users.id, set: { name, photo_url } })
+				const dbUser = await Users.createOrUpdate({ id, name, photo_url })
+				if (dbUser.workflowLimit < WORKFLOW_LIMIT_VERIFIED) {
+					// check idv in background
+					;(async () => {
+						const isIdv = await checkIdv(id)
+						if (isIdv) {
+							await Users.updateWorkflowLimit({ id, limit: WORKFLOW_LIMIT_VERIFIED })
+						}
+					})()
+				}
 			}
 			return true
 		},
