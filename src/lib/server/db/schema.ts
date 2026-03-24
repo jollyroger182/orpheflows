@@ -8,7 +8,8 @@ import {
 	foreignKey,
 	index,
 	varchar,
-	real
+	real,
+	boolean
 } from 'drizzle-orm/pg-core'
 import { relations } from 'drizzle-orm'
 import { WORKFLOW_LIMIT } from '../../consts'
@@ -45,6 +46,7 @@ export const workflows = pgTable(
 		signingSecret: text('signing_secret').notNull(),
 		blocks: text('blocks'),
 		code: text('code').notNull().default(''),
+		isPublic: boolean('is_public').notNull().default(false),
 		blocksUpdatedAt: timestamp('blocks_updated_at', { withTimezone: true }).notNull().defaultNow(),
 		codeUpdatedAt: timestamp('code_updated_at', { withTimezone: true }).notNull().defaultNow(),
 		createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),

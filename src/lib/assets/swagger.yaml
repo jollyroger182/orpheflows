@@ -209,6 +209,8 @@ components:
           type: string
         appId:
           type: string
+        isPublic:
+          type: boolean
         createdAt:
           type: string
           format: date-time

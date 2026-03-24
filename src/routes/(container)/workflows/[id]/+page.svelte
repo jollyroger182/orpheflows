@@ -10,6 +10,8 @@
 	let showDetailsForm = $state(false)
 
 	let deleteForm: HTMLFormElement | undefined = $state()
+	let publicForm: HTMLFormElement | undefined = $state()
+	let publicMode = $state('public')
 
 	const oauthUrl = $derived.by(() => {
 		const url = new URL('https://slack.com/oauth/v2/authorize')
@@ -26,6 +28,28 @@
 			)
 		) {
 			deleteForm?.submit()
+		}
+	}
+
+	function onMakePrivate() {
+		if (
+			confirm(
+				'Are you sure you want to make this workflow private? Other people cannot view this workflow then.'
+			)
+		) {
+			publicMode = 'private'
+			setTimeout(() => publicForm?.submit(), 0)
+		}
+	}
+
+	function onMakePublic() {
+		if (
+			confirm(
+				'Are you sure you want to make this workflow public? Anyone can view the blocks and code of public workflows.'
+			)
+		) {
+			publicMode = 'public'
+			setTimeout(() => publicForm?.submit(), 0)
 		}
 	}
 </script>
@@ -73,6 +97,10 @@
 			<a href={resolve(`/workflows/${data.workflow.id}/edit`)} class="btn btn-primary"
 				>Edit workflow</a
 			>
+		{:else if data.workflow.isPublic}
+			<a href={resolve(`/workflows/${data.workflow.id}/edit`)} class="btn btn-primary"
+				>View workflow</a
+			>
 		{/if}
 		<a
 			href={`https://${PUBLIC_SLACK_DOMAIN}.slack.com/team/${data.workflow.installation.userId}`}
@@ -96,15 +124,25 @@
 	<p class="mb-4">The workflow creator hasn't installed the workflow yet.</p>
 {/if}
 
-{#if data.isOwner}
-	<form method="POST" action="?/delete" bind:this={deleteForm}></form>
+{#if showDetailsForm}
+	<div class="mb-4">
+		<WorkflowForm
+			action="?/edit"
+			button="Save"
+			name={data.workflow.name}
+			description={data.workflow.description}
+		/>
+	</div>
+	{#if data.workflow.isPublic}
+		<button onclick={onMakePrivate} class="btn btn-secondary">Make private</button>
+	{:else}
+		<button onclick={onMakePublic} class="btn btn-secondary">Make public</button>
+	{/if}
+	<form method="POST" action="?/public" bind:this={publicForm}>
+		<input type="hidden" bind:value={publicMode} name="mode" />
+	</form>
 {/if}
 
-{#if showDetailsForm}
-	<WorkflowForm
-		action="?/edit"
-		button="Save"
-		name={data.workflow.name}
-		description={data.workflow.description}
-	/>
+{#if data.isOwner}
+	<form method="POST" action="?/delete" bind:this={deleteForm}></form>
 {/if}

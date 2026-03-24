@@ -28,6 +28,7 @@
 		registerExtensions()
 
 		workspace = Blockly.inject(blocklyContainer, { toolbox })
+		if (!data.isOwner) workspace.setIsReadOnly(true)
 		workspace.setTheme(theme)
 		if (data.workflow.blocks) {
 			Blockly.serialization.workspaces.load(JSON.parse(data.workflow.blocks), workspace)
@@ -190,10 +191,12 @@
 <div class="grid h-full grid-cols-2 grid-rows-[auto_1fr]">
 	<div class="col-span-2 flex items-center gap-2 px-4 py-2">
 		<a href={resolve(`/workflows/${data.workflow.id}`)} class="text-lg">{data.workflow.name}</a>
-		<button onclick={onSave} class="btn btn-sm btn-secondary">Save</button>
-		<button onclick={onPublish} class="btn btn-sm btn-success">Publish</button>
+		{#if data.isOwner}
+			<button onclick={onSave} class="btn btn-sm btn-secondary">Save</button>
+			<button onclick={onPublish} class="btn btn-sm btn-success">Publish</button>
+		{/if}
 		<span class="flex-1"></span>
-		{#if hasEditorTrigger}
+		{#if data.isOwner && hasEditorTrigger}
 			<button onclick={onRun} class="btn btn-sm btn-success">Run</button>
 		{/if}
 	</div>

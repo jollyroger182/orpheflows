@@ -40,6 +40,10 @@ const EditSchema = z.object({
 	description: z.string().nonempty().max(200)
 })
 
+const PublicSchema = z.object({
+	mode: z.enum(['public', 'private'])
+})
+
 export const actions = {
 	run: async ({ locals, params }) => {
 		const id = parseInt(params.id)
@@ -96,5 +100,28 @@ export const actions = {
 		if (!flow) return error(403, 'You cannot edit this workflow')
 
 		return { message: 'Workflow edited!' }
+	},
+	public: async ({ locals, params, request }) => {
+		const id = parseInt(params.id)
+		if (isNaN(id)) return error(404, 'Workflow not found')
+
+		const session = await locals.auth()
+		if (!session?.user.slackId) return error(401, 'You are not logged in')
+
+		const form = await request.formData()
+		const result = PublicSchema.safeParse({
+			mode: form.get('mode')
+		})
+		if (!result.success) {
+			return { error: z.prettifyError(result.error) }
+		}
+		const { mode } = result.data
+
+		const pub = mode === 'public'
+
+		const flow = await Workflows.setPublic({ id, public: pub, userId: session.user.slackId })
+		if (!flow) return error(403, 'You cannot edit this workflow')
+
+		return { message: `Workflow set to ${mode}!` }
 	}
 }

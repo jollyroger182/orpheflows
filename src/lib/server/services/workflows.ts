@@ -255,6 +255,32 @@ export async function setDetails({
 	return workflow
 }
 
+interface SetPublic {
+	id: number
+	public: boolean
+	userId: string
+}
+
+export async function setPublic({ id, public: isPublic, userId }: SetPublic) {
+	const workflow = (
+		await db
+			.update(workflows)
+			.set({ isPublic })
+			.where(and(eq(workflows.id, id), eq(workflows.authorId, userId)))
+			.returning()
+	)[0]
+	if (workflow) {
+		await AuditLogs.create({
+			action: 'workflow.editPublic',
+			user: userId,
+			resourceType: 'workflow',
+			resourceId: workflow.id,
+			metadata: { isPublic }
+		})
+	}
+	return workflow
+}
+
 interface PublishVersion {
 	id: number
 	blocks?: string

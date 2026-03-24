@@ -1,4 +1,4 @@
-import { convertWorkflowToSelf } from '$lib/server/convert'
+import { convertWorkflowToPublic, convertWorkflowToSelf } from '$lib/server/convert'
 import { Workflows } from '$lib/server/services'
 import { error } from '@sveltejs/kit'
 import type { PageServerLoad } from './$types'
@@ -12,7 +12,8 @@ export const load: PageServerLoad = async ({ locals, params, url }) => {
 
 	const session = await locals.auth()
 
-	if (flow.authorId !== session?.user.slackId) return error(403, 'Forbidden')
+	const isOwner = flow.authorId === session?.user.slackId
+	if (!isOwner && !flow.isPublic) return error(403, 'Forbidden')
 
 	const version = await Workflows.getLatestVersion({ id })
 	const hasEditorTrigger =
@@ -22,8 +23,9 @@ export const load: PageServerLoad = async ({ locals, params, url }) => {
 		)
 
 	return {
-		workflow: convertWorkflowToSelf(flow),
+		workflow: isOwner ? convertWorkflowToSelf(flow) : convertWorkflowToPublic(flow),
 		dev: url.searchParams.has('dev'),
+		isOwner,
 		hasEditorTrigger
 	}
 }

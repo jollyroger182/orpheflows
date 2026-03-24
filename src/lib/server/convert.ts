@@ -17,7 +17,10 @@ export function convertWorkflowToPublic(workflow: WorkflowWithAuthor) {
 		name: workflow.name,
 		description: workflow.description,
 		appId: workflow.appId,
-		createdAt: workflow.createdAt
+		isPublic: workflow.isPublic,
+		createdAt: workflow.createdAt,
+		blocks: workflow.isPublic ? workflow.blocks : null,
+		code: workflow.isPublic ? workflow.code : null
 	}
 }
 
@@ -32,10 +35,15 @@ export function convertWorkflowToSelf(workflow: WorkflowWithAuthor) {
 	}
 }
 
-export function convertVersionToPublic(version: typeof versions.$inferSelect) {
+export function convertVersionToPublic(
+	version: typeof versions.$inferSelect,
+	isPublic: boolean = false
+) {
 	return {
 		id: version.id,
-		createdAt: version.createdAt
+		createdAt: version.createdAt,
+		blocks: isPublic ? version.blocks : null,
+		code: isPublic ? version.code : null
 	}
 }
 

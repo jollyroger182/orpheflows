@@ -33,7 +33,9 @@ export async function GET({ url, params, locals, request }) {
 	if (include === 'version') {
 		const ver = await Workflows.getLatestVersion({ id })
 		if (ver) {
-			version = isAuthor ? convertVersionToSelf(ver) : convertVersionToPublic(ver)
+			version = isAuthor
+				? convertVersionToSelf(ver)
+				: convertVersionToPublic(ver, workflow.isPublic)
 		}
 	}
 
