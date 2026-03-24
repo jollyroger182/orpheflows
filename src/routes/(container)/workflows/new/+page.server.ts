@@ -1,4 +1,4 @@
-import { Slack, Workflows } from '$lib/server/services'
+import { Slack, Users, Workflows } from '$lib/server/services'
 import { redirect } from '@sveltejs/kit'
 import z from 'zod'
 import type { Actions, PageServerLoad } from './$types'
@@ -6,6 +6,15 @@ import type { Actions, PageServerLoad } from './$types'
 export const load: PageServerLoad = async ({ locals }) => {
 	const session = await locals.auth()
 	if (!session?.user.slackId) return await locals.signIn('slack')
+
+	const user = await Users.get({ id: session.user.slackId })
+	if (!user) return await locals.signOut()
+
+	const count = await Workflows.countWorkflowsByUser({ author: session.user.slackId })
+
+	return {
+		reachedLimit: count >= user.workflowLimit
+	}
 }
 
 const CreateSchema = z.object({

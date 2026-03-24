@@ -12,18 +12,13 @@
 <div class="mb-4 flex flex-wrap items-center gap-x-20 gap-y-2">
 	<h1 class="text-3xl font-semibold">Your workflows</h1>
 	{#if user}
-		<button
-			onclick={() => goto(resolve('/workflows/new'))}
-			class="btn btn-success"
-			disabled={data.total >= data.workflowLimit}>Create</button
-		>
+		<button onclick={() => goto(resolve('/workflows/new'))} class="btn btn-success">Create</button>
 	{/if}
 </div>
 
 {#if user}
 	<p class="mb-4">
-		You have used {data.total} of your limit of {data.workflowLimit} workflows. To see how you can increase
-		your limit, go to your <a class="underline" href={resolve('/profile')}>Profile page</a>.
+		You have <strong class="bold">{data.total}</strong> workflow{data.total !== 1 ? 's' : ''}.
 	</p>
 
 	<ul class="mb-4 grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
