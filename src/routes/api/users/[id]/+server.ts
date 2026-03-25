@@ -1,5 +1,5 @@
-import { convertUserToSelf } from '$lib/server/convert'
-import { authorize } from '$lib/server/middleware'
+import { convertUserToPublic, convertUserToSelf } from '$lib/server/convert'
+import { authorize, authorizeUser } from '$lib/server/middleware'
 import { Users } from '$lib/server/services'
 import { error, json } from '@sveltejs/kit'
 import z from 'zod'
@@ -18,6 +18,18 @@ export async function PATCH({ request, locals, params }) {
 	const { workflowLimit } = result.data
 
 	const user = await Users.updateWorkflowLimit({ id, limit: workflowLimit, actorId })
+	if (!user) return error(404, 'User not found')
 
 	return json(convertUserToSelf(user))
+}
+
+export async function GET({ request, locals, params }) {
+	const id = params.id
+
+	const { role } = await authorizeUser({ request, locals }, false)
+
+	const user = await Users.get({ id })
+	if (!user) return error(404, 'User not found')
+
+	return json(role === 'admin' ? convertUserToSelf(user) : convertUserToPublic(user))
 }
