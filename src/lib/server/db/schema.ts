@@ -128,7 +128,7 @@ export const executions = pgTable(
 		workflowId: integer('workflow_id')
 			.references(() => workflows.id, { onDelete: 'cascade' })
 			.notNull(),
-		userId: text('user_id').references(() => users.id),
+		userId: text('user_id'),
 		data: text('data').notNull(),
 		createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow()
 	},
@@ -188,9 +188,7 @@ export const workflowUserNotifs = pgTable(
 		workflowId: integer('workflow_id')
 			.references(() => workflows.id)
 			.notNull(),
-		userId: text('user_id')
-			.references(() => users.id)
-			.notNull(),
+		userId: text('user_id').notNull(),
 		notifiedAt: timestamp('notified_at', { withTimezone: true }).notNull()
 	},
 	(table) => [index('idx_workflow_user_notifs_workflow_user').on(table.userId, table.workflowId)]
@@ -200,10 +198,6 @@ export const workflowUserNotifsRelations = relations(workflowUserNotifs, ({ one 
 	workflow: one(workflows, {
 		fields: [workflowUserNotifs.workflowId],
 		references: [workflows.id]
-	}),
-	user: one(users, {
-		fields: [workflowUserNotifs.userId],
-		references: [users.id]
 	})
 }))
 
