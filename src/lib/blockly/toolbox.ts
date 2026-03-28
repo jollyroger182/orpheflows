@@ -243,6 +243,7 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 			name: 'Text',
 			contents: [
 				{ kind: 'block', type: 'text' },
+				{ kind: 'block', type: 'text_newline' },
 				{ kind: 'block', type: 'text_join' },
 				{
 					kind: 'block',

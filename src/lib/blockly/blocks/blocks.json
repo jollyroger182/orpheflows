@@ -459,6 +459,18 @@
 		"style": "text_blocks"
 	},
 	{
+		"type": "text_newline",
+		"message0": "newline %1",
+		"args0": [
+			{
+				"type": "input_dummy",
+				"name": "NAME"
+			}
+		],
+		"output": "String",
+		"style": "text_blocks"
+	},
+	{
 		"type": "text_embed",
 		"message0": "%1 %2",
 		"args0": [

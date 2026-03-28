@@ -2,6 +2,7 @@ import type { StepExecutionContext } from '..'
 
 export default {
 	text: async (ctx) => ctx.params.TEXT as string,
+	text_newline: async () => '\n',
 	text_join: async (ctx) => {
 		let text = ''
 		for (let i = 0; ; i++) {
