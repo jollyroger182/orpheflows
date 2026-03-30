@@ -67,6 +67,17 @@ export default {
 		const iffalse = await ctx.evaluate(ctx.params.ELSE as WorkflowStep)
 		return test !== 'false' ? iftrue : iffalse
 	},
+	timer_sleep: async (ctx) => {
+		const ms = parseFloat(await ctx.evaluate(ctx.params.MS as WorkflowStep))
+		if (isNaN(ms)) {
+			throw new Error('Argument to sleep block is not a number')
+		}
+		await new Promise((resolve) => setTimeout(resolve, ms))
+		await progressWorkflow({
+			executionId: ctx.executionId,
+			continuationToken: ctx.data.continuationToken
+		})
+	},
 	ignore_output: async (ctx) => {
 		await ctx.evaluate(ctx.params.VALUE as WorkflowStep)
 		await progressWorkflow({

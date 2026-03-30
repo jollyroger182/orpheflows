@@ -403,6 +403,25 @@
 	},
 
 	{
+		"type": "timer_sleep",
+		"tooltip": "Delays the workflow execution by a given number of milliseconds. NOTE: Do not use this block to delay for longer than a few minutes, as a server reboot would interrupt the workflow, and it will never continue executing!",
+		"message0": "delay %1 ms %2",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "MS",
+				"check": "Number"
+			},
+			{
+				"type": "input_dummy",
+				"name": "NAME"
+			}
+		],
+		"previousStatement": null,
+		"nextStatement": null,
+		"style": "logic_blocks"
+	},
+	{
 		"type": "ignore_output",
 		"message0": "execute and ignore output %1",
 		"args0": [

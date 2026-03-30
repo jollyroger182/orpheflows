@@ -151,7 +151,7 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 
 		{
 			kind: 'category',
-			name: 'Logic',
+			name: 'Control',
 			contents: [
 				{ kind: 'block', type: 'controls_if' },
 				{ kind: 'block', type: 'controls_if', extraState: { hasElse: true } },
@@ -161,6 +161,11 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 				{ kind: 'block', type: 'logic_negate' },
 				{ kind: 'block', type: 'logic_boolean' },
 				{ kind: 'block', type: 'logic_ternary' },
+				{
+					kind: 'block',
+					type: 'timer_sleep',
+					inputs: { MS: { shadow: { type: 'math_number', fields: { NUM: '1000' } } } }
+				},
 				{ kind: 'block', type: 'ignore_output' }
 			],
 			categorystyle: 'logic_category'

@@ -1,10 +1,10 @@
 import { type StepExecutionContext } from '..'
 
 import channels from './channels'
+import control from './control'
 import form from './form'
 import legacy from './legacy'
 import lists from './lists'
-import logic from './logic'
 import math from './math'
 import messaging from './messaging'
 import persistence from './persistence'
@@ -20,7 +20,7 @@ export const stepHandlers: Record<string, (context: StepExecutionContext) => Pro
 	...channels,
 	...users,
 
-	...logic,
+	...control,
 	...math,
 	...text,
 	...lists,
