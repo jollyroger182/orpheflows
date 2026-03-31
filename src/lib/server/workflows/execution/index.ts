@@ -76,7 +76,7 @@ export async function startWorkflow({
 			if (!workflow) return
 			const mention = workflow.installation ? `<@${workflow.installation.userId}>` : workflow.name
 			await slack.chat.postMessage({
-				channel: workflow.authorId,
+				channel: userId,
 				text: `The workflow you executed, ${mention}, has reached its per-user execution limit of ${USER_EXECUTE_RATE_LIMIT_COUNT} executions per ${USER_EXECUTE_RATE_LIMIT_TIME} ms. Please try again later. (This message will only be sent once per ${USER_EXECUTE_RATE_LIMIT_NOTIFY_INTERVAL / 1000} seconds.)`,
 				token: SLACK_BOT_TOKEN
 			})
