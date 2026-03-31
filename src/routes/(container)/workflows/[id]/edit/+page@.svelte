@@ -83,6 +83,12 @@
 
 	function setStackDisabled(block: Blockly.Block, disabled: boolean) {
 		block.setDisabledReason(disabled, 'connected to trigger')
+		for (const input of block.inputList) {
+			if (input instanceof Blockly.inputs.ValueInput) {
+				const target = input.connection?.targetBlock()
+				if (target) setStackDisabled(target, disabled)
+			}
+		}
 		const next = block.nextConnection?.targetBlock()
 		if (next) setStackDisabled(next, disabled)
 	}
