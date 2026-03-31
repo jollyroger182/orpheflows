@@ -22,7 +22,7 @@ export default {
 		return items[idx - 1]
 	},
 	lists_repeat: async (ctx) => {
-		const item = await ctx.evaluate(ctx.params.LIST as WorkflowStep)
+		const item = await ctx.evaluate(ctx.params.ITEM as WorkflowStep)
 		const num = await ctx.evaluate(ctx.params.NUM as WorkflowStep)
 
 		const repeat = parseInt(num)
