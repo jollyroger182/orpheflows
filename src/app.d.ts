@@ -42,6 +42,41 @@ declare global {
 			getWorkflow(id: number): Promise<{ id: number } | undefined>
 		}
 	}
+
+	namespace Schemas {
+		interface PublicWorkflow {
+			id: number
+			author: PublicUser
+			installation: PublicInstallation | null
+			name: string
+			description: string
+			appId: string
+			isPublic: boolean
+			createdAt: Date
+		}
+
+		interface SelfWorkflow extends PublicWorkflow {
+			author: SelfUser
+			blocks: string | null
+			blocksUpdatedAt: Date
+			code: string
+			codeUpdatedAt: Date
+		}
+
+		interface PublicUser {
+			id: string
+			name: string
+			photo_url: string | null
+		}
+
+		interface SelfUser extends PublicUser {
+			workflowLimit: number
+		}
+
+		interface PublicInstallation {
+			userId: string
+		}
+	}
 }
 
 declare module '@auth/core/types' {
