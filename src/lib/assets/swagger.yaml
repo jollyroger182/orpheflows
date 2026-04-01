@@ -262,6 +262,12 @@ components:
           type: string
         isPublic:
           type: boolean
+        blocks:
+          type: string
+          nullable: true
+        code:
+          type: string
+          nullable: true
         createdAt:
           type: string
           format: date-time
@@ -272,9 +278,6 @@ components:
           properties:
             author:
               $ref: '#/components/schemas/SelfUser'
-            blocks:
-              type: string
-              nullable: true
             blocksUpdatedAt:
               type: string
               format: date-time

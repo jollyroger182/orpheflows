@@ -39,7 +39,54 @@ declare global {
 
 	namespace RPC {
 		interface PublicAPI {
-			getWorkflow(id: number): Promise<{ id: number } | undefined>
+			getWorkflow(id: number): Promise<BasicWorkflow | undefined>
+			authorize(apiToken: string): Promise<AuthorizedAPI>
+		}
+
+		interface AuthorizedAPI {
+			getMe(): Promise<User>
+			getMyWorkflows(): Promise<BasicWorkflow[]>
+		}
+
+		// workflows
+
+		interface BasicWorkflow {
+			getDetails(): Promise<Schemas.PublicWorkflow>
+		}
+
+		interface ReadonlyWorkflow extends BasicWorkflow {
+			getFullDetails(): Promise<Schemas.SelfWorkflow>
+			getVersions(): Promise<ReadonlyVersion[]>
+			getLatestVersion(): Promise<ReadonlyVersion | undefined>
+		}
+
+		interface Workflow extends ReadonlyWorkflow {
+			updateDetails(data: { name: string; description: string }): Promise<void>
+			updateCode(data: { code: string; blocks: string | null }): Promise<void>
+			setPublic(isPublic: boolean): Promise<void>
+			publish(): Promise<Version>
+			getFullVersions(): Promise<Version[]>
+			getFullLatestVersion(): Promise<Version | undefined>
+		}
+
+		// versions
+
+		interface ReadonlyVersion {
+			getDetails(): Promise<Schemas.PublicVersion>
+		}
+
+		interface Version extends ReadonlyVersion {
+			getFullDetails(): Promise<Schemas.SelfVersion>
+		}
+
+		// users
+
+		interface BasicUser {
+			getDetails(): Promise<Schemas.PublicUser>
+		}
+
+		interface User {
+			getFullDetails(): Promise<Schemas.SelfUser>
 		}
 	}
 
@@ -52,12 +99,13 @@ declare global {
 			description: string
 			appId: string
 			isPublic: boolean
+			blocks: string | null
+			code: string | null
 			createdAt: Date
 		}
 
 		interface SelfWorkflow extends PublicWorkflow {
 			author: SelfUser
-			blocks: string | null
 			blocksUpdatedAt: Date
 			code: string
 			codeUpdatedAt: Date
@@ -75,6 +123,18 @@ declare global {
 
 		interface PublicInstallation {
 			userId: string
+		}
+
+		interface PublicVersion {
+			id: number
+			workflowId: number
+			blocks: string | null
+			code: string | null
+			createdAt: Date
+		}
+
+		interface SelfVersion extends PublicVersion {
+			code: string
 		}
 	}
 }
