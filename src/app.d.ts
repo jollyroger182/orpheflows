@@ -57,7 +57,7 @@ declare global {
 			getLatestVersion(): Promise<BasicVersion | null>
 		}
 
-		interface Workflow extends ReadonlyWorkflow {
+		interface Workflow extends BasicWorkflow {
 			getFullDetails(): Promise<Schemas.SelfWorkflow>
 			getFullVersions(): Promise<Version[]>
 			getFullLatestVersion(): Promise<Version | null>
