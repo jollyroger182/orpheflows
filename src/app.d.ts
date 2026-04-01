@@ -1,15 +1,21 @@
-// See https://svelte.dev/docs/kit/types#app.d.ts
-
 import type { SlackEvent } from '@slack/web-api'
 
+// See https://svelte.dev/docs/kit/types#app.d.ts
 // for information about these interfaces
 declare global {
+	interface WebSocketData {
+		wrapped?: import('$lib/rpc/websocket').BunWebsocketWrapper
+	}
+
 	namespace App {
 		// interface Error {}
 		// interface Locals {}
 		// interface PageData {}
 		// interface PageState {}
-		// interface Platform {}
+		interface Platform {
+			server: Bun.Server<WebSocketData>
+			request: Request
+		}
 	}
 
 	interface WorkflowStep {
@@ -28,6 +34,12 @@ declare global {
 			event_id: string
 			event_time: number
 			authorizations: unknown[]
+		}
+	}
+
+	namespace RPC {
+		interface PublicAPI {
+			getWorkflow(id: number): Promise<{ id: number } | undefined>
 		}
 	}
 }
