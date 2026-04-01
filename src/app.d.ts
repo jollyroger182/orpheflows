@@ -39,54 +39,56 @@ declare global {
 
 	namespace RPC {
 		interface PublicAPI {
-			getWorkflow(id: number): Promise<BasicWorkflow | undefined>
+			getWorkflow(id: number): Promise<BasicWorkflow | null>
+			getUser(id: string): Promise<BasicUser | null>
 			authorize(apiToken: string): Promise<AuthorizedAPI>
 		}
 
 		interface AuthorizedAPI {
 			getMe(): Promise<User>
-			getMyWorkflows(): Promise<BasicWorkflow[]>
 		}
 
 		// workflows
 
 		interface BasicWorkflow {
+			refresh(): Promise<void>
 			getDetails(): Promise<Schemas.PublicWorkflow>
-		}
-
-		interface ReadonlyWorkflow extends BasicWorkflow {
-			getFullDetails(): Promise<Schemas.SelfWorkflow>
-			getVersions(): Promise<ReadonlyVersion[]>
-			getLatestVersion(): Promise<ReadonlyVersion | undefined>
+			getVersions(): Promise<BasicVersion[]>
+			getLatestVersion(): Promise<BasicVersion | null>
 		}
 
 		interface Workflow extends ReadonlyWorkflow {
+			getFullDetails(): Promise<Schemas.SelfWorkflow>
+			getFullVersions(): Promise<Version[]>
+			getFullLatestVersion(): Promise<Version | null>
 			updateDetails(data: { name: string; description: string }): Promise<void>
 			updateCode(data: { code: string; blocks: string | null }): Promise<void>
 			setPublic(isPublic: boolean): Promise<void>
 			publish(): Promise<Version>
-			getFullVersions(): Promise<Version[]>
-			getFullLatestVersion(): Promise<Version | undefined>
 		}
 
 		// versions
 
-		interface ReadonlyVersion {
+		interface BasicVersion {
+			refresh(): Promise<void>
 			getDetails(): Promise<Schemas.PublicVersion>
 		}
 
-		interface Version extends ReadonlyVersion {
+		interface Version extends BasicVersion {
 			getFullDetails(): Promise<Schemas.SelfVersion>
 		}
 
 		// users
 
 		interface BasicUser {
+			refresh(): Promise<void>
 			getDetails(): Promise<Schemas.PublicUser>
+			getWorkflows(pagination?: { offset?: number; limit?: number }): Promise<BasicWorkflow[]>
 		}
 
-		interface User {
+		interface User extends BasicUser {
 			getFullDetails(): Promise<Schemas.SelfUser>
+			getFullWorkflows(pagination?: { offset?: number; limit?: number }): Promise<Workflow[]>
 		}
 	}
 
@@ -136,6 +138,17 @@ declare global {
 		interface SelfVersion extends PublicVersion {
 			code: string
 		}
+	}
+
+	namespace DB {
+		type Workflow = typeof import('$lib/server/db/schema').workflows.$inferSelect
+		type Installation = typeof import('$lib/server/db/schema').installations.$inferSelect
+		type Version = typeof import('$lib/server/db/schema').versions.$inferSelect
+		type Execution = typeof import('$lib/server/db/schema').executions.$inferSelect
+		type User = typeof import('$lib/server/db/schema').users.$inferSelect
+		type Token = typeof import('$lib/server/db/schema').tokens.$inferSelect
+
+		type WorkflowWithAuthor = Workflow & { author: User; installation?: Installation | null }
 	}
 }
 

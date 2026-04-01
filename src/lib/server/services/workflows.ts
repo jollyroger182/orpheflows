@@ -377,6 +377,17 @@ export async function publishVersion({ id, blocks, code, userId }: PublishVersio
 	return result
 }
 
+export async function getVersion({ id }: { id: number }) {
+	return await db.query.versions.findFirst({ where: eq(versions.id, id) })
+}
+
+export async function getVersions({ id }: { id: number }) {
+	return await db.query.versions.findMany({
+		where: eq(versions.workflowId, id),
+		orderBy: desc(versions.createdAt)
+	})
+}
+
 interface GetLatestVersion {
 	id: number
 }
