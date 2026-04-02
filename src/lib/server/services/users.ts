@@ -1,4 +1,4 @@
-import { and, eq, gt } from 'drizzle-orm'
+import { and, eq, gt, isNull, or } from 'drizzle-orm'
 import { db } from '../db'
 import { tokens, users } from '../db/schema'
 import { createHash, randomUUID } from 'crypto'
@@ -64,7 +64,10 @@ export async function getUserToken({ token }: GetUserToken) {
 	const hash = hasher.digest('hex')
 
 	return await db.query.tokens.findFirst({
-		where: and(eq(tokens.tokenHash, hash), gt(tokens.expiresAt, new Date())),
+		where: and(
+			eq(tokens.tokenHash, hash),
+			or(isNull(tokens.expiresAt), gt(tokens.expiresAt, new Date()))
+		),
 		with: { user: true }
 	})
 }
