@@ -151,6 +151,20 @@
 		"style": "messaging_blocks"
 	},
 	{
+		"type": "messaging_get_thread_ts",
+		"tooltip": "Get the thread_ts of the message. Returns an empty string (\"\") if the message is not in a thread.",
+		"message0": "get parent timestamp from message %1",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "MESSAGE",
+				"check": "Message"
+			}
+		],
+		"output": "String",
+		"style": "messaging_blocks"
+	},
+	{
 		"type": "messaging_action_button",
 		"message0": "button with text %1 action ID %2 value %3 style %4 %5",
 		"args0": [

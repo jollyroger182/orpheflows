@@ -38,6 +38,7 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 				{ kind: 'block', type: 'message_to_channel' },
 				{ kind: 'block', type: 'message_to_ts' },
 				{ kind: 'block', type: 'messaging_get_text' },
+				{ kind: 'block', type: 'messaging_get_thread_ts' },
 				{
 					kind: 'block',
 					type: 'messaging_send_v1',

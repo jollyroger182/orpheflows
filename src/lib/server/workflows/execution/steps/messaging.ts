@@ -14,7 +14,7 @@ export default {
 		JSON.parse(await ctx.evaluate(ctx.params.MESSAGE as WorkflowStep)).ts,
 	messaging_get_text: async (ctx) => {
 		const message = JSON.parse(await ctx.evaluate(ctx.params.MESSAGE as WorkflowStep))
-		if ('text' in message) return message.text
+		if ('text' in message) return message.text || ''
 
 		const resp = await slack.conversations.replies({
 			channel: message.channel,
@@ -25,6 +25,20 @@ export default {
 		const msg = resp.messages?.[0]
 		if (msg?.ts !== message.ts) return ''
 		return msg?.text || ''
+	},
+	messaging_get_thread_ts: async (ctx) => {
+		const message = JSON.parse(await ctx.evaluate(ctx.params.MESSAGE as WorkflowStep))
+		if ('thread_ts' in message) return message.thread_ts || ''
+
+		const resp = await slack.conversations.replies({
+			channel: message.channel,
+			ts: message.ts,
+			limit: 1,
+			token: await ctx.getToken()
+		})
+		const msg = resp.messages?.[0]
+		if (msg?.ts !== message.ts) return ''
+		return msg?.thread_ts || ''
 	},
 	messaging_send_v1: sendMessage,
 	messaging_send_v1_stmt: async (ctx) => {
