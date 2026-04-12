@@ -27,6 +27,8 @@ export const EXECUTE_RATE_LIMIT_NOTIFY_INTERVAL = 30_000
 
 export const PERSISTENCE_VAR_LENGTH_LIMIT = 10000
 
+export const EXECUTE_STEPS_LIMIT = 200
+
 export const FOR_MAX_ITERATIONS = 1000
 
 export const WORKFLOW_APP_SCOPES: BotScope[] = [

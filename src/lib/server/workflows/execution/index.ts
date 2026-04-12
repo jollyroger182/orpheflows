@@ -7,6 +7,7 @@ import {
 	EXECUTE_RATE_LIMIT_COUNT,
 	EXECUTE_RATE_LIMIT_NOTIFY_INTERVAL,
 	EXECUTE_RATE_LIMIT_TIME,
+	EXECUTE_STEPS_LIMIT,
 	USER_EXECUTE_RATE_LIMIT_COUNT,
 	USER_EXECUTE_RATE_LIMIT_NOTIFY_INTERVAL,
 	USER_EXECUTE_RATE_LIMIT_TIME
@@ -86,7 +87,7 @@ export async function startWorkflow({
 	const continuationToken = randomUUID()
 	const data: ExecutionData = {
 		blockId: trigger.id,
-		variables,
+		variables: { ...variables, 'meta.steps': '0' },
 		continuationToken
 	}
 
@@ -143,6 +144,16 @@ export async function progressWorkflow({
 		// execution finished
 		// TODO: log
 		return
+	}
+
+	if ('meta.steps' in data.variables) {
+		const count = parseInt(data.variables['meta.steps']) + 1
+		if (count > EXECUTE_STEPS_LIMIT) {
+			throw new Error(
+				`Execution step limit reached. Each execution of the workflow can only run up to ${EXECUTE_STEPS_LIMIT} steps.`
+			)
+		}
+		data.variables['meta.steps'] = count.toString()
 	}
 
 	const handler = stepHandlers[step.type]
