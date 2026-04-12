@@ -63,7 +63,7 @@ export default {
 			throw new Error('Invalid index in list to set item')
 		}
 
-		array[idx] = value
+		array[idx - 1] = value
 		return JSON.stringify(array)
 	},
 	lists_getSublist: async (ctx) => {
