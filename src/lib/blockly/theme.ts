@@ -8,8 +8,9 @@ const theme = Blockly.Theme.defineTheme('orpheflows', {
 		channel_blocks: { colourPrimary: '60' },
 		user_blocks: { colourPrimary: '30' },
 		form_blocks: { colourPrimary: '150' },
-		trigger_blocks: { colourPrimary: '120' },
-		pvar_blocks: { colourPrimary: '75' }
+		trigger_blocks: { colourPrimary: '120', hat: 'cap' },
+		pvar_blocks: { colourPrimary: '75' },
+		loop_blocks: { colourPrimary: '210' }
 	},
 	categoryStyles: {
 		messaging_category: { colour: '300' },
@@ -18,9 +19,9 @@ const theme = Blockly.Theme.defineTheme('orpheflows', {
 		form_category: { colour: '150' },
 		trigger_category: { colour: '120' },
 		pvar_category: { colour: '75' },
+		loop_blocks: { colour: '210' },
 		legacy_category: { colour: '#000000' }
-	},
-	startHats: true
+	}
 })
 
 const darkTheme = Blockly.Theme.defineTheme('orpheflows-dark', {
@@ -39,8 +40,7 @@ const darkTheme = Blockly.Theme.defineTheme('orpheflows-dark', {
 		insertionMarkerOpacity: 0.3,
 		scrollbarOpacity: 0.4,
 		cursorColour: '#d0d0d0'
-	},
-	startHats: true
+	}
 })
 
 export default theme

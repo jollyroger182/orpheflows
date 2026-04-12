@@ -251,8 +251,7 @@ function findNextStep(steps: WorkflowStep[], id: string): WorkflowStep | typeof 
 			if (value instanceof Array) {
 				const result = findNextStep(value, id)
 				if (result === NEXT) {
-					if (i !== steps.length - 1) return steps[i + 1]
-					return NEXT
+					return step
 				} else if (result) {
 					return result
 				}

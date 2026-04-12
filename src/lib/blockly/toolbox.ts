@@ -157,6 +157,11 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 				{ kind: 'block', type: 'controls_if' },
 				{ kind: 'block', type: 'controls_if', extraState: { hasElse: true } },
 				{ kind: 'block', type: 'controls_if', extraState: { elseIfCount: 1, hasElse: true } },
+				{
+					kind: 'block',
+					type: 'controls_repeat_ext',
+					inputs: { TIMES: { shadow: { type: 'math_number', fields: { NUM: '10' } } } }
+				},
 				{ kind: 'block', type: 'logic_compare' },
 				{ kind: 'block', type: 'logic_operation' },
 				{ kind: 'block', type: 'logic_negate' },

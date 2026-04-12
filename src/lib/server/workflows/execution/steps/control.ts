@@ -1,7 +1,14 @@
+import { FOR_MAX_ITERATIONS } from '$lib/consts'
 import { progressWorkflow, type StepExecutionContext } from '..'
 
 export default {
 	controls_if: async (ctx) => {
+		if (ctx.data.variables[`if.${ctx.data.blockId}.run`] === '1') {
+			return progressWorkflow({
+				executionId: ctx.executionId,
+				continuationToken: ctx.data.continuationToken
+			})
+		}
 		for (let i = 0; ; i++) {
 			if (!(`IF${i}` in ctx.params)) break
 			const value = ctx.params[`IF${i}`]
@@ -13,6 +20,7 @@ export default {
 				await progressWorkflow({
 					executionId: ctx.executionId,
 					continuationToken: ctx.data.continuationToken,
+					updateVariables: { [`if.${ctx.data.blockId}.run`]: '1' },
 					nextBlockId
 				})
 				return
@@ -23,6 +31,47 @@ export default {
 		await progressWorkflow({
 			executionId: ctx.executionId,
 			continuationToken: ctx.data.continuationToken,
+			updateVariables: { [`if.${ctx.data.blockId}.run`]: '1' },
+			nextBlockId
+		})
+	},
+	controls_repeat_ext: async (ctx) => {
+		const totalKey = `for.${ctx.data.blockId}.total`
+		const currentKey = `for.${ctx.data.blockId}.cur`
+
+		const updateVariables: Record<string, string> = {}
+
+		if (!ctx.data.variables[totalKey] || !ctx.data.variables[currentKey]) {
+			const total = Math.floor(Number(await ctx.evaluate(ctx.params.TIMES as WorkflowStep)))
+			if (isNaN(total)) {
+				throw new Error('Argument to for block is not a number')
+			}
+			if (total > FOR_MAX_ITERATIONS) {
+				throw new Error(`For loops cannot iterate more than ${total} times`)
+			}
+			updateVariables[totalKey] = total.toString()
+			updateVariables[currentKey] = '1'
+		} else {
+			const total = parseInt(ctx.data.variables[totalKey])
+			let current = parseInt(ctx.data.variables[currentKey])
+
+			current++
+			if (current > total) {
+				return progressWorkflow({
+					executionId: ctx.executionId,
+					continuationToken: ctx.data.continuationToken
+				})
+			}
+
+			updateVariables[currentKey] = current.toString()
+		}
+
+		const connection = ctx.params.DO as WorkflowStep[]
+		const nextBlockId = connection[0]?.id
+		await progressWorkflow({
+			executionId: ctx.executionId,
+			continuationToken: ctx.data.continuationToken,
+			updateVariables,
 			nextBlockId
 		})
 	},
