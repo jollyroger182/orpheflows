@@ -70,7 +70,6 @@ export async function startWorkflow({
 			createdAfter: new Date(Date.now() - USER_EXECUTE_RATE_LIMIT_TIME),
 			userId
 		})
-		console.log(userCount)
 		if (userCount >= USER_EXECUTE_RATE_LIMIT_COUNT) {
 			const workflow = await Workflows.shouldSendUserNotif({ id: workflowId, userId })
 			if (!workflow) return

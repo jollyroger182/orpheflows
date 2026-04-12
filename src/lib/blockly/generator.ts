@@ -49,7 +49,6 @@ class OrphejsonGenerator extends Blockly.CodeGenerator {
 					)
 					break
 				case Blockly.inputs.inputTypes.STATEMENT:
-					console.log(this.statementToCode(block, input.name))
 					params[input.name] = JSON.parse('[' + this.statementToCode(block, input.name) + ']')
 					break
 			}

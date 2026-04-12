@@ -7,7 +7,6 @@
 	let swaggerDiv: HTMLDivElement
 
 	onMount(() => {
-		console.log(swagger)
 		SwaggerUIBundle({
 			domNode: swaggerDiv,
 			spec: swagger

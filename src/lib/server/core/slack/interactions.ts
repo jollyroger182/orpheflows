@@ -3,8 +3,6 @@ import { startWorkflow } from '$lib/server/workflows/execution'
 import type { SlackAction } from '@slack/bolt'
 
 export async function handleCoreInteraction(payload: SlackAction) {
-	console.log(payload)
-
 	if (payload.type === 'block_actions') {
 		const { actions } = payload
 		for (const action of actions) {

@@ -62,7 +62,6 @@ export async function handleCoreSlash(payload: SlashCommand) {
 }
 
 async function parseWorkflowMention(mention: string) {
-	console.log(mention)
 	let match: RegExpMatchArray | null
 	if ((match = mention.match(/^<@([A-Z0-9]+)(?:\|.*)?>$/))) {
 		const workflowUserId = match[1]

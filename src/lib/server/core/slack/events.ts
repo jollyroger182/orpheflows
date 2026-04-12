@@ -6,7 +6,6 @@ import type { LinkUnfurls } from '@slack/web-api'
 
 export async function handleCoreEvent(payload: Slack.EventCallback) {
 	const { event } = payload
-	console.log(event)
 
 	if (event.type === 'link_shared') {
 		const unfurls: LinkUnfurls = {}
@@ -25,8 +24,6 @@ export async function handleCoreEvent(payload: Slack.EventCallback) {
 				}
 			}
 		}
-
-		console.log(JSON.stringify(unfurls, null, 2))
 
 		await slack.chat.unfurl({
 			channel: event.channel,
