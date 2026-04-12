@@ -102,3 +102,16 @@ export async function checkIdv(slackId: string) {
 	).then((r) => r.json())) as { result: string }
 	return result === 'verified_eligible' || result === 'verified_but_over_18'
 }
+
+export function countSteps(code: WorkflowStep[]) {
+	let count = 0
+	for (const step of code) {
+		count++
+		for (const value of Object.values(step.params)) {
+			if (value instanceof Array) {
+				count += countSteps(value)
+			}
+		}
+	}
+	return count
+}

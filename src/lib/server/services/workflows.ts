@@ -1,6 +1,7 @@
 import {
 	BLOCKS_LENGTH_LIMIT,
 	CODE_LENGTH_LIMIT,
+	CODE_STEPS_LIMIT,
 	EXECUTE_RATE_LIMIT_NOTIFY_INTERVAL,
 	USER_EXECUTE_RATE_LIMIT_NOTIFY_INTERVAL
 } from '$lib/consts'
@@ -16,6 +17,7 @@ import {
 	workflowUserNotifs
 } from '../db/schema'
 import { slack } from '../slack'
+import { countSteps } from '../utils'
 
 interface GetWorkflows {
 	offset?: number
@@ -303,6 +305,9 @@ export async function publishVersion({ id, blocks, code, userId }: PublishVersio
 	}
 	if (code.length > CODE_LENGTH_LIMIT) {
 		throw new Error(`Your transpiled code is longer than the limit of ${CODE_LENGTH_LIMIT} bytes.`)
+	}
+	if (countSteps(JSON.parse(code)) > CODE_STEPS_LIMIT) {
+		throw new Error(`Your transpiled code has more than ${CODE_STEPS_LIMIT} steps.`)
 	}
 
 	const now = new Date()
