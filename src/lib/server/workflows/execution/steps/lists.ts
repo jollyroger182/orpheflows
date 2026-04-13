@@ -66,6 +66,14 @@ export default {
 		array[idx - 1] = value
 		return JSON.stringify(array)
 	},
+	lists_addItem2: async (ctx) => {
+		const list = await ctx.evaluate(ctx.params.LIST as WorkflowStep)
+		const value = await ctx.evaluate(ctx.params.VALUE as WorkflowStep)
+
+		const array = JSON.parse(list) as string[]
+		array.push(value)
+		return JSON.stringify(array)
+	},
 	lists_getSublist: async (ctx) => {
 		const list = await ctx.evaluate(ctx.params.LIST as WorkflowStep)
 		const startMode = ctx.params.WHERE1 as 'FROM_START' | 'FROM_END' | 'FIRST'

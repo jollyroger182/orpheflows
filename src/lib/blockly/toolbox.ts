@@ -325,6 +325,7 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 					type: 'lists_setIndex2',
 					inputs: { INDEX: { shadow: { type: 'math_number', fields: { NUM: '1' } } } }
 				},
+				{ kind: 'block', type: 'lists_addItem2' },
 				{ kind: 'block', type: 'lists_getSublist' },
 				{
 					kind: 'block',

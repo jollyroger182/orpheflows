@@ -564,19 +564,6 @@
 				"check": "Array"
 			}
 		],
-		"output": null,
-		"style": "list_blocks"
-	},
-	{
-		"type": "lists_length",
-		"message0": "length of %1",
-		"args0": [
-			{
-				"type": "input_value",
-				"name": "VALUE",
-				"check": "Array"
-			}
-		],
 		"output": "Number",
 		"style": "list_blocks"
 	},
@@ -635,6 +622,28 @@
 			{
 				"type": "input_value",
 				"name": "VALUE"
+			}
+		],
+		"output": "Array",
+		"style": "list_blocks",
+		"inputsInline": true
+	},
+	{
+		"type": "lists_addItem2",
+		"message0": "in list %1 add item %2 to the end %3",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "LIST",
+				"check": "Array"
+			},
+			{
+				"type": "input_value",
+				"name": "VALUE"
+			},
+			{
+				"type": "input_dummy",
+				"name": "DUMMY"
 			}
 		],
 		"output": "Array",
