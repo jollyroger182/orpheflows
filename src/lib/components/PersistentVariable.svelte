@@ -51,10 +51,10 @@
 </script>
 
 <div class="mb-6">
-	<p><span class="font-semibold">Name</span>: {name}</p>
+	<p class="mb-2"><span class="font-semibold">Name</span>: {name}</p>
 	<p class="mb-4">
 		<span class="font-semibold">Value</span>:
-		<input class="border-b" bind:value={currentValue} />
+		<textarea class="border" bind:value={currentValue}></textarea>
 	</p>
 	<div>
 		<button onclick={del} class="btn btn-sm btn-danger">Delete</button>
