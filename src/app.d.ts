@@ -4,7 +4,7 @@ import type { SlackEvent } from '@slack/web-api'
 // for information about these interfaces
 declare global {
 	interface WebSocketData {
-		wrapped?: import('$lib/rpc/websocket').BunWebsocketWrapper
+		wrapped?: import('$lib/server/rpc/websocket').BunWebsocketWrapper
 	}
 
 	namespace App {

@@ -3,9 +3,9 @@ import cron from 'node-cron'
 import { handle as handleAuth } from './auth'
 import type { Handle } from '@sveltejs/kit'
 import { sequence } from '@sveltejs/kit/hooks'
-import { BunWebsocketWrapper } from '$lib/rpc/websocket'
+import { BunWebsocketWrapper } from '$lib/server/rpc/websocket'
 import { newWebSocketRpcSession } from 'capnweb'
-import { RPCSession } from '$lib/rpc'
+import { RPCSession } from '$lib/server/rpc'
 
 const handleWebsocketUpgrade: Handle = async ({ event, resolve }) => {
 	const { request } = event
