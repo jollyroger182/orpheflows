@@ -6,19 +6,25 @@
 	import toolbox from '$lib/blockly/toolbox'
 
 	import { beforeNavigate } from '$app/navigation'
+	import { resolve } from '$app/paths'
+	import PersistencePanel from '$lib/components/PersistencePanel.svelte'
 	import 'blockly/blocks'
 	import * as Blockly from 'blockly/core'
 	import * as En from 'blockly/msg/en'
 	import { mode } from 'mode-watcher'
 	import { onMount } from 'svelte'
-	import { resolve } from '$app/paths'
 
 	const { data } = $props()
 
 	let code = $state('')
 	let hasEditorTrigger = $state(data.hasEditorTrigger)
 
+	let variablesShown = $state(false)
+
+	let columns = $derived(1 + (data.dev ? 1 : 0))
+
 	let blocklyContainer: HTMLDivElement
+	let persistencePanel: PersistencePanel
 	let workspace: Blockly.WorkspaceSvg
 	let dirty = false
 
@@ -39,6 +45,13 @@
 		workspace.addChangeListener(generateCode)
 		setTimeout(() => workspace.addChangeListener(checkSetDirty), 100)
 		generateCode()
+
+		const observer = new ResizeObserver(() => Blockly.svgResize(workspace))
+		observer.observe(blocklyContainer)
+
+		return () => {
+			observer.disconnect()
+		}
 	})
 
 	$effect(() => {
@@ -190,12 +203,19 @@
 			alert('Workflow successfully executed!')
 		}
 	}
+
+	function onTogglePersistence() {
+		variablesShown = !variablesShown
+	}
 </script>
 
 <svelte:window onbeforeunload={checkDirty} />
 
-<div class="grid h-full grid-cols-2 grid-rows-[auto_1fr]">
-	<div class="col-span-2 flex items-center gap-2 px-4 py-2">
+<div
+	style:--columns={columns}
+	class=" grid h-full grid-cols-[repeat(var(--columns),1fr)] grid-rows-[auto_1fr]"
+>
+	<div class="col-span-(--columns) flex items-center gap-2 px-4 py-2">
 		<a href={resolve(`/workflows/${data.workflow.id}`)} class="text-lg">{data.workflow.name}</a>
 		{#if data.isOwner}
 			<button onclick={onSave} class="btn btn-sm btn-secondary">Save</button>
@@ -205,9 +225,19 @@
 		{#if data.isOwner && hasEditorTrigger}
 			<button onclick={onRun} class="btn btn-sm btn-success">Run</button>
 		{/if}
+		{#if data.isOwner}
+			<button onclick={onTogglePersistence} class="btn btn-sm btn-secondary">Variables</button>
+		{/if}
 	</div>
 
-	<div bind:this={blocklyContainer} class={`h-full ${data.dev ? '' : 'col-span-2'}`}></div>
+	<div class="relative">
+		<div bind:this={blocklyContainer} class="h-full"></div>
+		<PersistencePanel
+			id={data.workflow.id}
+			bind:open={variablesShown}
+			bind:this={persistencePanel}
+		/>
+	</div>
 	{#if data.dev}
 		<pre class="text-wrap">{code}</pre>
 	{/if}
