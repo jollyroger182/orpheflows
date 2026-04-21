@@ -112,6 +112,75 @@ paths:
           description: Workflow not found
         500:
           description: Internal server error
+  /workflows/{id}/variables:
+    get:
+      summary: Get persistent variables for a workflow
+      security:
+        - api_key: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArrayOfVariables'
+        403:
+          description: Forbidden
+        404:
+          description: Workflow not found
+  /variables/{id}:
+    patch:
+      summary: Update a persistent variable
+      security:
+        - api_key: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateVariable'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Variable'
+        400:
+          description: Invalid parameters
+        403:
+          description: Variable not found or forbidden
+        404:
+          description: Variable not found
+    delete:
+      summary: Delete a persistent variable
+      security:
+        - api_key: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Variable'
+        403:
+          description: Variable not found or forbidden
+        404:
+          description: Variable not found
   /users/{id}/workflows:
     get:
       summary: "Fetches a user's workflows"
@@ -227,6 +296,15 @@ components:
             properties:
               data:
                 type: string
+    UpdateVariable:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              value:
+                type: string
+            required: [value]
 
     UpdateUser:
       content:
@@ -244,6 +322,10 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/PublicWorkflow'
+    ArrayOfVariables:
+      type: array
+      items:
+        $ref: '#/components/schemas/Variable'
     PublicWorkflow:
       type: object
       properties:
@@ -312,6 +394,18 @@ components:
       properties:
         userId:
           type: string
+    Variable:
+      type: object
+      properties:
+        id:
+          type: integer
+        workflowId:
+          type: integer
+        name:
+          type: string
+        value:
+          type: string
+      required: [id, workflowId, name, value]
 
     CreateWorkflow:
       type: object
