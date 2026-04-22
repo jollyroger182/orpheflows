@@ -1,0 +1,1 @@
+CREATE INDEX "idx_whitelists_global_scope" ON "whitelists" USING btree ("type","value") WHERE scope = 'global';

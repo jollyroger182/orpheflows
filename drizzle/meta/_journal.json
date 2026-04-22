@@ -225,6 +225,20 @@
       "when": 1776867293829,
       "tag": "0031_demonic_gamma_corps",
       "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1776870921408,
+      "tag": "0032_serious_mariko_yashida",
+      "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1776870929798,
+      "tag": "0033_flawless_lord_tyger",
+      "breakpoints": true
     }
   ]
 }

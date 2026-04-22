@@ -10,16 +10,7 @@ interface Check {
 export async function check({ id, url }: Check) {
 	const { host } = new URL(url)
 
-	const workflowPromise = db.query.whitelists.findFirst({
-		where: and(
-			eq(whitelists.scope, 'workflow'),
-			eq(whitelists.workflowId, id),
-			eq(whitelists.type, 'domain'),
-			eq(whitelists.value, host)
-		)
-	})
-
-	const userPromise = db.query.whitelists.findFirst({
+	const checkUser = await db.query.whitelists.findFirst({
 		where: and(
 			eq(whitelists.scope, 'user'),
 			eq(
@@ -30,8 +21,30 @@ export async function check({ id, url }: Check) {
 			eq(whitelists.value, host)
 		)
 	})
+	if (checkUser) {
+		return checkUser
+	}
 
-	const [checkWorkflow, checkUser] = await Promise.all([workflowPromise, userPromise])
+	const checkGlobal = db.query.whitelists.findFirst({
+		where: and(
+			eq(whitelists.scope, 'global'),
+			eq(whitelists.type, 'domain'),
+			eq(whitelists.value, host)
+		)
+	})
+	if (checkGlobal) {
+		return checkGlobal
+	}
 
-	return checkWorkflow || checkUser
+	const checkWorkflow = db.query.whitelists.findFirst({
+		where: and(
+			eq(whitelists.scope, 'workflow'),
+			eq(whitelists.workflowId, id),
+			eq(whitelists.type, 'domain'),
+			eq(whitelists.value, host)
+		)
+	})
+	if (checkWorkflow) {
+		return checkWorkflow
+	}
 }

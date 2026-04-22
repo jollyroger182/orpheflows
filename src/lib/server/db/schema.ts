@@ -182,7 +182,7 @@ export const variablesRelations = relations(variables, ({ one }) => ({
 
 // workflow domain whitelists
 
-export const whitelistScope = pgEnum('whitelist_scope', ['user', 'workflow'])
+export const whitelistScope = pgEnum('whitelist_scope', ['user', 'workflow', 'global'])
 export const whitelistType = pgEnum('whitelist_type', ['domain'])
 
 export const whitelists = pgTable(
@@ -205,7 +205,10 @@ export const whitelists = pgTable(
 			.where(sql`scope = 'workflow'`),
 		index('idx_whitelists_user_scope')
 			.on(table.userId, table.type, table.value)
-			.where(sql`scope = 'user'`)
+			.where(sql`scope = 'user'`),
+		index('idx_whitelists_global_scope')
+			.on(table.type, table.value)
+			.where(sql`scope = 'global'`)
 	]
 )
 
