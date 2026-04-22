@@ -68,7 +68,8 @@ export const workflowsRelations = relations(workflows, ({ one, many }) => ({
 		references: [users.id]
 	}),
 	triggeringListener: one(listeners),
-	variables: many(variables)
+	variables: many(variables),
+	whitelists: many(workflowWhitelists)
 }))
 
 // installations
@@ -179,6 +180,38 @@ export const variablesRelations = relations(variables, ({ one }) => ({
 	})
 }))
 
+// workflow domain whitelists
+
+export const whitelistType = pgEnum('whitelist_type', ['domain'])
+
+export const workflowWhitelists = pgTable(
+	'workflow_whitelists',
+	{
+		id: serial('id').primaryKey(),
+		workflowId: integer('workflow_id')
+			.references(() => workflows.id)
+			.notNull(),
+		type: whitelistType('type').notNull(),
+		value: text('value').notNull(),
+		createdBy: text('created_by')
+			.references(() => users.id)
+			.notNull(),
+		createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow()
+	},
+	(table) => [index().on(table.workflowId, table.type, table.value)]
+)
+
+export const workflowWhitelistsRelations = relations(workflowWhitelists, ({ one }) => ({
+	creator: one(users, {
+		fields: [workflowWhitelists.createdBy],
+		references: [users.id]
+	}),
+	workflow: one(workflows, {
+		fields: [workflowWhitelists.workflowId],
+		references: [workflows.id]
+	})
+}))
+
 // user rate limit notifications
 
 export const workflowUserNotifs = pgTable(
@@ -240,7 +273,8 @@ export const users = pgTable('users', {
 
 export const usersRelations = relations(users, ({ many }) => ({
 	workflows: many(workflows),
-	tokens: many(tokens)
+	tokens: many(tokens),
+	workflowWhitelists: many(workflowWhitelists)
 }))
 
 // tokens
@@ -267,6 +301,25 @@ export const tokensRelations = relations(tokens, ({ one }) => ({
 		references: [users.id]
 	})
 }))
+
+// user domain whitelists
+
+export const userWhitelists = pgTable(
+	'user_whitelists',
+	{
+		id: serial('id').primaryKey(),
+		userId: text('user_id')
+			.references(() => users.id)
+			.notNull(),
+		type: whitelistType('type').notNull(),
+		value: text('value').notNull(),
+		createdBy: text('created_by')
+			.references(() => users.id)
+			.notNull(),
+		createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow()
+	},
+	(table) => [index().on(table.userId, table.type, table.value)]
+)
 
 // audit logs
 

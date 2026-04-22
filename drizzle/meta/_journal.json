@@ -197,6 +197,20 @@
       "when": 1774610627074,
       "tag": "0027_dizzy_dracula",
       "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1776825565299,
+      "tag": "0028_slim_dust",
+      "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1776826205560,
+      "tag": "0029_lazy_mongoose",
+      "breakpoints": true
     }
   ]
 }
