@@ -1,11 +1,23 @@
 import cron from 'node-cron'
 
-import { handle as handleAuth } from './auth'
-import type { Handle } from '@sveltejs/kit'
-import { sequence } from '@sveltejs/kit/hooks'
-import { BunWebsocketWrapper } from '$lib/server/rpc/websocket'
-import { newWebSocketRpcSession } from 'capnweb'
+import { resolve as resolvePath } from '$app/paths'
 import { RPCSession } from '$lib/server/rpc'
+import { BunWebsocketWrapper } from '$lib/server/rpc/websocket'
+import { redirect, type Handle } from '@sveltejs/kit'
+import { sequence } from '@sveltejs/kit/hooks'
+import { newWebSocketRpcSession } from 'capnweb'
+import { handle as handleAuth } from './auth'
+
+const handleAuthFunctions: Handle = async ({ event, resolve }) => {
+	event.locals.signIn = () => {
+		throw redirect(307, resolvePath('/signin'))
+	}
+	event.locals.signOut = () => {
+		throw redirect(307, resolvePath('/signout'))
+	}
+
+	return resolve(event)
+}
 
 const handleWebsocketUpgrade: Handle = async ({ event, resolve }) => {
 	const { request } = event
@@ -25,7 +37,7 @@ const handleWebsocketUpgrade: Handle = async ({ event, resolve }) => {
 	return resolve(event)
 }
 
-export const handle: Handle = sequence(handleWebsocketUpgrade, handleAuth)
+export const handle: Handle = sequence(handleAuthFunctions, handleWebsocketUpgrade, handleAuth)
 
 export const websocket: Bun.WebSocketHandler<WebSocketData> = {
 	open(ws) {
