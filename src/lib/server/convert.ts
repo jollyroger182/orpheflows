@@ -51,6 +51,15 @@ export function convertVersionToSelf(version: typeof versions.$inferSelect) {
 	}
 }
 
+export function convertVariableToSelf(variable: DB.Variable) {
+	return {
+		id: variable.id,
+		workflowId: variable.workflowId,
+		name: variable.name,
+		value: variable.value
+	}
+}
+
 export function convertUserToPublic(user: typeof users.$inferSelect) {
 	return {
 		id: user.id,

@@ -61,6 +61,7 @@ declare global {
 			getFullDetails(): Promise<Schemas.SelfWorkflow>
 			getFullVersions(): Promise<Version[]>
 			getFullLatestVersion(): Promise<Version | null>
+			getVariables(): Promise<Variable[]>
 			updateDetails(data: { name: string; description: string }): Promise<void>
 			updateCode(data: { code: string; blocks: string | null }): Promise<void>
 			setPublic(isPublic: boolean): Promise<void>
@@ -76,6 +77,14 @@ declare global {
 
 		interface Version extends BasicVersion {
 			getFullDetails(): Promise<Schemas.SelfVersion>
+		}
+
+		// variables
+
+		interface Variable {
+			getDetails(): Promise<Schemas.Variable>
+			update(value: string): Promise<void>
+			delete(): Promise<void>
 		}
 
 		// users
@@ -113,6 +122,13 @@ declare global {
 			codeUpdatedAt: Date
 		}
 
+		interface Variable {
+			id: number
+			workflowId: number
+			name: string
+			value: string
+		}
+
 		interface PublicUser {
 			id: string
 			name: string
@@ -145,6 +161,7 @@ declare global {
 		type Installation = typeof import('$lib/server/db/schema').installations.$inferSelect
 		type Version = typeof import('$lib/server/db/schema').versions.$inferSelect
 		type Execution = typeof import('$lib/server/db/schema').executions.$inferSelect
+		type Variable = typeof import('$lib/server/db/schema').variables.$inferSelect
 		type User = typeof import('$lib/server/db/schema').users.$inferSelect
 		type Token = typeof import('$lib/server/db/schema').tokens.$inferSelect
 

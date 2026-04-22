@@ -1,12 +1,13 @@
 import {
 	convertUserToPublic,
 	convertUserToSelf,
+	convertVariableToSelf,
 	convertVersionToPublic,
 	convertVersionToSelf,
 	convertWorkflowToPublic,
 	convertWorkflowToSelf
 } from '$lib/server/convert'
-import { Users, Workflows } from '$lib/server/services'
+import { Users, Variables, Workflows } from '$lib/server/services'
 import { RpcTarget } from 'capnweb'
 
 export class RPCSession extends RpcTarget implements RPC.PublicAPI {
@@ -93,6 +94,12 @@ class Workflow extends BasicWorkflow implements RPC.Workflow {
 		return null
 	}
 
+	async getVariables(): Promise<RPC.Variable[]> {
+		const workflow = await Variables.getAllByWorkflow(this.workflow.id)
+		if (!workflow) return []
+		return workflow.variables.map((v) => new Variable(this.workflow, v, this.user))
+	}
+
 	async updateDetails({ name, description }: { name: string; description: string }): Promise<void> {
 		await Workflows.setDetails({ id: this.workflow.id, name, description, userId: this.user.id })
 	}
@@ -161,6 +168,33 @@ class Version extends BasicVersion implements RPC.Version {
 
 	async getFullDetails(): Promise<Schemas.SelfVersion> {
 		return convertVersionToSelf(this.version)
+	}
+}
+
+// variables
+
+class Variable extends RpcTarget implements RPC.Variable {
+	constructor(
+		protected workflow: DB.WorkflowWithAuthor,
+		protected variable: DB.Variable,
+		protected user: DB.User
+	) {
+		super()
+	}
+
+	async getDetails(): Promise<Schemas.Variable> {
+		return convertVariableToSelf(this.variable)
+	}
+
+	async update(value: string): Promise<void> {
+		Object.assign(
+			this.variable,
+			await Variables.setById({ id: this.variable.id, value, userId: this.user.id })
+		)
+	}
+
+	async delete(): Promise<void> {
+		await Variables.deleteById({ id: this.variable.id, userId: this.user.id })
 	}
 }
 
