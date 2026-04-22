@@ -165,7 +165,7 @@ export const variables = pgTable(
 	{
 		id: serial('id').primaryKey(),
 		workflowId: integer('workflow_id')
-			.references(() => workflows.id)
+			.references(() => workflows.id, { onDelete: 'cascade' })
 			.notNull(),
 		name: text().notNull(),
 		value: text().notNull()
@@ -189,7 +189,7 @@ export const workflowWhitelists = pgTable(
 	{
 		id: serial('id').primaryKey(),
 		workflowId: integer('workflow_id')
-			.references(() => workflows.id)
+			.references(() => workflows.id, { onDelete: 'cascade' })
 			.notNull(),
 		type: whitelistType('type').notNull(),
 		value: text('value').notNull(),
@@ -219,7 +219,7 @@ export const workflowUserNotifs = pgTable(
 	{
 		id: serial('id').primaryKey(),
 		workflowId: integer('workflow_id')
-			.references(() => workflows.id)
+			.references(() => workflows.id, { onDelete: 'cascade' })
 			.notNull(),
 		userId: text('user_id').notNull(),
 		notifiedAt: timestamp('notified_at', { withTimezone: true }).notNull()
@@ -284,7 +284,7 @@ export const tokens = pgTable(
 	{
 		id: serial('id').primaryKey(),
 		userId: text('user_id')
-			.references(() => users.id)
+			.references(() => users.id, { onDelete: 'cascade' })
 			.notNull(),
 		tokenHash: text('token_hash').notNull().unique(),
 		name: text('name').notNull().default('Unnamed token'),
@@ -309,7 +309,7 @@ export const userWhitelists = pgTable(
 	{
 		id: serial('id').primaryKey(),
 		userId: text('user_id')
-			.references(() => users.id)
+			.references(() => users.id, { onDelete: 'cascade' })
 			.notNull(),
 		type: whitelistType('type').notNull(),
 		value: text('value').notNull(),
