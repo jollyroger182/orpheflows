@@ -1,1 +1,2 @@
 ALTER TYPE "public"."whitelist_scope" ADD VALUE 'global';
+COMMIT;
