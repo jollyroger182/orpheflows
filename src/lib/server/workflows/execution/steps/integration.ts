@@ -1,3 +1,4 @@
+import { Whitelist } from '$lib/server/services'
 import { progressWorkflow, type StepExecutionContext } from '..'
 
 export default {
@@ -8,6 +9,13 @@ export default {
 		const headersText = await ctx.evaluate(ctx.params.HEADERS as WorkflowStep)
 		const statusOut = ctx.params.STATUS as string
 		const responseOut = ctx.params.RESPONSE as string
+
+		const check = await Whitelist.check({ id: ctx.workflowId, url })
+		if (!check) {
+			throw new Error(
+				`This workflow is not permitted to access the domain ${new URL(url).host}. If you are the workflow author, please contact @Jolly on Slack for approval.`
+			)
+		}
 
 		const headers = new Headers()
 		const headersArray = JSON.parse(headersText)
