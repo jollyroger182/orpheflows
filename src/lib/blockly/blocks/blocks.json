@@ -417,6 +417,66 @@
 	},
 
 	{
+		"type": "integration_request",
+		"tooltip": "Performs an HTTP request. Specify the headers as an array of arrays, where each inner array has two string values, the header name and value.",
+		"message0": "make %1 request to URL %2 with body %3 headers %4 storing status code in %5 %6 response body in %7 %8",
+		"args0": [
+			{
+				"type": "field_dropdown",
+				"name": "METHOD",
+				"options": [
+					["GET", "GET"],
+					["POST", "POST"],
+					["PUT", "PUT"],
+					["DELETE", "DELETE"],
+					["PATCH", "PATCH"]
+				]
+			},
+			{
+				"type": "input_value",
+				"name": "URL",
+				"align": "RIGHT",
+				"check": "String"
+			},
+			{
+				"type": "input_value",
+				"name": "BODY",
+				"align": "RIGHT",
+				"check": "String"
+			},
+			{
+				"type": "input_value",
+				"name": "HEADERS",
+				"align": "RIGHT",
+				"check": "Array"
+			},
+			{
+				"type": "field_variable",
+				"name": "STATUS",
+				"variable": "status"
+			},
+			{
+				"type": "input_dummy",
+				"name": "OUT1",
+				"align": "RIGHT"
+			},
+			{
+				"type": "field_variable",
+				"name": "RESPONSE",
+				"variable": "response"
+			},
+			{
+				"type": "input_dummy",
+				"name": "OUT2",
+				"align": "RIGHT"
+			}
+		],
+		"previousStatement": null,
+		"nextStatement": null,
+		"style": "integration_blocks"
+	},
+
+	{
 		"type": "timer_sleep",
 		"tooltip": "Delays the workflow execution by a given number of milliseconds. NOTE: Do not use this block to delay for longer than a few minutes, as a server reboot would interrupt the workflow, and it will never continue executing!",
 		"message0": "delay %1 ms %2",

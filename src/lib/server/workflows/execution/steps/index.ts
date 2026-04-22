@@ -3,6 +3,7 @@ import { type StepExecutionContext } from '..'
 import channels from './channels'
 import control from './control'
 import form from './form'
+import integration from './integration'
 import legacy from './legacy'
 import lists from './lists'
 import math from './math'
@@ -19,6 +20,7 @@ export const stepHandlers: Record<string, (context: StepExecutionContext) => Pro
 	...form,
 	...channels,
 	...users,
+	...integration,
 
 	...control,
 	...math,

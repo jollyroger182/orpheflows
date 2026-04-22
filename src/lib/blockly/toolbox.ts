@@ -147,6 +147,22 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 			],
 			categorystyle: 'user_category'
 		},
+		{
+			kind: 'category',
+			name: 'Integration',
+			contents: [
+				{
+					kind: 'block',
+					type: 'integration_request',
+					inputs: {
+						URL: { shadow: { type: 'text', fields: { TEXT: 'https://example.com' } } },
+						BODY: { shadow: { type: 'text' } },
+						HEADERS: { block: { type: 'lists_create_with', extraState: { itemCount: 0 } } }
+					}
+				}
+			],
+			categorystyle: 'integration_category'
+		},
 
 		{ kind: 'sep' },
 

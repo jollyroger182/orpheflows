@@ -10,7 +10,7 @@ const theme = Blockly.Theme.defineTheme('orpheflows', {
 		form_blocks: { colourPrimary: '150' },
 		trigger_blocks: { colourPrimary: '120', hat: 'cap' },
 		pvar_blocks: { colourPrimary: '75' },
-		loop_blocks: { colourPrimary: '210' }
+		integration_blocks: { colourPrimary: '105' }
 	},
 	categoryStyles: {
 		messaging_category: { colour: '300' },
@@ -19,7 +19,7 @@ const theme = Blockly.Theme.defineTheme('orpheflows', {
 		form_category: { colour: '150' },
 		trigger_category: { colour: '120' },
 		pvar_category: { colour: '75' },
-		loop_blocks: { colour: '210' },
+		integration_category: { colour: '105' },
 		legacy_category: { colour: '#000000' }
 	}
 })
