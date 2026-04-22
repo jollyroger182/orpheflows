@@ -54,7 +54,7 @@
 	<p class="mb-2"><span class="font-semibold">Name</span>: {name}</p>
 	<p class="mb-4">
 		<span class="font-semibold">Value</span>:
-		<textarea class="border" bind:value={currentValue}></textarea>
+		<textarea class="rounded border px-2 py-1" bind:value={currentValue}></textarea>
 	</p>
 	<div>
 		<button onclick={del} class="btn btn-sm btn-danger">Delete</button>
