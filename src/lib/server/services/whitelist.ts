@@ -1,6 +1,6 @@
 import { and, eq } from 'drizzle-orm'
 import { db } from '../db'
-import { userWhitelists, workflows, workflowWhitelists } from '../db/schema'
+import { whitelists, workflows } from '../db/schema'
 
 interface Check {
 	id: number
@@ -10,33 +10,28 @@ interface Check {
 export async function check({ id, url }: Check) {
 	const { host } = new URL(url)
 
-	const checkWorkflow = await db.query.workflowWhitelists.findFirst({
+	const workflowPromise = db.query.whitelists.findFirst({
 		where: and(
-			eq(workflowWhitelists.workflowId, id),
-			eq(workflowWhitelists.type, 'domain'),
-			eq(workflowWhitelists.value, host)
+			eq(whitelists.scope, 'workflow'),
+			eq(whitelists.workflowId, id),
+			eq(whitelists.type, 'domain'),
+			eq(whitelists.value, host)
 		)
 	})
-	if (checkWorkflow) {
-		return true
-	}
 
-	const [checkUser] = await db
-		.select()
-		.from(userWhitelists)
-		.where(
-			and(
-				eq(
-					userWhitelists.userId,
-					db.select({ authorId: workflows.authorId }).from(workflows).where(eq(workflows.id, id))
-				),
-				eq(userWhitelists.type, 'domain'),
-				eq(userWhitelists.value, host)
-			)
+	const userPromise = db.query.whitelists.findFirst({
+		where: and(
+			eq(whitelists.scope, 'user'),
+			eq(
+				whitelists.userId,
+				db.select({ authorId: workflows.authorId }).from(workflows).where(eq(workflows.id, id))
+			),
+			eq(whitelists.type, 'domain'),
+			eq(whitelists.value, host)
 		)
-	if (checkUser) {
-		return true
-	}
+	})
 
-	return false
+	const [checkWorkflow, checkUser] = await Promise.all([workflowPromise, userPromise])
+
+	return checkWorkflow || checkUser
 }

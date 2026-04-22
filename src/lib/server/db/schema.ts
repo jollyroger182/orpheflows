@@ -1,18 +1,18 @@
+import { relations, sql } from 'drizzle-orm'
 import {
-	pgTable,
-	serial,
+	boolean,
+	foreignKey,
+	index,
 	integer,
+	pgEnum,
+	pgTable,
+	real,
+	serial,
 	text,
 	timestamp,
 	unique,
-	foreignKey,
-	index,
-	varchar,
-	real,
-	boolean,
-	pgEnum
+	varchar
 } from 'drizzle-orm/pg-core'
-import { relations } from 'drizzle-orm'
 import { WORKFLOW_LIMIT } from '../../consts'
 
 // config tokens
@@ -69,7 +69,7 @@ export const workflowsRelations = relations(workflows, ({ one, many }) => ({
 	}),
 	triggeringListener: one(listeners),
 	variables: many(variables),
-	whitelists: many(workflowWhitelists)
+	whitelists: many(whitelists)
 }))
 
 // installations
@@ -182,15 +182,16 @@ export const variablesRelations = relations(variables, ({ one }) => ({
 
 // workflow domain whitelists
 
+export const whitelistScope = pgEnum('whitelist_scope', ['user', 'workflow'])
 export const whitelistType = pgEnum('whitelist_type', ['domain'])
 
-export const workflowWhitelists = pgTable(
-	'workflow_whitelists',
+export const whitelists = pgTable(
+	'whitelists',
 	{
 		id: serial('id').primaryKey(),
-		workflowId: integer('workflow_id')
-			.references(() => workflows.id, { onDelete: 'cascade' })
-			.notNull(),
+		scope: whitelistScope('scope').notNull(),
+		workflowId: integer('workflow_id').references(() => workflows.id, { onDelete: 'cascade' }),
+		userId: text('user_id').references(() => users.id, { onDelete: 'cascade' }),
 		type: whitelistType('type').notNull(),
 		value: text('value').notNull(),
 		createdBy: text('created_by')
@@ -198,17 +199,30 @@ export const workflowWhitelists = pgTable(
 			.notNull(),
 		createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow()
 	},
-	(table) => [index().on(table.workflowId, table.type, table.value)]
+	(table) => [
+		index('idx_whitelists_workflow_scope')
+			.on(table.workflowId, table.type, table.value)
+			.where(sql`scope = 'workflow'`),
+		index('idx_whitelists_user_scope')
+			.on(table.userId, table.type, table.value)
+			.where(sql`scope = 'user'`)
+	]
 )
 
-export const workflowWhitelistsRelations = relations(workflowWhitelists, ({ one }) => ({
-	creator: one(users, {
-		fields: [workflowWhitelists.createdBy],
-		references: [users.id]
-	}),
+export const whitelistsRelations = relations(whitelists, ({ one }) => ({
 	workflow: one(workflows, {
-		fields: [workflowWhitelists.workflowId],
+		fields: [whitelists.workflowId],
 		references: [workflows.id]
+	}),
+	user: one(users, {
+		fields: [whitelists.userId],
+		references: [users.id],
+		relationName: 'user'
+	}),
+	creator: one(users, {
+		fields: [whitelists.createdBy],
+		references: [users.id],
+		relationName: 'creator'
 	})
 }))
 
@@ -274,7 +288,8 @@ export const users = pgTable('users', {
 export const usersRelations = relations(users, ({ many }) => ({
 	workflows: many(workflows),
 	tokens: many(tokens),
-	workflowWhitelists: many(workflowWhitelists)
+	whitelists: many(whitelists, { relationName: 'user' }),
+	createdWhitelists: many(whitelists, { relationName: 'creator' })
 }))
 
 // tokens
@@ -301,25 +316,6 @@ export const tokensRelations = relations(tokens, ({ one }) => ({
 		references: [users.id]
 	})
 }))
-
-// user domain whitelists
-
-export const userWhitelists = pgTable(
-	'user_whitelists',
-	{
-		id: serial('id').primaryKey(),
-		userId: text('user_id')
-			.references(() => users.id, { onDelete: 'cascade' })
-			.notNull(),
-		type: whitelistType('type').notNull(),
-		value: text('value').notNull(),
-		createdBy: text('created_by')
-			.references(() => users.id)
-			.notNull(),
-		createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow()
-	},
-	(table) => [index().on(table.userId, table.type, table.value)]
-)
 
 // audit logs
 
