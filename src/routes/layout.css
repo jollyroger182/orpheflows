@@ -42,3 +42,11 @@
 .blocklyFlyoutScrollbar[display='none'] {
 	display: none;
 }
+
+.blocklyTextInputField.blocklyEditing > text {
+	display: none;
+}
+
+.blocklyHtmlInput {
+	color: #000;
+}
