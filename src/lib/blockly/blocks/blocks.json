@@ -712,6 +712,111 @@
 	},
 
 	{
+		"type": "dict_new",
+		"message0": "create empty dictionary %1",
+		"args0": [
+			{
+				"type": "input_dummy",
+				"name": "NAME"
+			}
+		],
+		"output": "Dictionary",
+		"style": "dictionary_blocks"
+	},
+	{
+		"type": "dict_from_pairs",
+		"tooltip": "Create a dictionary from key-value pairs. The argument should be a list, of which each element is a list of two items, key and value.",
+		"message0": "create dictionary from array %1",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "VALUES",
+				"check": "Array"
+			}
+		],
+		"output": "Dictionary",
+		"style": "dictionary_blocks"
+	},
+	{
+		"type": "dict_from_json",
+		"message0": "create dictionary from JSON string %1",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "TEXT",
+				"check": "String"
+			}
+		],
+		"output": "Dictionary",
+		"style": "dictionary_blocks"
+	},
+	{
+		"type": "dict_getkey",
+		"message0": "dictionary %1 get value at key %2 default %3",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "DICT",
+				"check": "Dictionary"
+			},
+			{
+				"type": "input_value",
+				"name": "KEY",
+				"check": "String"
+			},
+			{
+				"type": "input_value",
+				"name": "DEFAULT"
+			}
+		],
+		"output": null,
+		"style": "dictionary_blocks",
+		"inputsInline": true
+	},
+	{
+		"type": "dict_setkey",
+		"message0": "dictionary %1 replace value at key %2 with value %3",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "DICT",
+				"check": "Dictionary"
+			},
+			{
+				"type": "input_value",
+				"name": "KEY",
+				"check": "String"
+			},
+			{
+				"type": "input_value",
+				"name": "VALUE"
+			}
+		],
+		"output": "Dictionary",
+		"style": "dictionary_blocks",
+		"inputsInline": true
+	},
+	{
+		"type": "dict_deletekey",
+		"message0": "dictionary %1 delete value at key %2",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "DICT",
+				"check": "Dictionary"
+			},
+			{
+				"type": "input_value",
+				"name": "KEY",
+				"check": "String"
+			}
+		],
+		"output": "Dictionary",
+		"style": "dictionary_blocks",
+		"inputsInline": true
+	},
+
+	{
 		"type": "messaging_send_text",
 		"message0": "send message to channel %1 text %2",
 		"args0": [

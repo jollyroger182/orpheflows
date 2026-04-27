@@ -354,6 +354,64 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 		},
 		{
 			kind: 'category',
+			name: 'Dictionaries',
+			contents: [
+				{ kind: 'block', type: 'dict_new' },
+				{
+					kind: 'block',
+					type: 'dict_from_pairs',
+					inputs: {
+						VALUES: {
+							block: {
+								type: 'lists_create_with',
+								extraState: { itemCount: 1 },
+								inputs: {
+									ADD0: {
+										block: {
+											type: 'lists_create_with',
+											extraState: { itemCount: 2 },
+											inputs: {
+												ADD0: { block: { type: 'text', fields: { TEXT: 'key' } } },
+												ADD1: { block: { type: 'text', fields: { TEXT: 'value' } } }
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				{
+					kind: 'block',
+					type: 'dict_from_json',
+					inputs: { TEXT: { shadow: { type: 'text', fields: { TEXT: '{"key": "value"}' } } } }
+				},
+				{
+					kind: 'block',
+					type: 'dict_getkey',
+					inputs: {
+						KEY: { shadow: { type: 'text', fields: { TEXT: 'key' } } },
+						DEFAULT: { shadow: { type: 'text', fields: { TEXT: 'value' } } }
+					}
+				},
+				{
+					kind: 'block',
+					type: 'dict_setkey',
+					inputs: {
+						KEY: { shadow: { type: 'text', fields: { TEXT: 'key' } } },
+						VALUE: { shadow: { type: 'text', fields: { TEXT: 'value' } } }
+					}
+				},
+				{
+					kind: 'block',
+					type: 'dict_deletekey',
+					inputs: { KEY: { shadow: { type: 'text', fields: { TEXT: 'key' } } } }
+				}
+			],
+			categorystyle: 'dictionary_category'
+		},
+		{
+			kind: 'category',
 			name: 'Variables',
 			custom: 'VARIABLE',
 			categorystyle: 'variable_category'
