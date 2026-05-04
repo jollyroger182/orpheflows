@@ -5,6 +5,7 @@ import { ConfigTokens } from '.'
 import { slack } from '../slack'
 import type { workflows } from '../db/schema'
 import { getLatestVersion } from './workflows'
+import { hash } from 'crypto'
 
 interface CreateApp {
 	name: string
@@ -79,6 +80,14 @@ export async function generateManifest({ name, triggers = [] }: GenerateManifest
 		? (['message.channels', 'message.groups', 'message.mpim'] as const)
 		: []
 	const dmEvents = triggers.find((s) => s.params.TRIGGER === 'DM') ? (['message.im'] as const) : []
+	const globalShortcuts = triggers
+		.filter((s) => s.params.TRIGGER === 'GLOBAL')
+		.map((s) => ({
+			name: s.params.NAME as string,
+			type: 'global' as const,
+			callback_id: hash('sha1', s.params.NAME as string, 'hex'),
+			description: 'Trigger the workflow'
+		}))
 	const slashCommands = triggers
 		.filter((s) => s.params.TRIGGER === 'SLASH')
 		.map((s) => ({
@@ -103,6 +112,7 @@ export async function generateManifest({ name, triggers = [] }: GenerateManifest
 				display_name: name,
 				always_online: false
 			},
+			shortcuts: globalShortcuts.length ? [...globalShortcuts] : undefined,
 			slash_commands: slashCommands.length ? slashCommands : undefined
 		},
 		oauth_config: {

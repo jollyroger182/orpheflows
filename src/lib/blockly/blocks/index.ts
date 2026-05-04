@@ -21,6 +21,7 @@ const TRIGGER = {
 						['workflow is executed on website', 'WEBSITE'],
 						['workflow is executed via API', 'API'],
 						['workflow is executed in editor', 'EDITOR'],
+						['global shortcut is used', 'GLOBAL'],
 						['reaction is added', 'REACTION'],
 						['a user joins a channel', 'JOIN'],
 						['message is received', 'MESSAGE'],
@@ -55,7 +56,9 @@ const TRIGGER = {
 
 		const input = this.appendDummyInput('DYNAMIC')
 
-		if (value === 'REACTION') {
+		if (value === 'GLOBAL') {
+			input.appendField('with name').appendField(new Blockly.FieldTextInput('Run Workflow'), 'NAME')
+		} else if (value === 'REACTION') {
 			input
 				.appendField('in channel ID')
 				.appendField(new Blockly.FieldTextInput('C'), 'CHANNEL')

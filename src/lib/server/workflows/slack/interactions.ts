@@ -1,12 +1,13 @@
-import { Listeners, type Workflows } from '$lib/server/services'
-import type { SlackAction, ViewSubmitAction } from '@slack/bolt'
-import { progressWorkflow, startWorkflow } from '../execution'
 import { ID } from '$lib/consts'
-import { and, eq } from 'drizzle-orm'
 import { listeners as listenersSchema } from '$lib/server/db/schema'
+import { Listeners, type Workflows } from '$lib/server/services'
+import type { SlackAction, SlackShortcut, ViewSubmitAction } from '@slack/bolt'
+import { hash } from 'crypto'
+import { and, eq } from 'drizzle-orm'
+import { progressWorkflow, startWorkflow } from '../execution'
 
 export async function handleWorkflowInteraction(
-	payload: SlackAction | ViewSubmitAction,
+	payload: SlackAction | ViewSubmitAction | SlackShortcut,
 	workflow: Awaited<ReturnType<typeof Workflows.getWorkflowByVerificationToken>> & {}
 ) {
 	if (payload.type === 'block_actions') {
@@ -85,6 +86,31 @@ export async function handleWorkflowInteraction(
 					[`variable.${output}`]: JSON.stringify(responses),
 					[`variable.${trigger_id_output}`]: payload.trigger_id
 				}
+			})
+		}
+	} else if (payload.type === 'shortcut') {
+		// global shortcut
+		console.log(payload) // TODO remove me
+		const listeners = await Listeners.getByFilter({
+			filter: and(
+				eq(listenersSchema.event, 'global_shortcut'),
+				eq(listenersSchema.param, payload.callback_id),
+				eq(listenersSchema.triggersWorkflowId, workflow.id)
+			)
+		})
+		for (const listener of listeners) {
+			const variables: Record<string, string> = {
+				'trigger.user': payload.user.id,
+				'trigger.trigger_id': payload.trigger_id
+			}
+			await startWorkflow({
+				workflowId: workflow.id,
+				variables,
+				findTrigger: (step) =>
+					listener.data
+						? step.id === JSON.parse(listener.data).trigger
+						: step.params.TRIGGER === 'GLOBAL' &&
+							hash('sha1', step.params.NAME as string, 'hex') === payload.callback_id
 			})
 		}
 	}

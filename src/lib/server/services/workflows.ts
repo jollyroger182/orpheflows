@@ -18,6 +18,7 @@ import {
 } from '../db/schema'
 import { slack } from '../slack'
 import { countSteps } from '../utils'
+import { hash } from 'crypto'
 
 interface GetWorkflows {
 	offset?: number
@@ -349,7 +350,10 @@ export async function publishVersion({ id, blocks, code, userId }: PublishVersio
 			})
 
 		for (const trigger of triggers) {
-			if (trigger.params.TRIGGER === 'REACTION') {
+			if (trigger.params.TRIGGER === 'GLOBAL') {
+				const name = trigger.params.NAME as string
+				await addListener(trigger, { event: 'global_shortcut', param: hash('sha1', name, 'hex') })
+			} else if (trigger.params.TRIGGER === 'REACTION') {
 				const channel = trigger.params.CHANNEL as string
 				const emoji = trigger.params.EMOJI as string
 				await addListener(trigger, { event: 'reaction_added', param: `${channel};${emoji}` })
