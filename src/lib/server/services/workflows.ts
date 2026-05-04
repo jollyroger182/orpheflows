@@ -353,6 +353,9 @@ export async function publishVersion({ id, blocks, code, userId }: PublishVersio
 			if (trigger.params.TRIGGER === 'GLOBAL') {
 				const name = trigger.params.NAME as string
 				await addListener(trigger, { event: 'global_shortcut', param: hash('sha1', name, 'hex') })
+			} else if (trigger.params.TRIGGER === 'SHORTCUT') {
+				const name = trigger.params.NAME as string
+				await addListener(trigger, { event: 'message_shortcut', param: hash('sha1', name, 'hex') })
 			} else if (trigger.params.TRIGGER === 'REACTION') {
 				const channel = trigger.params.CHANNEL as string
 				const emoji = trigger.params.EMOJI as string

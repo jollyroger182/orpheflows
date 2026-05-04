@@ -88,6 +88,14 @@ export async function generateManifest({ name, triggers = [] }: GenerateManifest
 			callback_id: hash('sha1', s.params.NAME as string, 'hex'),
 			description: 'Trigger the workflow'
 		}))
+	const messageShortcuts = triggers
+		.filter((s) => s.params.TRIGGER === 'SHORTCUT')
+		.map((s) => ({
+			name: s.params.NAME as string,
+			type: 'message' as const,
+			callback_id: hash('sha1', s.params.NAME as string, 'hex'),
+			description: 'Trigger the workflow'
+		}))
 	const slashCommands = triggers
 		.filter((s) => s.params.TRIGGER === 'SLASH')
 		.map((s) => ({
@@ -112,7 +120,10 @@ export async function generateManifest({ name, triggers = [] }: GenerateManifest
 				display_name: name,
 				always_online: false
 			},
-			shortcuts: globalShortcuts.length ? [...globalShortcuts] : undefined,
+			shortcuts:
+				globalShortcuts.length + messageShortcuts.length
+					? [...globalShortcuts, ...messageShortcuts]
+					: undefined,
 			slash_commands: slashCommands.length ? slashCommands : undefined
 		},
 		oauth_config: {

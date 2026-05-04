@@ -22,6 +22,7 @@ const TRIGGER = {
 						['workflow is executed via API', 'API'],
 						['workflow is executed in editor', 'EDITOR'],
 						['global shortcut is used', 'GLOBAL'],
+						['message shortcut is used', 'SHORTCUT'],
 						['reaction is added', 'REACTION'],
 						['a user joins a channel', 'JOIN'],
 						['message is received', 'MESSAGE'],
@@ -58,6 +59,10 @@ const TRIGGER = {
 
 		if (value === 'GLOBAL') {
 			input.appendField('with name').appendField(new Blockly.FieldTextInput('Run Workflow'), 'NAME')
+		} else if (value === 'SHORTCUT') {
+			input
+				.appendField('with name')
+				.appendField(new Blockly.FieldTextInput('Inspect Message'), 'NAME')
 		} else if (value === 'REACTION') {
 			input
 				.appendField('in channel ID')

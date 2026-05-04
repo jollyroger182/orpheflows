@@ -113,5 +113,32 @@ export async function handleWorkflowInteraction(
 							hash('sha1', step.params.NAME as string, 'hex') === payload.callback_id
 			})
 		}
+	} else if (payload.type === 'message_action') {
+		// message shortcut
+		console.log(payload) // TODO remove me
+		const listeners = await Listeners.getByFilter({
+			filter: and(
+				eq(listenersSchema.event, 'message_shortcut'),
+				eq(listenersSchema.param, payload.callback_id),
+				eq(listenersSchema.triggersWorkflowId, workflow.id)
+			)
+		})
+		for (const listener of listeners) {
+			const variables: Record<string, string> = {
+				'trigger.user': payload.user.id,
+				'trigger.channel': payload.channel.id,
+				'trigger.message': JSON.stringify({
+					channel: payload.channel.id,
+					ts: payload.message.ts,
+					text: payload.message.text
+				}),
+				'trigger.trigger_id': payload.trigger_id
+			}
+			await startWorkflow({
+				workflowId: workflow.id,
+				variables,
+				findTrigger: (step) => step.id === JSON.parse(listener.data!).trigger
+			})
+		}
 	}
 }

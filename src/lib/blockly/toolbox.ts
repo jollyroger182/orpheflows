@@ -12,6 +12,7 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 				{ kind: 'block', type: 'trigger', extraState: { trigger: 'API' } },
 				{ kind: 'block', type: 'trigger', extraState: { trigger: 'EDITOR' } },
 				{ kind: 'block', type: 'trigger', extraState: { trigger: 'GLOBAL' } },
+				{ kind: 'block', type: 'trigger', extraState: { trigger: 'SHORTCUT' } },
 				{ kind: 'block', type: 'trigger', extraState: { trigger: 'REACTION' } },
 				{ kind: 'block', type: 'trigger', extraState: { trigger: 'JOIN' } },
 				{ kind: 'block', type: 'trigger', extraState: { trigger: 'MESSAGE' } },
