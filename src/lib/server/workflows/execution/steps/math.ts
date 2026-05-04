@@ -162,7 +162,7 @@ export default {
 
 		const a = Math.ceil(low)
 		const b = Math.floor(high) + 1
-		return (Math.random() * (b - a) + a).toString()
+		return Math.floor(Math.random() * (b - a) + a).toString()
 	},
 	math_random_float: async () => Math.random().toString(),
 	math_atan2: async (ctx) => {
