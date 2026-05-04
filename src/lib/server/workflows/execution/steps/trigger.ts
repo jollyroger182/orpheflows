@@ -48,6 +48,12 @@ export default {
 		}
 		return ctx.data.variables['trigger.user']
 	},
+	trigger_channel: async (ctx) => {
+		if (!ctx.data.variables['trigger.channel']) {
+			throw new Error('The workflow was not triggered in a channel.')
+		}
+		return ctx.data.variables['trigger.channel']
+	},
 	trigger_message: async (ctx) => {
 		if (!ctx.data.variables['trigger.message']) {
 			throw new Error('The workflow was not triggered by a message or a message reaction.')

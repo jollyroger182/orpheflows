@@ -353,6 +353,9 @@ export async function publishVersion({ id, blocks, code, userId }: PublishVersio
 				const channel = trigger.params.CHANNEL as string
 				const emoji = trigger.params.EMOJI as string
 				await addListener(trigger, { event: 'reaction_added', param: `${channel};${emoji}` })
+			} else if (trigger.params.TRIGGER === 'JOIN') {
+				const channel = trigger.params.CHANNEL as string
+				await addListener(trigger, { event: 'channel_joined', param: channel })
 			} else if (trigger.params.TRIGGER === 'MESSAGE') {
 				const channel = trigger.params.CHANNEL as string
 				await addListener(trigger, { event: 'message_received', param: channel })

@@ -12,6 +12,18 @@
 		"style": "trigger_blocks"
 	},
 	{
+		"type": "trigger_channel",
+		"message0": "trigger channel %1",
+		"args0": [
+			{
+				"type": "input_dummy",
+				"name": "NAME"
+			}
+		],
+		"output": "Channel",
+		"style": "trigger_blocks"
+	},
+	{
 		"type": "trigger_trigger_id",
 		"message0": "trigger trigger_id %1",
 		"args0": [

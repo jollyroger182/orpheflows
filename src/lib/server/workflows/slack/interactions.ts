@@ -13,9 +13,16 @@ export async function handleWorkflowInteraction(
 		const { actions } = payload
 		for (const action of actions) {
 			if (action.action_id === ID.runWorkflow) {
+				const variables: Record<string, string> = {
+					'trigger.user': payload.user.id,
+					'trigger.trigger_id': payload.trigger_id
+				}
+				if (payload.channel?.id) {
+					variables['trigger.channel'] = payload.channel.id
+				}
 				await startWorkflow({
 					workflowId: workflow.id,
-					variables: { 'trigger.user': payload.user.id, 'trigger.trigger_id': payload.trigger_id },
+					variables,
 					findTrigger: (step) => step.params.TRIGGER === 'MANUAL'
 				})
 			} else if (!action.action_id.startsWith(ID.ignore)) {
@@ -33,6 +40,9 @@ export async function handleWorkflowInteraction(
 							'trigger.trigger_id': payload.trigger_id,
 							'trigger.data': action.value || '',
 							'trigger.response_url': payload.response_url
+						}
+						if (payload.channel) {
+							variables['trigger.channel'] = payload.channel.id
 						}
 						if (payload.channel && payload.message) {
 							variables['trigger.message'] = JSON.stringify({

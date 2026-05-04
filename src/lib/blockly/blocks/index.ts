@@ -22,6 +22,7 @@ const TRIGGER = {
 						['workflow is executed via API', 'API'],
 						['workflow is executed in editor', 'EDITOR'],
 						['reaction is added', 'REACTION'],
+						['a user joins a channel', 'JOIN'],
 						['message is received', 'MESSAGE'],
 						['message is received in DM', 'DM'],
 						['button is clicked', 'BUTTON'],
@@ -60,6 +61,8 @@ const TRIGGER = {
 				.appendField(new Blockly.FieldTextInput('C'), 'CHANNEL')
 				.appendField('emoji name')
 				.appendField(new Blockly.FieldTextInput('yay'), 'EMOJI')
+		} else if (value === 'JOIN') {
+			input.appendField('channel ID').appendField(new Blockly.FieldTextInput('C'), 'CHANNEL')
 		} else if (value === 'MESSAGE') {
 			input.appendField('in channel ID').appendField(new Blockly.FieldTextInput('C'), 'CHANNEL')
 		} else if (value === 'BUTTON') {

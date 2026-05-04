@@ -72,6 +72,9 @@ export async function generateManifest({ name, triggers = [] }: GenerateManifest
 	const reactionEvents = triggers.find((s) => s.params.TRIGGER === 'REACTION')
 		? (['reaction_added'] as const)
 		: []
+	const joinEvents = triggers.find((s) => s.params.TRIGGER === 'JOIN')
+		? (['member_joined_channel'] as const)
+		: []
 	const messageEvents = triggers.find((s) => s.params.TRIGGER === 'MESSAGE')
 		? (['message.channels', 'message.groups', 'message.mpim'] as const)
 		: []
@@ -111,7 +114,13 @@ export async function generateManifest({ name, triggers = [] }: GenerateManifest
 		settings: {
 			event_subscriptions: {
 				request_url: `${EXTERNAL_URL}/api/slack/events`,
-				bot_events: ['app_home_opened', ...reactionEvents, ...messageEvents, ...dmEvents]
+				bot_events: [
+					'app_home_opened',
+					...reactionEvents,
+					...joinEvents,
+					...messageEvents,
+					...dmEvents
+				]
 			},
 			interactivity: {
 				is_enabled: true,

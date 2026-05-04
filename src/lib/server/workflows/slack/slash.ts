@@ -21,6 +21,7 @@ export async function handleWorkflowSlash(
 			variables: {
 				'trigger.trigger_id': payload.trigger_id,
 				'trigger.user': payload.user_id,
+				'trigger.channel': payload.channel_id,
 				'trigger.data': payload.text,
 				'trigger.response_url': payload.response_url
 			},

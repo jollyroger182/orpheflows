@@ -28,6 +28,7 @@ export async function handleWorkflowEvent(
 				workflowId: workflow.id,
 				variables: {
 					'trigger.message': JSON.stringify({ channel: event.item.channel, ts: event.item.ts }),
+					'trigger.channel': event.item.channel,
 					'trigger.user': event.user
 				},
 				findTrigger: (step) =>
@@ -36,6 +37,27 @@ export async function handleWorkflowEvent(
 						: step.params.TRIGGER === 'REACTION' &&
 							step.params.CHANNEL === event.item.channel &&
 							step.params.EMOJI === event.reaction
+			})
+		}
+	} else if (event.type === 'member_joined_channel') {
+		const listeners = await Listeners.getByFilter({
+			filter: and(
+				eq(listenersSchema.event, 'channel_joined'),
+				eq(listenersSchema.param, event.channel),
+				eq(listenersSchema.triggersWorkflowId, workflow.id)
+			)
+		})
+		for (const listener of listeners) {
+			await startWorkflow({
+				workflowId: workflow.id,
+				variables: {
+					'trigger.channel': event.channel,
+					'trigger.user': event.user
+				},
+				findTrigger: (step) =>
+					listener.data
+						? step.id === JSON.parse(listener.data).trigger
+						: step.params.TRIGGER === 'JOIN' && step.params.CHANNEL === event.channel
 			})
 		}
 	} else if (event.type === 'message') {
@@ -62,6 +84,7 @@ export async function handleWorkflowEvent(
 							ts: event.ts,
 							text: event.text || ''
 						}),
+						'trigger.channel': event.channel,
 						'trigger.user': event.user
 					},
 					findTrigger: (step) =>
@@ -90,6 +113,7 @@ export async function handleWorkflowEvent(
 							ts: event.ts,
 							text: event.text || ''
 						}),
+						'trigger.channel': event.channel,
 						'trigger.user': event.user
 					},
 					findTrigger: (step) =>

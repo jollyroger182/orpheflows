@@ -9,9 +9,16 @@ export async function handleCoreInteraction(payload: SlackAction) {
 			if (action.action_id === ID.runWorkflow) {
 				if (action.type !== 'button') return
 				const { id } = JSON.parse(action.value!) as { id: number }
+				const variables: Record<string, string> = {
+					'trigger.user': payload.user.id,
+					'trigger.trigger_id': payload.trigger_id
+				}
+				if (payload.channel?.id) {
+					variables['trigger.channel'] = payload.channel.id
+				}
 				await startWorkflow({
 					workflowId: id,
-					variables: { 'trigger.user': payload.user.id, 'trigger.trigger_id': payload.trigger_id },
+					variables,
 					findTrigger: (step) => step.params.TRIGGER === 'MANUAL'
 				})
 			}

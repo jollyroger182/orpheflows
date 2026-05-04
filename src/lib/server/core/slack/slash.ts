@@ -41,7 +41,11 @@ export async function handleCoreSlash(payload: SlashCommand) {
 		try {
 			await startWorkflow({
 				workflowId: workflow.id,
-				variables: { 'trigger.user': payload.user_id, 'trigger.trigger_id': payload.trigger_id },
+				variables: {
+					'trigger.user': payload.user_id,
+					'trigger.channel': payload.channel_id,
+					'trigger.trigger_id': payload.trigger_id
+				},
 				findTrigger: (step) => step.params.TRIGGER === 'MANUAL'
 			})
 		} catch (e) {
