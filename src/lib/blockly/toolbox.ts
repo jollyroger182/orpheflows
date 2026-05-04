@@ -125,6 +125,11 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 				{ kind: 'block', type: 'channel_to_id' },
 				{
 					kind: 'block',
+					type: 'channel_exists',
+					inputs: { CHANNEL: { shadow: { type: 'text', fields: { TEXT: 'C' } } } }
+				},
+				{
+					kind: 'block',
 					type: 'channel_create',
 					inputs: { NAME: { shadow: { type: 'text', fields: { TEXT: 'my-channel' } } } }
 				},
@@ -143,7 +148,12 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 					inputs: { ID: { shadow: { type: 'text', fields: { TEXT: 'U' } } } }
 				},
 				{ kind: 'block', type: 'user_to_id' },
-				{ kind: 'block', type: 'user_mention' }
+				{ kind: 'block', type: 'user_mention' },
+				{
+					kind: 'block',
+					type: 'user_exists',
+					inputs: { USER: { shadow: { type: 'text', fields: { TEXT: 'U' } } } }
+				}
 			],
 			categorystyle: 'user_category'
 		},

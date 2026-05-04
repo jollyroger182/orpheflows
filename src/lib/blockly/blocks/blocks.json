@@ -381,6 +381,24 @@
 		"nextStatement": null,
 		"style": "channel_blocks"
 	},
+	{
+		"type": "channel_exists",
+		"tooltip": "This block cannot detect private channels and DMs that the workflow bot is not a member of.",
+		"message0": "channel with ID %1 exists? %2",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "CHANNEL",
+				"check": "String"
+			},
+			{
+				"type": "input_dummy",
+				"name": "NAME"
+			}
+		],
+		"output": "Boolean",
+		"style": "channel_blocks"
+	},
 
 	{
 		"type": "user_from_id",
@@ -413,6 +431,23 @@
 			}
 		],
 		"output": "String",
+		"style": "user_blocks"
+	},
+	{
+		"type": "user_exists",
+		"message0": "user with ID %1 exists? %2",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "USER",
+				"check": "String"
+			},
+			{
+				"type": "input_dummy",
+				"name": "TEXT"
+			}
+		],
+		"output": "Boolean",
 		"style": "user_blocks"
 	},
 

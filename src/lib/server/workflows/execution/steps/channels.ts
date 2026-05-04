@@ -34,5 +34,17 @@ export default {
 			executionId: ctx.executionId,
 			continuationToken: ctx.data.continuationToken
 		})
+	},
+	channel_exists: async (ctx) => {
+		const channel = await ctx.evaluate(ctx.params.CHANNEL as WorkflowStep)
+		try {
+			await slack.conversations.info({ channel, token: await ctx.getToken() })
+			return 'true'
+		} catch (e) {
+			if (isSlackPlatformError(e, 'channel_not_found')) {
+				return 'false'
+			}
+			throw e
+		}
 	}
 } satisfies Record<string, (context: StepExecutionContext) => Promise<unknown>>
