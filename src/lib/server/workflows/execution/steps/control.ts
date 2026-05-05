@@ -78,23 +78,10 @@ export default {
 	logic_compare: async (ctx) => {
 		const lhs = await ctx.evaluate(ctx.params.A as WorkflowStep)
 		const rhs = await ctx.evaluate(ctx.params.B as WorkflowStep)
+		const op = ctx.params.OP as string
 
-		switch (ctx.params.OP as string) {
-			case 'EQ':
-				return lhs === rhs ? 'true' : 'false'
-			case 'NEQ':
-				return lhs !== rhs ? 'true' : 'false'
-			case 'LT':
-				return lhs < rhs ? 'true' : 'false'
-			case 'LTE':
-				return lhs <= rhs ? 'true' : 'false'
-			case 'GT':
-				return lhs > rhs ? 'true' : 'false'
-			case 'GTE':
-				return lhs >= rhs ? 'true' : 'false'
-			default:
-				throw new Error(`Unknown comparison operator ${ctx.params.OP}`)
-		}
+		if (!isNaN(+lhs) && !isNaN(+rhs)) return compare(op, +lhs, +rhs)
+		return compare(op, lhs, rhs)
 	},
 	logic_operation: async (ctx) => {
 		const lhs = await ctx.evaluate(ctx.params.A as WorkflowStep)
@@ -135,3 +122,22 @@ export default {
 		})
 	}
 } satisfies Record<string, (context: StepExecutionContext) => Promise<unknown>>
+
+function compare<T>(op: string, lhs: T, rhs: T): string {
+	switch (op) {
+		case 'EQ':
+			return lhs === rhs ? 'true' : 'false'
+		case 'NEQ':
+			return lhs !== rhs ? 'true' : 'false'
+		case 'LT':
+			return lhs < rhs ? 'true' : 'false'
+		case 'LTE':
+			return lhs <= rhs ? 'true' : 'false'
+		case 'GT':
+			return lhs > rhs ? 'true' : 'false'
+		case 'GTE':
+			return lhs >= rhs ? 'true' : 'false'
+		default:
+			throw new Error(`Unknown comparison operator ${op}`)
+	}
+}
