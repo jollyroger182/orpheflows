@@ -462,6 +462,59 @@
 		"output": "Boolean",
 		"style": "user_blocks"
 	},
+	{
+		"type": "usergroup_add",
+		"message0": "add user %1 to user group with ID %2",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "USER",
+				"check": "User"
+			},
+			{
+				"type": "input_value",
+				"name": "GROUP",
+				"check": "String"
+			}
+		],
+		"previousStatement": null,
+		"nextStatement": null,
+		"style": "user_blocks",
+		"inputsInline": true
+	},
+	{
+		"type": "usergroup_remove",
+		"message0": "remove user %1 from user group with ID %2",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "USER",
+				"check": "User"
+			},
+			{
+				"type": "input_value",
+				"name": "GROUP",
+				"check": "String"
+			}
+		],
+		"previousStatement": null,
+		"nextStatement": null,
+		"style": "user_blocks",
+		"inputsInline": true
+	},
+	{
+		"type": "usergroup_get",
+		"message0": "list users in user group with ID %1",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "GROUP",
+				"check": "String"
+			}
+		],
+		"output": "Array",
+		"style": "user_blocks"
+	},
 
 	{
 		"type": "integration_request",

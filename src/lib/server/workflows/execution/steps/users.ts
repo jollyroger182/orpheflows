@@ -1,6 +1,6 @@
 import { slack } from '$lib/server/slack'
 import { isSlackPlatformError } from '$lib/server/utils'
-import type { StepExecutionContext } from '..'
+import { progressWorkflow, type StepExecutionContext } from '..'
 
 export default {
 	user_from_id: async (ctx) => ctx.evaluate(ctx.params.ID as WorkflowStep),
@@ -20,5 +20,60 @@ export default {
 			}
 			throw e
 		}
+	},
+	usergroup_add: async (ctx) => {
+		const user = await ctx.evaluate(ctx.params.USER as WorkflowStep)
+		const group = await ctx.evaluate(ctx.params.GROUP as WorkflowStep)
+
+		const token = await ctx.getToken()
+
+		const usersResp = await slack.usergroups.users.list({ usergroup: group, token })
+		const users = usersResp.users!
+		if (!users.includes(user)) {
+			await slack.usergroups.users.update({
+				users: [...users, user].join(','),
+				usergroup: group,
+				token
+			})
+		}
+
+		await progressWorkflow({
+			executionId: ctx.executionId,
+			continuationToken: ctx.data.continuationToken
+		})
+	},
+	usergroup_remove: async (ctx) => {
+		const user = await ctx.evaluate(ctx.params.USER as WorkflowStep)
+		const group = await ctx.evaluate(ctx.params.GROUP as WorkflowStep)
+
+		const token = await ctx.getToken()
+
+		const usersResp = await slack.usergroups.users.list({ usergroup: group, token })
+		const users = usersResp.users!
+		const idx = users.indexOf(user)
+		if (idx >= 0) {
+			users.splice(idx, 1)
+			await slack.usergroups.users.update({
+				users: users.join(','),
+				usergroup: group,
+				token
+			})
+		}
+
+		await progressWorkflow({
+			executionId: ctx.executionId,
+			continuationToken: ctx.data.continuationToken
+		})
+	},
+	usergroup_get: async (ctx) => {
+		const group = await ctx.evaluate(ctx.params.GROUP as WorkflowStep)
+
+		const usersResp = await slack.usergroups.users.list({
+			usergroup: group,
+			token: await ctx.getToken()
+		})
+		const users = usersResp.users!
+
+		return JSON.stringify(users)
 	}
 } satisfies Record<string, (context: StepExecutionContext) => Promise<unknown>>

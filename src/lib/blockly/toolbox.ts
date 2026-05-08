@@ -160,6 +160,21 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 					kind: 'block',
 					type: 'user_exists',
 					inputs: { USER: { shadow: { type: 'text', fields: { TEXT: 'U' } } } }
+				},
+				{
+					kind: 'block',
+					type: 'usergroup_add',
+					inputs: { GROUP: { shadow: { type: 'text', fields: { TEXT: 'S' } } } }
+				},
+				{
+					kind: 'block',
+					type: 'usergroup_remove',
+					inputs: { GROUP: { shadow: { type: 'text', fields: { TEXT: 'S' } } } }
+				},
+				{
+					kind: 'block',
+					type: 'usergroup_get',
+					inputs: { GROUP: { shadow: { type: 'text', fields: { TEXT: 'S' } } } }
 				}
 			],
 			categorystyle: 'user_category'
