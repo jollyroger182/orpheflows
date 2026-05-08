@@ -35,5 +35,30 @@ export default {
 				[`variable.${responseOut}`]: respBody
 			}
 		})
+	},
+	integration_idv: async (ctx) => {
+		const user = await ctx.evaluate(ctx.params.USER as WorkflowStep)
+
+		const url = new URL('https://auth.hackclub.com/api/external/check')
+		url.searchParams.set('slack_id', user)
+		return await checkIDV(url)
 	}
 } satisfies Record<string, (context: StepExecutionContext) => Promise<unknown>>
+
+async function checkIDV(url: URL | string): Promise<string> {
+	const resp = await fetch(url)
+
+	if (!resp.ok) {
+		console.error('idv check', url, 'failed with status code', resp.status, await resp.text())
+		throw new Error(`Failed to check IDV: request failed with status code ${resp.status}`)
+	}
+
+	const data = await resp.json()
+
+	if (!data.result) {
+		console.error('idv check', url, 'returned no data', JSON.stringify(data))
+		throw new Error(`Failed to check IDV: upstream server error`)
+	}
+
+	return data.result
+}
