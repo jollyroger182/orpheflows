@@ -27,6 +27,21 @@ export default {
 			continuationToken: ctx.data.continuationToken
 		})
 	},
+	channel_kick: async (ctx) => {
+		const user = await ctx.evaluate(ctx.params.USER as WorkflowStep)
+		const channel = await ctx.evaluate(ctx.params.CHANNEL as WorkflowStep)
+		try {
+			await slack.conversations.kick({ channel, user, token: await ctx.getToken() })
+		} catch (e) {
+			if (!isSlackPlatformError(e, 'not_in_channel')) {
+				throw e
+			}
+		}
+		await progressWorkflow({
+			executionId: ctx.executionId,
+			continuationToken: ctx.data.continuationToken
+		})
+	},
 	channel_archive: async (ctx) => {
 		const channel = await ctx.evaluate(ctx.params.CHANNEL as WorkflowStep)
 		await slack.conversations.archive({ channel, token: await ctx.getToken() })

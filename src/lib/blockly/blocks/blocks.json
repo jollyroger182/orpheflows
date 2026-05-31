@@ -380,6 +380,26 @@
 		"inputsInline": true
 	},
 	{
+		"type": "channel_kick",
+		"message0": "kick user %1 from channel %2",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "USER",
+				"check": "User"
+			},
+			{
+				"type": "input_value",
+				"name": "CHANNEL",
+				"check": "Channel"
+			}
+		],
+		"previousStatement": null,
+		"nextStatement": null,
+		"style": "channel_blocks",
+		"inputsInline": true
+	},
+	{
 		"type": "channel_archive",
 		"message0": "archive channel %1",
 		"args0": [
