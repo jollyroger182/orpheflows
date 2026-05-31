@@ -101,7 +101,7 @@ export default {
 		const text = await ctx.evaluate(ctx.params.TEXT as WorkflowStep)
 		const substring = await ctx.evaluate(ctx.params.SUB as WorkflowStep)
 
-		return substring ? text.split(substring).length - 1 : '0'
+		return substring ? (text.split(substring).length - 1).toString() : '0'
 	},
 	text_replace: async (ctx) => {
 		const text = await ctx.evaluate(ctx.params.TEXT as WorkflowStep)
