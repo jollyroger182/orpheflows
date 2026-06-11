@@ -1,5 +1,5 @@
 import { slack } from '$lib/server/slack'
-import { isSlackPlatformError } from '$lib/server/utils'
+import { isSlackPlatformError, paginateSlack } from '$lib/server/utils'
 import { progressWorkflow, type StepExecutionContext } from '..'
 
 export default {
@@ -11,6 +11,44 @@ export default {
 
 		const resp = await slack.conversations.create({ name, is_private, token: await ctx.getToken() })
 		return resp.channel!.id!
+	},
+	channel_contains_user: async (ctx) => {
+		const user = await ctx.evaluate(ctx.params.USER as WorkflowStep)
+		const channel = await ctx.evaluate(ctx.params.CHANNEL as WorkflowStep)
+
+		for await (const chan of paginateSlack(
+			slack.users.conversations,
+			{
+				user,
+				types: 'public_channel,private_channel,mpim,im',
+				limit: 1000,
+				token: await ctx.getToken()
+			},
+			(resp) => resp.channels!
+		)) {
+			if (chan.id === channel) {
+				return 'true'
+			}
+		}
+
+		return 'false'
+	},
+	channel_members: async (ctx) => {
+		const channel = await ctx.evaluate(ctx.params.CHANNEL as WorkflowStep)
+
+		return JSON.stringify(
+			await Array.fromAsync(
+				paginateSlack(
+					slack.conversations.members,
+					{
+						channel,
+						limit: 1000,
+						token: await ctx.getToken()
+					},
+					(resp) => resp.members!
+				)
+			)
+		)
 	},
 	channel_invite: async (ctx) => {
 		const user = await ctx.evaluate(ctx.params.USER as WorkflowStep)

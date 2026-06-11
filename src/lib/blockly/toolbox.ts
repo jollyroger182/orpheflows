@@ -140,6 +140,8 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 					type: 'channel_create',
 					inputs: { NAME: { shadow: { type: 'text', fields: { TEXT: 'my-channel' } } } }
 				},
+				{ kind: 'block', type: 'channel_contains_user' },
+				{ kind: 'block', type: 'channel_members' },
 				{ kind: 'block', type: 'channel_invite' },
 				{ kind: 'block', type: 'channel_kick' },
 				{ kind: 'block', type: 'channel_archive' }

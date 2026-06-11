@@ -360,6 +360,42 @@
 		"style": "channel_blocks"
 	},
 	{
+		"type": "channel_contains_user",
+		"message0": "user %1 is in channel %2 ? %3",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "USER",
+				"check": "User"
+			},
+			{
+				"type": "input_value",
+				"name": "CHANNEL",
+				"check": "Channel"
+			},
+			{
+				"type": "input_dummy",
+				"name": "NAME"
+			}
+		],
+		"output": "Boolean",
+		"style": "channel_blocks",
+		"inputsInline": true
+	},
+	{
+		"type": "channel_members",
+		"message0": "members of channel %1",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "CHANNEL",
+				"check": "Channel"
+			}
+		],
+		"output": "Array",
+		"style": "channel_blocks"
+	},
+	{
 		"type": "channel_invite",
 		"message0": "invite user %1 to channel %2",
 		"args0": [

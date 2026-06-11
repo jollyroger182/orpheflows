@@ -115,3 +115,22 @@ export function countSteps(code: WorkflowStep[]) {
 	}
 	return count
 }
+
+export async function* paginateSlack<
+	Arg extends { cursor?: string },
+	T extends { response_metadata?: { next_cursor?: string } },
+	V
+>(
+	method: (arg: Arg) => T | Promise<T>,
+	params: Arg,
+	extract: (response: T) => Iterable<V> | AsyncIterable<V>
+): AsyncGenerator<V> {
+	let cursor: string | undefined = params.cursor
+
+	while (true) {
+		const resp = await method({ ...params, cursor })
+		yield* extract(resp)
+		cursor = resp.response_metadata?.next_cursor
+		if (!cursor) break
+	}
+}
