@@ -457,7 +457,7 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 			kind: 'category',
 			name: 'Persistence',
 			contents: [
-				{ kind: 'block', type: 'pvar_get' },
+				{ kind: 'block', type: 'pvar_get', inputs: { DEFAULT: { shadow: { type: 'text' } } } },
 				// { kind: 'block', type: 'pvar_get_keyed' },
 				{ kind: 'block', type: 'pvar_set' },
 				// { kind: 'block', type: 'pvar_set_keyed' },
