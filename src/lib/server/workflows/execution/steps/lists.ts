@@ -27,10 +27,11 @@ export default {
 
 		const repeat = parseInt(num)
 		if (isNaN(repeat) || repeat < 0) throw new Error('Invalid repeat count')
+		const json = JSON.stringify(item)
 		return (
 			'[' +
 			Array.from({ length: repeat })
-				.map(() => item)
+				.map(() => json)
 				.join(',') +
 			']'
 		)
