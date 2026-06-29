@@ -797,7 +797,7 @@
 
 	{
 		"type": "lists_length",
-		"message0": "length of %1",
+		"message0": "length of array %1",
 		"args0": [
 			{
 				"type": "input_value",
