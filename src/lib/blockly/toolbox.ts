@@ -224,7 +224,8 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 					type: 'timer_sleep',
 					inputs: { MS: { shadow: { type: 'math_number', fields: { NUM: '1000' } } } }
 				},
-				{ kind: 'block', type: 'ignore_output' }
+				{ kind: 'block', type: 'ignore_output' },
+				{ kind: 'block', type: 'stop_workflow' }
 			],
 			categorystyle: 'logic_category'
 		},

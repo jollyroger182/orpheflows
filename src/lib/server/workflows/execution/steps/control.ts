@@ -120,7 +120,8 @@ export default {
 			executionId: ctx.executionId,
 			continuationToken: ctx.data.continuationToken
 		})
-	}
+	},
+	stop_workflow: async () => {}
 } satisfies Record<string, (context: StepExecutionContext) => Promise<unknown>>
 
 function compare<T>(op: string, lhs: T, rhs: T): string {

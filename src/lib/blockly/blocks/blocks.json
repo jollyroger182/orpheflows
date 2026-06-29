@@ -677,6 +677,18 @@
 		"nextStatement": null,
 		"style": "logic_blocks"
 	},
+	{
+		"type": "stop_workflow",
+		"message0": "stop this workflow %1",
+		"args0": [
+			{
+				"type": "input_dummy",
+				"name": "NAME"
+			}
+		],
+		"previousStatement": null,
+		"style": "logic_blocks"
+	},
 
 	{
 		"type": "convert_float",
