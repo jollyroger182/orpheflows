@@ -573,6 +573,18 @@
 	},
 
 	{
+		"type": "time_get_sec",
+		"message0": "seconds since epoch %1",
+		"args0": [
+			{
+				"type": "input_dummy",
+				"name": "NAME"
+			}
+		],
+		"output": "Number",
+		"style": "integration_blocks"
+	},
+	{
 		"type": "integration_request",
 		"tooltip": "Performs an HTTP request. Specify the headers as an array of arrays, where each inner array has two string values, the header name and value.",
 		"message0": "make %1 request to URL %2 with body %3 headers %4 storing status code in %5 %6 response body in %7 %8",

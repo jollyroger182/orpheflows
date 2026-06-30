@@ -2,6 +2,9 @@ import { Whitelist } from '$lib/server/services'
 import { progressWorkflow, type StepExecutionContext } from '..'
 
 export default {
+	time_get_sec: async () => {
+		return (Date.now() / 1000).toString()
+	},
 	integration_request: async (ctx) => {
 		const method = ctx.params.METHOD as string
 		const url = await ctx.evaluate(ctx.params.URL as WorkflowStep)

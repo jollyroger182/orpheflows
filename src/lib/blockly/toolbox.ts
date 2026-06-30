@@ -186,6 +186,7 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 			kind: 'category',
 			name: 'Integration',
 			contents: [
+				{ kind: 'block', type: 'time_get_sec' },
 				{
 					kind: 'block',
 					type: 'integration_request',
