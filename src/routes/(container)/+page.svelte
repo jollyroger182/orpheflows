@@ -109,6 +109,12 @@
 								</Item.Description>
 							</Item.Content>
 							<Item.Actions class={cn(display.value === 'grid' ? 'self-start' : '')}>
+								{#if workflow.isPublic}
+									<EarthIcon class="size-4 text-muted-foreground" />
+								{/if}
+								{#if !workflow.installation}
+									<TriangleAlertIcon class="size-4 text-ctp-yellow" />
+								{/if}
 								<ChevronRightIcon class="size-4 text-muted-foreground" />
 							</Item.Actions>
 						</a>
