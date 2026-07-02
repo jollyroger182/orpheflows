@@ -8,15 +8,11 @@
 	import { signIn } from '@auth/sveltekit/client'
 	import type { PageProps } from './$types'
 	import {
-		ChevronRightIcon,
 		EarthIcon,
 		Grid2x2Icon,
 		ListIcon,
-		LockIcon,
-		LockOpenIcon,
 		LogInIcon,
 		TriangleAlertIcon,
-		UnlockIcon,
 		WorkflowIcon
 	} from '@lucide/svelte'
 	import { cn } from '$lib/utils'
