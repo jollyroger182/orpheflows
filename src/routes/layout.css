@@ -50,7 +50,7 @@
 	--muted: var(--catppuccin-color-surface1);
 	--muted-foreground: var(--catppuccin-color-subtext0);
 	--accent: var(--catppuccin-color-mauve);
-	--accent-foreground: var(--catppuccin-color-text);
+	--accent-foreground: var(--catppuccin-color-base);
 	--destructive: var(--catppuccin-color-red);
 	--border: var(--catppuccin-color-surface1);
 	--input: var(--catppuccin-color-surface1);
