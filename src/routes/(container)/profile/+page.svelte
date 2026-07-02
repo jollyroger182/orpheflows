@@ -67,7 +67,7 @@
 					click the button. ID verified users get a limit of
 					<strong class="font-bold">{WORKFLOW_LIMIT_VERIFIED}</strong> workflows.
 					<form action="?/idv" method="POST" class="inline">
-						<Button type="submit" variant="secondary">Check IDV status</Button>
+						<Button type="submit" variant="outline">Check IDV status</Button>
 					</form>
 				{:else if increase === 'REQUEST'}
 					Message <a href="https://hackclub.enterprise.slack.com/team/U08CJCZ2Z9S" class="underline"

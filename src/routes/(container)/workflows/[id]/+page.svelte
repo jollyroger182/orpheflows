@@ -92,7 +92,7 @@
 {#if data.workflow.installation}
 	<div class="mb-4 flex flex-wrap gap-2">
 		{#if data.isOwner}
-			<Button onclick={() => (showDetailsForm = !showDetailsForm)} variant="secondary"
+			<Button onclick={() => (showDetailsForm = !showDetailsForm)} variant="outline"
 				>Edit details</Button
 			>
 			<a href={resolve(`/workflows/${data.workflow.id}/edit`)} class="btn btn-primary"
@@ -136,9 +136,9 @@
 		/>
 	</div>
 	{#if data.workflow.isPublic}
-		<Button onclick={onMakePrivate} variant="secondary">Make private</Button>
+		<Button onclick={onMakePrivate} variant="outline">Make private</Button>
 	{:else}
-		<Button onclick={onMakePublic} variant="secondary">Make public</Button>
+		<Button onclick={onMakePublic} variant="outline">Make public</Button>
 	{/if}
 	<form method="POST" action="?/public" bind:this={publicForm}>
 		<input type="hidden" bind:value={publicMode} name="mode" />

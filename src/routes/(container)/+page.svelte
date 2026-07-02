@@ -44,12 +44,12 @@
 	<div class="mb-4 flex flex-wrap items-center gap-4">
 		<form>
 			<input type="hidden" name="page" value={data.page - 1} />
-			<Button type="submit" variant="secondary" disabled={data.page <= 1}>&lt;</Button>
+			<Button type="submit" variant="outline" disabled={data.page <= 1}>&lt;</Button>
 		</form>
 		<span>Page {data.page} of {data.totalPages}</span>
 		<form>
 			<input type="hidden" name="page" value={data.page + 1} />
-			<Button variant="secondary" disabled={data.page >= data.totalPages}>&gt;</Button>
+			<Button variant="outline" disabled={data.page >= data.totalPages}>&gt;</Button>
 		</form>
 	</div>
 {:else}

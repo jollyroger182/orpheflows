@@ -219,7 +219,7 @@
 	<div class="col-span-(--columns) flex items-center gap-2 px-4 py-2">
 		<a href={resolve(`/workflows/${data.workflow.id}`)} class="text-lg">{data.workflow.name}</a>
 		{#if data.isOwner}
-			<Button onclick={onSave} variant="secondary">Save</Button>
+			<Button onclick={onSave} variant="outline">Save</Button>
 			<Button onclick={onPublish}>Publish</Button>
 		{/if}
 		<span class="flex-1"></span>
@@ -227,7 +227,7 @@
 			<Button onclick={onRun}>Run</Button>
 		{/if}
 		{#if data.isOwner}
-			<Button onclick={onTogglePersistence} variant="secondary">Variables</Button>
+			<Button onclick={onTogglePersistence} variant="outline">Variables</Button>
 		{/if}
 	</div>
 

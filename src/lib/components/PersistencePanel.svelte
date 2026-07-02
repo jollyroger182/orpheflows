@@ -31,7 +31,7 @@
 	>
 		<h2 class="mb-4 text-3xl font-semibold">Variables</h2>
 		<div class="mb-4">
-			<Button onclick={refresh} variant="secondary">Refresh</Button>
+			<Button onclick={refresh} variant="outline">Refresh</Button>
 		</div>
 
 		{#if variables.length}

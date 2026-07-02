@@ -41,10 +41,10 @@
 				signOut()
 				goto(resolve('/'))
 			}}
-			variant="secondary">Log out</Button
+			variant="outline">Log out</Button
 		>
 	{:else}
-		<Button onclick={() => signIn('slack')} variant="secondary">Log in</Button>
+		<Button onclick={() => signIn('slack')} variant="outline">Log in</Button>
 	{/if}
 </header>
 
