@@ -95,17 +95,15 @@
 			<Button onclick={() => (showDetailsForm = !showDetailsForm)} variant="outline"
 				>Edit details</Button
 			>
-			<a href={resolve(`/workflows/${data.workflow.id}/edit`)} class="btn btn-primary"
-				>Edit workflow</a
-			>
+			<Button href={resolve(`/workflows/${data.workflow.id}/edit`)}>Edit workflow</Button>
 		{:else if data.workflow.isPublic}
-			<a href={resolve(`/workflows/${data.workflow.id}/edit`)} class="btn btn-primary"
-				>View workflow</a
+			<Button href={resolve(`/workflows/${data.workflow.id}/edit`)} 
+				>View workflow</Button
 			>
 		{/if}
-		<a
+		<Button
 			href={`https://${PUBLIC_SLACK_DOMAIN}.slack.com/team/${data.workflow.installation.userId}`}
-			class="btn btn-success">Open in Slack</a
+			>Open in Slack</Button
 		>
 		{#if data.canRun}
 			<form method="POST" action="?/run">
@@ -119,7 +117,7 @@
 {:else if data.isOwner}
 	<p class="mb-4 flex flex-wrap items-center gap-2">
 		<Button onclick={confirmDelete} variant="destructive">Delete workflow</Button>
-		<a href={oauthUrl} rel="external" class="btn btn-success">Install workflow</a>
+		<Button href={oauthUrl} rel="external">Install workflow</Button>
 		<span>Your workflow must be installed before you can edit it.</span>
 	</p>
 {:else}
