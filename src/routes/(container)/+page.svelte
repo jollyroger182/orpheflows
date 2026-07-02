@@ -1,16 +1,18 @@
 <script lang="ts">
-	import { goto } from '$app/navigation'
 	import { resolve } from '$app/paths'
 	import { page } from '$app/state'
 	import { Button } from '$lib/components/ui/button'
+	import * as ButtonGroup from '$lib/components/ui/button-group'
 	import * as Empty from '$lib/components/ui/empty'
 	import { signIn } from '@auth/sveltekit/client'
 	import type { PageProps } from './$types'
-	import { LogInIcon, WorkflowIcon } from '@lucide/svelte'
+	import { Grid2x2Icon, ListIcon, LogInIcon, WorkflowIcon } from '@lucide/svelte'
+	import { cn } from '$lib/utils'
 
 	let { data }: PageProps = $props()
 
 	let user = $derived(page.data.session?.user)
+	let display = $state<'list' | 'grid'>('list')
 </script>
 
 {#if user}
@@ -28,9 +30,31 @@
 			</Empty.Content>
 		</Empty.Root>
 	{:else}
-		<div class="mb-4 flex flex-wrap items-center gap-x-20 gap-y-2">
+		<div class="mb-4 flex w-full flex-wrap items-center justify-between gap-y-2">
 			<h1 class="text-3xl font-semibold">Your workflows</h1>
-			<Button onclick={() => goto(resolve('/workflows/new'))}>Create</Button>
+			<ButtonGroup.Root>
+				<ButtonGroup.Root>
+					<Button
+						variant="outline"
+						class={cn(display === 'list' ? 'bg-ctp-surface1!' : '')}
+						onclick={() => (display = 'list')}
+					>
+						<span class="sr-only">Show as list</span>
+						<ListIcon />
+					</Button>
+					<Button
+						variant="outline"
+						class={cn(display === 'grid' ? 'bg-ctp-surface1!' : '')}
+						onclick={() => (display = 'grid')}
+					>
+						<span class="sr-only">Show as grid</span>
+						<Grid2x2Icon />
+					</Button>
+				</ButtonGroup.Root>
+				<ButtonGroup.Root>
+					<Button href="/workflows/new">Create</Button>
+				</ButtonGroup.Root>
+			</ButtonGroup.Root>
 		</div>
 
 		<p class="mb-4">
