@@ -96,3 +96,5 @@ export const WORKFLOW_APP_SCOPES: BotScope[] = [
 	'search:read.public' as BotScope,
 	'search:read.users' as BotScope
 ]
+
+export const WORKFLOWS_PER_PAGE = 25;
