@@ -8,6 +8,9 @@
 	import type { PageProps } from './$types'
 	import { Grid2x2Icon, ListIcon, LogInIcon, WorkflowIcon } from '@lucide/svelte'
 	import { cn } from '$lib/utils'
+	import * as Pagination from '$lib/components/ui/pagination'
+	import { goto } from '$app/navigation'
+	import { WORKFLOWS_PER_PAGE } from '$lib/consts'
 
 	let { data }: PageProps = $props()
 
@@ -80,17 +83,43 @@
 			{/each}
 		</ul>
 
-		<div class="mb-4 flex flex-wrap items-center gap-4">
-			<form>
-				<input type="hidden" name="page" value={data.page - 1} />
-				<Button type="submit" variant="outline" disabled={data.page <= 1}>&lt;</Button>
-			</form>
-			<span>Page {data.page} of {data.totalPages}</span>
-			<form>
-				<input type="hidden" name="page" value={data.page + 1} />
-				<Button variant="outline" disabled={data.page >= data.totalPages}>&gt;</Button>
-			</form>
-		</div>
+		<Pagination.Root
+			count={data.total}
+			perPage={WORKFLOWS_PER_PAGE}
+			bind:page={
+				() => data.page,
+				(nextPage) => {
+					const searchParams = new URLSearchParams(page.url.searchParams)
+					searchParams.set('page', String(nextPage))
+
+					goto(resolve(`/?${searchParams}`))
+				}
+			}
+		>
+			{#snippet children({ pages, currentPage })}
+				<Pagination.Content>
+					<Pagination.Item>
+						<Pagination.Previous />
+					</Pagination.Item>
+					{#each pages as page (page.key)}
+						{#if page.type === 'ellipsis'}
+							<Pagination.Item>
+								<Pagination.Ellipsis />
+							</Pagination.Item>
+						{:else}
+							<Pagination.Item>
+								<Pagination.Link {page} isActive={currentPage === page.value}>
+									{page.value}
+								</Pagination.Link>
+							</Pagination.Item>
+						{/if}
+					{/each}
+					<Pagination.Item>
+						<Pagination.Next />
+					</Pagination.Item>
+				</Pagination.Content>
+			{/snippet}
+		</Pagination.Root>
 	{/if}
 {:else}
 	<Empty.Root class="py-20">
