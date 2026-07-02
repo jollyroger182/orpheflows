@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths'
 	import { PUBLIC_SLACK_DOMAIN } from '$env/static/public'
+	import { Button } from '$lib/components/ui/button'
 	import WorkflowForm from '$lib/components/WorkflowForm.svelte'
 	import { WORKFLOW_APP_SCOPES } from '$lib/consts'
 	import type { PageProps } from './$types'
@@ -91,8 +92,8 @@
 {#if data.workflow.installation}
 	<div class="mb-4 flex flex-wrap gap-2">
 		{#if data.isOwner}
-			<button onclick={() => (showDetailsForm = !showDetailsForm)} class="btn btn-secondary"
-				>Edit details</button
+			<Button onclick={() => (showDetailsForm = !showDetailsForm)} variant="secondary"
+				>Edit details</Button
 			>
 			<a href={resolve(`/workflows/${data.workflow.id}/edit`)} class="btn btn-primary"
 				>Edit workflow</a
@@ -108,16 +109,16 @@
 		>
 		{#if data.canRun}
 			<form method="POST" action="?/run">
-				<button type="submit" class="btn btn-success">Run workflow</button>
+				<Button type="submit">Run workflow</Button>
 			</form>
 		{/if}
 		{#if data.isOwner}
-			<button onclick={confirmDelete} class="btn btn-danger">Delete workflow</button>
+			<Button onclick={confirmDelete} variant="destructive">Delete workflow</Button>
 		{/if}
 	</div>
 {:else if data.isOwner}
 	<p class="mb-4 flex flex-wrap items-center gap-2">
-		<button onclick={confirmDelete} class="btn btn-danger">Delete workflow</button>
+		<Button onclick={confirmDelete} variant="destructive">Delete workflow</Button>
 		<a href={oauthUrl} rel="external" class="btn btn-success">Install workflow</a>
 		<span>Your workflow must be installed before you can edit it.</span>
 	</p>
@@ -135,9 +136,9 @@
 		/>
 	</div>
 	{#if data.workflow.isPublic}
-		<button onclick={onMakePrivate} class="btn btn-secondary">Make private</button>
+		<Button onclick={onMakePrivate} variant="secondary">Make private</Button>
 	{:else}
-		<button onclick={onMakePublic} class="btn btn-secondary">Make public</button>
+		<Button onclick={onMakePublic} variant="secondary">Make public</Button>
 	{/if}
 	<form method="POST" action="?/public" bind:this={publicForm}>
 		<input type="hidden" bind:value={publicMode} name="mode" />

@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation'
 	import { resolve } from '$app/paths'
 	import { page } from '$app/state'
+	import { Button } from '$lib/components/ui/button'
 	import type { PageProps } from './$types'
 
 	let { data }: PageProps = $props()
@@ -12,7 +13,7 @@
 <div class="mb-4 flex flex-wrap items-center gap-x-20 gap-y-2">
 	<h1 class="text-3xl font-semibold">Your workflows</h1>
 	{#if user}
-		<button onclick={() => goto(resolve('/workflows/new'))} class="btn btn-success">Create</button>
+		<Button onclick={() => goto(resolve('/workflows/new'))}>Create</Button>
 	{/if}
 </div>
 
@@ -43,12 +44,12 @@
 	<div class="mb-4 flex flex-wrap items-center gap-4">
 		<form>
 			<input type="hidden" name="page" value={data.page - 1} />
-			<button type="submit" class="btn btn-secondary" disabled={data.page <= 1}>&lt;</button>
+			<Button type="submit" variant="secondary" disabled={data.page <= 1}>&lt;</Button>
 		</form>
 		<span>Page {data.page} of {data.totalPages}</span>
 		<form>
 			<input type="hidden" name="page" value={data.page + 1} />
-			<button class="btn btn-secondary" disabled={data.page >= data.totalPages}>&gt;</button>
+			<Button variant="secondary" disabled={data.page >= data.totalPages}>&gt;</Button>
 		</form>
 	</div>
 {:else}

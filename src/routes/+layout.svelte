@@ -7,6 +7,7 @@
 
 	import './layout.css'
 	import { ModeWatcher } from 'mode-watcher'
+	import { Button } from '$lib/components/ui/button'
 
 	let { children } = $props()
 
@@ -35,15 +36,15 @@
 				<span>{user.name}</span>
 			{/if}
 		</a>
-		<button
+		<Button
 			onclick={() => {
 				signOut()
 				goto(resolve('/'))
 			}}
-			class="btn btn-secondary">Log out</button
+			variant="secondary">Log out</Button
 		>
 	{:else}
-		<button onclick={() => signIn('slack')} class="btn btn-secondary">Log in</button>
+		<Button onclick={() => signIn('slack')} variant="secondary">Log in</Button>
 	{/if}
 </header>
 

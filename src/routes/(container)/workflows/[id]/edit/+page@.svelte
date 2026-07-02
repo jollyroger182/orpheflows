@@ -13,6 +13,7 @@
 	import * as En from 'blockly/msg/en'
 	import { mode } from 'mode-watcher'
 	import { onMount } from 'svelte'
+	import { Button } from '$lib/components/ui/button'
 
 	const { data } = $props()
 
@@ -218,15 +219,15 @@
 	<div class="col-span-(--columns) flex items-center gap-2 px-4 py-2">
 		<a href={resolve(`/workflows/${data.workflow.id}`)} class="text-lg">{data.workflow.name}</a>
 		{#if data.isOwner}
-			<button onclick={onSave} class="btn btn-sm btn-secondary">Save</button>
-			<button onclick={onPublish} class="btn btn-sm btn-success">Publish</button>
+			<Button onclick={onSave} variant="secondary">Save</Button>
+			<Button onclick={onPublish}>Publish</Button>
 		{/if}
 		<span class="flex-1"></span>
 		{#if data.isOwner && hasEditorTrigger}
-			<button onclick={onRun} class="btn btn-sm btn-success">Run</button>
+			<Button onclick={onRun}>Run</Button>
 		{/if}
 		{#if data.isOwner}
-			<button onclick={onTogglePersistence} class="btn btn-sm btn-secondary">Variables</button>
+			<Button onclick={onTogglePersistence} variant="secondary">Variables</Button>
 		{/if}
 	</div>
 

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { slide } from 'svelte/transition'
 	import PersistentVariable from './PersistentVariable.svelte'
+	import { Button } from '$lib/components/ui/button'
 
 	let { open = $bindable(false), id }: { open: boolean; id: number } = $props()
 
@@ -30,7 +31,7 @@
 	>
 		<h2 class="mb-4 text-3xl font-semibold">Variables</h2>
 		<div class="mb-4">
-			<button onclick={refresh} class="btn btn-sm btn-secondary">Refresh</button>
+			<Button onclick={refresh} variant="secondary">Refresh</Button>
 		</div>
 
 		{#if variables.length}

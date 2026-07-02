@@ -1,7 +1,7 @@
 @import 'tailwindcss';
-@import "tw-animate-css";
-@import "shadcn-svelte/tailwind.css";
-@import "@fontsource-variable/inter";
+@import 'tw-animate-css';
+@import 'shadcn-svelte/tailwind.css';
+@import '@fontsource-variable/inter';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -9,27 +9,6 @@
 	display: grid;
 	grid-template-rows: auto 1fr;
 	height: 100vh;
-}
-
-.btn {
-	@apply cursor-pointer rounded px-4 py-2 transition-colors disabled:cursor-not-allowed disabled:opacity-50;
-}
-
-.btn.btn-sm {
-	@apply px-3 py-1;
-}
-
-.btn-primary {
-	@apply bg-blue-500 text-white enabled:hover:bg-blue-600;
-}
-.btn-secondary {
-	@apply bg-gray-500 text-white enabled:hover:bg-gray-600;
-}
-.btn-success {
-	@apply bg-green-500 text-white enabled:hover:bg-green-600;
-}
-.btn-danger {
-	@apply bg-red-500 text-white enabled:hover:bg-red-600;
 }
 
 .alert {
