@@ -16,7 +16,7 @@
 
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>
 
-<ModeWatcher />
+<ModeWatcher lightClassNames={['latte']} darkClassNames={['dark', 'mocha']} />
 
 <header class="flex items-center gap-2 border-b bg-card px-4 py-2">
 	<a href={resolve('/')}><span class="text-2xl">Orpheflows</span></a>
