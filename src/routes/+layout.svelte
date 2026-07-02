@@ -8,6 +8,8 @@
 	import './layout.css'
 	import { ModeWatcher } from 'mode-watcher'
 	import { Button } from '$lib/components/ui/button'
+	import * as Avatar from '$lib/components/ui/avatar'
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu'
 
 	let { children } = $props()
 
@@ -24,25 +26,33 @@
 	<span class="flex-1"></span>
 
 	{#if user}
-		<a href={resolve('/profile')}>
-			{#if user.image}
-				<img
-					src={user.image}
-					alt={user.name}
-					title={`Logged in as: ${user.name}`}
-					class="inline h-[2em] rounded-full"
-				/>
-			{:else}
-				<span>{user.name}</span>
-			{/if}
-		</a>
-		<Button
-			onclick={() => {
-				signOut()
-				goto(resolve('/'))
-			}}
-			variant="outline">Log out</Button
-		>
+		<DropdownMenu.Root>
+			<DropdownMenu.Trigger>
+				{#snippet child({ props })}
+					<Avatar.Root {...props}>
+						<Avatar.Image src={user.image} />
+						<Avatar.Fallback>{user.name?.charAt(0)}</Avatar.Fallback>
+					</Avatar.Root>
+				{/snippet}
+			</DropdownMenu.Trigger>
+			<DropdownMenu.Content collisionPadding={8}>
+				<DropdownMenu.Group>
+					<DropdownMenu.Label>{user.name}</DropdownMenu.Label>
+					<DropdownMenu.Separator />
+					<DropdownMenu.Item
+						onclick={() => {
+							goto(resolve('/profile'))
+						}}>Profile</DropdownMenu.Item
+					>
+					<DropdownMenu.Item
+						onclick={() => {
+							signOut()
+							goto(resolve('/'))
+						}}>Log out</DropdownMenu.Item
+					>
+				</DropdownMenu.Group>
+			</DropdownMenu.Content>
+		</DropdownMenu.Root>
 	{:else}
 		<Button onclick={() => signIn('slack')} variant="outline">Log in</Button>
 	{/if}
