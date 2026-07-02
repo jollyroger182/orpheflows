@@ -44,7 +44,7 @@
 	--popover: var(--catppuccin-color-surface0);
 	--popover-foreground: var(--catppuccin-color-text);
 	--primary: var(--catppuccin-color-mauve);
-	--primary-foreground: var(--catppuccin-color-text);
+	--primary-foreground: var(--catppuccin-color-base);
 	--secondary: var(--catppuccin-color-surface1);
 	--secondary-foreground: var(--catppuccin-color-text);
 	--muted: var(--catppuccin-color-surface1);
