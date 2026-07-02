@@ -6,9 +6,21 @@
 	import * as Empty from '$lib/components/ui/empty'
 	import { signIn } from '@auth/sveltekit/client'
 	import type { PageProps } from './$types'
-	import { Grid2x2Icon, ListIcon, LogInIcon, WorkflowIcon } from '@lucide/svelte'
+	import {
+		ChevronRightIcon,
+		EarthIcon,
+		Grid2x2Icon,
+		ListIcon,
+		LockIcon,
+		LockOpenIcon,
+		LogInIcon,
+		TriangleAlertIcon,
+		UnlockIcon,
+		WorkflowIcon
+	} from '@lucide/svelte'
 	import { cn } from '$lib/utils'
 	import * as Pagination from '$lib/components/ui/pagination'
+	import * as Item from '$lib/components/ui/item'
 	import { goto } from '$app/navigation'
 	import { WORKFLOWS_PER_PAGE } from '$lib/consts'
 	import { persistedState } from '$lib/persisted-state.svelte'
@@ -70,24 +82,40 @@
 			You have <strong class="bold">{data.total}</strong> workflow{data.total !== 1 ? 's' : ''}.
 		</p>
 
-		<ul class="mb-4 grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+		<Item.Group
+			class={cn(
+				'mb-4',
+				display.value === 'grid'
+					? 'grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
+					: 'flex flex-col gap-2'
+			)}
+		>
 			{#each data.workflows as workflow (workflow.id)}
-				<li>
-					<a href={resolve(`/workflows/${workflow.id}`)}>
-						<div
-							class="cursor-pointer rounded-xl border border-gray-500 p-8 transition-shadow hover:shadow-lg"
-						>
-							<h2 class="mb-4 text-xl font-semibold">{workflow.name}</h2>
-							<p>
-								Created at <time datetime={workflow.createdAt.toISOString()}
-									>{workflow.createdAt.toLocaleString()}</time
-								>
-							</p>
-						</div>
-					</a>
-				</li>
+				<Item.Root
+					variant="outline"
+					class={cn(
+						'cursor-pointer hover:shadow-sm',
+						display.value === 'grid' ? 'items-start p-4' : 'p-3'
+					)}
+				>
+					{#snippet child({ props })}
+						<a href={resolve(`/workflows/${workflow.id}`)} {...props}>
+							<Item.Content>
+								<Item.Title>{workflow.name}</Item.Title>
+								<Item.Description>
+									Created at <time datetime={workflow.createdAt.toISOString()}
+										>{workflow.createdAt.toLocaleString()}</time
+									>
+								</Item.Description>
+							</Item.Content>
+							<Item.Actions class={cn(display.value === 'grid' ? 'self-start' : '')}>
+								<ChevronRightIcon class="size-4 text-muted-foreground" />
+							</Item.Actions>
+						</a>
+					{/snippet}
+				</Item.Root>
 			{/each}
-		</ul>
+		</Item.Group>
 
 		<Pagination.Root
 			count={data.total}
