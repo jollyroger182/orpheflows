@@ -11,11 +11,17 @@
 	import * as Pagination from '$lib/components/ui/pagination'
 	import { goto } from '$app/navigation'
 	import { WORKFLOWS_PER_PAGE } from '$lib/consts'
+	import { persistedState } from '$lib/persisted-state.svelte'
 
 	let { data }: PageProps = $props()
 
 	let user = $derived(page.data.session?.user)
-	let display = $state<'list' | 'grid'>('list')
+
+	const display = persistedState(
+		'workflows-display',
+		'list',
+		(value): value is 'list' | 'grid' => value === 'list' || value === 'grid'
+	)
 </script>
 
 {#if user}
@@ -39,16 +45,16 @@
 				<ButtonGroup.Root>
 					<Button
 						variant="outline"
-						class={cn(display === 'list' ? 'bg-ctp-surface1!' : '')}
-						onclick={() => (display = 'list')}
+						class={cn(display.value === 'list' ? 'bg-ctp-surface1!' : '')}
+						onclick={() => (display.value = 'list')}
 					>
 						<span class="sr-only">Show as list</span>
 						<ListIcon />
 					</Button>
 					<Button
 						variant="outline"
-						class={cn(display === 'grid' ? 'bg-ctp-surface1!' : '')}
-						onclick={() => (display = 'grid')}
+						class={cn(display.value === 'grid' ? 'bg-ctp-surface1!' : '')}
+						onclick={() => (display.value = 'grid')}
 					>
 						<span class="sr-only">Show as grid</span>
 						<Grid2x2Icon />
