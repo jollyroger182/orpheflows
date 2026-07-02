@@ -4,6 +4,7 @@
 	import { Button } from '$lib/components/ui/button'
 	import * as ButtonGroup from '$lib/components/ui/button-group'
 	import * as Empty from '$lib/components/ui/empty'
+	import * as Tooltip from '$lib/components/ui/tooltip'
 	import { signIn } from '@auth/sveltekit/client'
 	import type { PageProps } from './$types'
 	import {
@@ -110,12 +111,21 @@
 							</Item.Content>
 							<Item.Actions class={cn(display.value === 'grid' ? 'self-start' : '')}>
 								{#if workflow.isPublic}
-									<EarthIcon class="size-4 text-muted-foreground" />
+									<Tooltip.Root>
+										<Tooltip.Trigger>
+											<EarthIcon class="size-4 text-muted-foreground" />
+										</Tooltip.Trigger>
+										<Tooltip.Content>Public</Tooltip.Content>
+									</Tooltip.Root>
 								{/if}
 								{#if !workflow.installation}
-									<TriangleAlertIcon class="size-4 text-ctp-yellow" />
+									<Tooltip.Root>
+										<Tooltip.Trigger>
+											<TriangleAlertIcon class="size-4 text-ctp-yellow" />
+										</Tooltip.Trigger>
+										<Tooltip.Content>Not installed</Tooltip.Content>
+									</Tooltip.Root>
 								{/if}
-								<ChevronRightIcon class="size-4 text-muted-foreground" />
 							</Item.Actions>
 						</a>
 					{/snippet}
