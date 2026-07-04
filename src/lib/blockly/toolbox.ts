@@ -159,6 +159,7 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 				},
 				{ kind: 'block', type: 'user_to_id' },
 				{ kind: 'block', type: 'user_mention' },
+				{ kind: 'block', type: 'user_is_bot' },
 				{
 					kind: 'block',
 					type: 'user_exists',

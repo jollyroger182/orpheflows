@@ -9,6 +9,11 @@ export default {
 		const user = await ctx.evaluate(ctx.params.USER as WorkflowStep)
 		return `<@${user}>`
 	},
+	user_is_bot: async (ctx) => {
+		const user = await ctx.evaluate(ctx.params.USER as WorkflowStep)
+		const resp = await slack.users.info({ user, token: await ctx.getToken() })
+		return resp.user?.is_bot ? 'true' : 'false'
+	},
 	user_exists: async (ctx) => {
 		const user = await ctx.evaluate(ctx.params.USER as WorkflowStep)
 		try {
