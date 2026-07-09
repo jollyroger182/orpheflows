@@ -363,6 +363,9 @@ export async function publishVersion({ id, blocks, code, userId }: PublishVersio
 			} else if (trigger.params.TRIGGER === 'JOIN') {
 				const channel = trigger.params.CHANNEL as string
 				await addListener(trigger, { event: 'channel_joined', param: channel })
+			} else if (trigger.params.TRIGGER === 'LEAVE') {
+				const channel = trigger.params.CHANNEL as string
+				await addListener(trigger, { event: 'channel_left', param: channel })
 			} else if (trigger.params.TRIGGER === 'MESSAGE') {
 				const channel = trigger.params.CHANNEL as string
 				await addListener(trigger, { event: 'message_received', param: channel })

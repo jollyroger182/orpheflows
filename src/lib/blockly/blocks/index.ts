@@ -25,6 +25,7 @@ const TRIGGER = {
 						['message shortcut is used', 'SHORTCUT'],
 						['reaction is added', 'REACTION'],
 						['a user joins a channel', 'JOIN'],
+						['a user leaves a channel', 'LEAVE'],
 						['message is received', 'MESSAGE'],
 						['message is received in DM', 'DM'],
 						['button is clicked', 'BUTTON'],
@@ -69,7 +70,7 @@ const TRIGGER = {
 				.appendField(new Blockly.FieldTextInput('C'), 'CHANNEL')
 				.appendField('emoji name')
 				.appendField(new Blockly.FieldTextInput('yay'), 'EMOJI')
-		} else if (value === 'JOIN') {
+		} else if (value === 'JOIN' || value === 'LEAVE') {
 			input.appendField('channel ID').appendField(new Blockly.FieldTextInput('C'), 'CHANNEL')
 		} else if (value === 'MESSAGE') {
 			input.appendField('in channel ID').appendField(new Blockly.FieldTextInput('C'), 'CHANNEL')
