@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { Button } from '$lib/components/ui/button'
+
 	let {
 		action,
 		button,
@@ -30,5 +32,5 @@
 		/>
 	</div>
 
-	<button class="btn btn-success" type="submit">{button}</button>
+	<Button type="submit">{button}</Button>
 </form>
