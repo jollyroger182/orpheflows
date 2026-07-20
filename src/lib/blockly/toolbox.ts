@@ -15,6 +15,7 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 				{ kind: 'block', type: 'trigger', extraState: { trigger: 'SHORTCUT' } },
 				{ kind: 'block', type: 'trigger', extraState: { trigger: 'REACTION' } },
 				{ kind: 'block', type: 'trigger', extraState: { trigger: 'JOIN' } },
+				{ kind: 'block', type: 'trigger', extraState: { trigger: 'LEAVE' } },
 				{ kind: 'block', type: 'trigger', extraState: { trigger: 'MESSAGE' } },
 				{ kind: 'block', type: 'trigger', extraState: { trigger: 'DM' } },
 				{ kind: 'block', type: 'trigger', extraState: { trigger: 'BUTTON' } },
@@ -159,6 +160,7 @@ const toolbox: Blockly.utils.toolbox.ToolboxInfo = {
 				},
 				{ kind: 'block', type: 'user_to_id' },
 				{ kind: 'block', type: 'user_mention' },
+				{ kind: 'block', type: 'user_is_bot' },
 				{
 					kind: 'block',
 					type: 'user_exists',

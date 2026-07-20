@@ -60,6 +60,27 @@ export async function handleWorkflowEvent(
 						: step.params.TRIGGER === 'JOIN' && step.params.CHANNEL === event.channel
 			})
 		}
+	} else if (event.type === 'member_left_channel') {
+		const listeners = await Listeners.getByFilter({
+			filter: and(
+				eq(listenersSchema.event, 'channel_left'),
+				eq(listenersSchema.param, event.channel),
+				eq(listenersSchema.triggersWorkflowId, workflow.id)
+			)
+		})
+		for (const listener of listeners) {
+			await startWorkflow({
+				workflowId: workflow.id,
+				variables: {
+					'trigger.channel': event.channel,
+					'trigger.user': event.user
+				},
+				findTrigger: (step) =>
+					listener.data
+						? step.id === JSON.parse(listener.data).trigger
+						: step.params.TRIGGER === 'LEAVE' && step.params.CHANNEL === event.channel
+			})
+		}
 	} else if (event.type === 'message') {
 		if (
 			(!event.subtype || event.subtype === 'file_share' || event.subtype === 'thread_broadcast') &&

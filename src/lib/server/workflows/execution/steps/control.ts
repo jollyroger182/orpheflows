@@ -6,7 +6,8 @@ export default {
 		if (ctx.data.variables[`if.${ctx.data.blockId}.run`] === '1') {
 			return progressWorkflow({
 				executionId: ctx.executionId,
-				continuationToken: ctx.data.continuationToken
+				continuationToken: ctx.data.continuationToken,
+				updateVariables: { [`if.${ctx.data.blockId}.run`]: '0' }
 			})
 		}
 		for (let i = 0; ; i++) {
@@ -20,7 +21,7 @@ export default {
 				await progressWorkflow({
 					executionId: ctx.executionId,
 					continuationToken: ctx.data.continuationToken,
-					updateVariables: { [`if.${ctx.data.blockId}.run`]: '1' },
+					updateVariables: { [`if.${ctx.data.blockId}.run`]: nextBlockId ? '1' : '0' },
 					nextBlockId
 				})
 				return
@@ -31,7 +32,7 @@ export default {
 		await progressWorkflow({
 			executionId: ctx.executionId,
 			continuationToken: ctx.data.continuationToken,
-			updateVariables: { [`if.${ctx.data.blockId}.run`]: '1' },
+			updateVariables: { [`if.${ctx.data.blockId}.run`]: nextBlockId ? '1' : '0' },
 			nextBlockId
 		})
 	},
@@ -59,7 +60,8 @@ export default {
 			if (current > total) {
 				return progressWorkflow({
 					executionId: ctx.executionId,
-					continuationToken: ctx.data.continuationToken
+					continuationToken: ctx.data.continuationToken,
+					updateVariables: { [totalKey]: '', [currentKey]: '' }
 				})
 			}
 
@@ -68,6 +70,12 @@ export default {
 
 		const connection = ctx.params.DO as WorkflowStep[]
 		const nextBlockId = connection[0]?.id
+		if (!nextBlockId) {
+			return progressWorkflow({
+				executionId: ctx.executionId,
+				continuationToken: ctx.data.continuationToken
+			})
+		}
 		await progressWorkflow({
 			executionId: ctx.executionId,
 			continuationToken: ctx.data.continuationToken,

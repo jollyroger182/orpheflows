@@ -502,6 +502,23 @@
 		"style": "user_blocks"
 	},
 	{
+		"type": "user_is_bot",
+		"message0": "user %1 is a bot? %2",
+		"args0": [
+			{
+				"type": "input_value",
+				"name": "USER",
+				"check": "User"
+			},
+			{
+				"type": "input_dummy",
+				"name": "NAME"
+			}
+		],
+		"output": "Boolean",
+		"style": "user_blocks"
+	},
+	{
 		"type": "user_exists",
 		"message0": "user with ID %1 exists? %2",
 		"args0": [

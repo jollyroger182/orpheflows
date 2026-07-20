@@ -76,6 +76,9 @@ export async function generateManifest({ name, triggers = [] }: GenerateManifest
 	const joinEvents = triggers.find((s) => s.params.TRIGGER === 'JOIN')
 		? (['member_joined_channel'] as const)
 		: []
+	const leaveEvents = triggers.find((s) => s.params.TRIGGER === 'LEAVE')
+		? (['member_left_channel'] as const)
+		: []
 	const messageEvents = triggers.find((s) => s.params.TRIGGER === 'MESSAGE')
 		? (['message.channels', 'message.groups', 'message.mpim'] as const)
 		: []
@@ -139,6 +142,7 @@ export async function generateManifest({ name, triggers = [] }: GenerateManifest
 					'app_home_opened',
 					...reactionEvents,
 					...joinEvents,
+					...leaveEvents,
 					...messageEvents,
 					...dmEvents
 				]
