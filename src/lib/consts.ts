@@ -80,7 +80,6 @@ export const WORKFLOW_APP_SCOPES: BotScope[] = [
 	'usergroups:write',
 	'users.profile:read',
 	'users:read',
-	'users:read.email',
 	'users:write',
 
 	// bolt doesn't recognize these smh
