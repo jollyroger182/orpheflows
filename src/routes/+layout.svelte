@@ -7,6 +7,10 @@
 
 	import './layout.css'
 	import { ModeWatcher } from 'mode-watcher'
+	import { Button } from '$lib/components/ui/button'
+	import * as Avatar from '$lib/components/ui/avatar'
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu'
+	import * as Tooltip from '$lib/components/ui/tooltip'
 
 	let { children } = $props()
 
@@ -15,36 +19,46 @@
 
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>
 
-<ModeWatcher />
+<ModeWatcher lightClassNames={['latte']} darkClassNames={['dark', 'mocha']} />
 
-<header class="flex items-center gap-2 bg-blue-100 px-4 py-2 dark:bg-blue-950">
-	<a href={resolve('/')}><span class="text-2xl">Orpheflows</span></a>
+<Tooltip.Provider>
+	<header class="flex items-center gap-2 border-b bg-card px-4 py-2">
+		<a href={resolve('/')}><span class="text-2xl">Orpheflows</span></a>
 
-	<span class="flex-1"></span>
+		<span class="flex-1"></span>
 
-	{#if user}
-		<a href={resolve('/profile')}>
-			{#if user.image}
-				<img
-					src={user.image}
-					alt={user.name}
-					title={`Logged in as: ${user.name}`}
-					class="inline h-[2em] rounded-full"
-				/>
-			{:else}
-				<span>{user.name}</span>
-			{/if}
-		</a>
-		<button
-			onclick={() => {
-				signOut()
-				goto(resolve('/'))
-			}}
-			class="btn btn-secondary">Log out</button
-		>
-	{:else}
-		<button onclick={() => signIn('slack')} class="btn btn-secondary">Log in</button>
-	{/if}
-</header>
+		{#if user}
+			<DropdownMenu.Root>
+				<DropdownMenu.Trigger>
+					{#snippet child({ props })}
+						<Avatar.Root {...props}>
+							<Avatar.Image src={user.image} />
+							<Avatar.Fallback>{user.name?.charAt(0)}</Avatar.Fallback>
+						</Avatar.Root>
+					{/snippet}
+				</DropdownMenu.Trigger>
+				<DropdownMenu.Content collisionPadding={8}>
+					<DropdownMenu.Group>
+						<DropdownMenu.Label>{user.name}</DropdownMenu.Label>
+						<DropdownMenu.Separator />
+						<DropdownMenu.Item
+							onclick={() => {
+								goto(resolve('/profile'))
+							}}>Profile</DropdownMenu.Item
+						>
+						<DropdownMenu.Item
+							onclick={() => {
+								signOut()
+								goto(resolve('/'))
+							}}>Log out</DropdownMenu.Item
+						>
+					</DropdownMenu.Group>
+				</DropdownMenu.Content>
+			</DropdownMenu.Root>
+		{:else}
+			<Button onclick={() => signIn('slack')} variant="outline">Log in</Button>
+		{/if}
+	</header>
 
-{@render children()}
+	{@render children()}
+</Tooltip.Provider>
