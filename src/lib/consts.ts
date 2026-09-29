@@ -71,7 +71,6 @@ export const WORKFLOW_APP_SCOPES: BotScope[] = [
 	'reactions:write',
 	'reminders:read',
 	'reminders:write',
-	'team.billing:read',
 	'team.preferences:read',
 	'team:read',
 	'usergroups:read',
