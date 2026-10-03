@@ -59,7 +59,6 @@ export const WORKFLOW_APP_SCOPES: BotScope[] = [
 	'im:history',
 	'im:read',
 	'im:write',
-	'links.embed:write',
 	'metadata.message:read',
 	'mpim:history',
 	'mpim:read',
