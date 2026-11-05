@@ -50,3 +50,7 @@
 .blocklyHtmlInput {
 	color: #000;
 }
+
+.blocklyCommentText {
+	color: #fff;
+}
