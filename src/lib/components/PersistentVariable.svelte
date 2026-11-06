@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { Button } from '$lib/components/ui/button'
+
 	let {
 		id,
 		name,
@@ -57,9 +59,9 @@
 		<textarea class="rounded border px-2 py-1" bind:value={currentValue}></textarea>
 	</p>
 	<div>
-		<button onclick={del} class="btn btn-sm btn-danger">Delete</button>
+		<Button onclick={del} variant="destructive">Delete</Button>
 		{#if !dirty}
-			<button onclick={save} class="btn btn-sm btn-success" disabled={saving}>Save</button>
+			<Button onclick={save} disabled={saving}>Save</Button>
 		{/if}
 	</div>
 </div>

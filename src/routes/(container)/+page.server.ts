@@ -1,14 +1,13 @@
 import { convertWorkflowToPublic } from '$lib/server/convert'
 import type { PageServerLoad } from './$types'
 import { Workflows } from '$lib/server/services'
-
-const PER_PAGE = 25
+import { WORKFLOWS_PER_PAGE } from '$lib/consts'
 
 export const load: PageServerLoad = async ({ locals, url }) => {
 	const page = Number(url.searchParams.get('page') ?? '1')
 
-	const limit = PER_PAGE
-	const offset = (page - 1) * PER_PAGE
+	const limit = WORKFLOWS_PER_PAGE
+	const offset = (page - 1) * WORKFLOWS_PER_PAGE
 
 	const session = await locals.auth()
 

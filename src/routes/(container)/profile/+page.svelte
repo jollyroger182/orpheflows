@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { Button } from '$lib/components/ui/button'
 	import { WORKFLOW_LIMIT_VERIFIED } from '$lib/consts'
 	import type { PageProps } from './$types'
 
@@ -66,7 +67,7 @@
 					click the button. ID verified users get a limit of
 					<strong class="font-bold">{WORKFLOW_LIMIT_VERIFIED}</strong> workflows.
 					<form action="?/idv" method="POST" class="inline">
-						<button type="submit" class="btn btn-sm btn-secondary">Check IDV status</button>
+						<Button type="submit" variant="outline">Check IDV status</Button>
 					</form>
 				{:else if increase === 'REQUEST'}
 					Message <a href="https://hackclub.enterprise.slack.com/team/U08CJCZ2Z9S" class="underline"
@@ -126,7 +127,7 @@
 				</p>
 				<form onsubmit={confirmDelete} action="?/deleteToken" method="POST">
 					<input type="hidden" name="id" value={token.id} />
-					<button type="submit" class="btn btn-danger">Delete</button>
+					<Button type="submit" variant="destructive">Delete</Button>
 				</form>
 			</li>
 		{/each}
@@ -168,5 +169,5 @@
 		</select>
 	</div>
 
-	<button class="btn btn-success">Create</button>
+	<Button>Create</Button>
 </form>
